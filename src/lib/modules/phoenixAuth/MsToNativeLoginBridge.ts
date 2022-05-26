@@ -1,33 +1,34 @@
 import uuid from "uuid/v4";
 import AuthChannel from "@root/lib/modules/phoenixAuth/auth-channel";
-import {connectToReticulum} from "@root/lib/modules/phoenixAuth/phoenix-utils";
+import { connectToReticulum } from "@root/lib/modules/phoenixAuth/phoenix-utils";
 declare const window;
 
 //TODO here we will need an interface Auth
 export class MsToNativeLoginBridge {
-  isLogged(){
+  isLogged() {
     try {
       return !!window.APP.store.state.credentials.token;
-    }catch (e){
+    } catch (e) {
       return false;
     }
   }
 
-  clearProfile(){
+  clearProfile() {
     window.APP.store.update({
       profile: {
         phoneNumber: null,
-        displayName:"Teams Guest",
-        email:null,
+        displayName: "Teams Guest",
+        email: null,
         jobTitle: null,
         companyName: null,
         microsoftUserprofilePicture: null,
         microsoftUser: null
-      }, activity: {hasChangedName: false, hasChangedPicture: false}
+      },
+      activity: { hasChangedName: false, hasChangedPicture: false }
     });
   }
 
-  async logout(){
+  async logout() {
     if (window.APP.hubChannel) {
       await window.APP.hubChannel.signOut(window.APP.hubChannel);
       console.log("Native signOut");
@@ -45,20 +46,26 @@ export class MsToNativeLoginBridge {
         microsoftUserprofilePicture: this.profilePicture,
         microsoftUser: user.id
       }*/
-  async setProfile(profile){
+  async setProfile(profile) {
     window.APP.store.update({
-      profile:profile, activity: {hasChangedName: true, hasChangedPicture: true}
+      profile: profile,
+      activity: { hasChangedName: true, hasChangedPicture: true }
     });
-    await new Promise(resolve => {setTimeout(resolve,0)});//await store.update()
+    await new Promise(resolve => {
+      setTimeout(resolve, 0);
+    }); //await store.update()
   }
-  async setCredential(email, token){
+  async setCredential(email, token) {
     window.APP.store.update({
-      credentials: { email, token }, activity: {hasChangedName: false, hasChangedPicture: false}
+      credentials: { email, token },
+      activity: { hasChangedName: false, hasChangedPicture: false }
     });
-    await new Promise(resolve => {setTimeout(resolve,0)});//await store.update()
+    await new Promise(resolve => {
+      setTimeout(resolve, 0);
+    }); //await store.update()
     if (window.APP.hubChannel) {
       await window.APP.hubChannel.signIn(token);
-      console.log("Native Sign In : "+token);
+      console.log("Native Sign In : " + token);
     }
   }
 
@@ -74,15 +81,15 @@ export class MsToNativeLoginBridge {
     return this.getProfile().microsoftUserprofilePicture;
   }
 
-  getProfile(){
+  getProfile() {
     return window.APP.store.state.profile || {};
   }
 
-  async nativeLogin(email,accessToken) {
-    if(window.APP.store.state.credentials.token){
+  async nativeLogin(email, accessToken) {
+    if (window.APP.store.state.credentials.token) {
       return;
     }
-    const hubChannel:any=new AuthChannel(window.APP.store);
+    const hubChannel: any = new AuthChannel(window.APP.store);
     const socket = await connectToReticulum();
     hubChannel.setSocket(socket);
 
@@ -96,23 +103,27 @@ export class MsToNativeLoginBridge {
       channel
         .join()
         .receive("ok", () => {
-          channel.on("auth_token_resp", async ({
-                                                 auth_token: auth_token,
-                                                 auth_payload: auth_payload
-                                               }) => {
+          channel.on("auth_token_resp", async ({ auth_token: auth_token, auth_payload: auth_payload }) => {
             channel.on("auth_credentials", async ({ credentials: token, payload: payload }) => {
               await this.setCredential(payload.email, token);
               resolve(true);
             });
-            channel.push("auth_verified", { token: auth_token, payload: auth_payload });
+            channel.push("auth_verified", {
+              token: auth_token,
+              payload: auth_payload
+            });
           });
           //TODO security ensure we always send acces token
-          if(!accessToken || !email){
+          if (!accessToken || !email) {
             reject(new Error());
           }
-          channel.push("auth_token_request", { email, authtoken:accessToken, origin: "hubs" });
-        }).receive("error", reject);
+          channel.push("auth_token_request", {
+            email,
+            authtoken: accessToken,
+            origin: "hubs"
+          });
+        })
+        .receive("error", reject);
     });
   }
-
 }

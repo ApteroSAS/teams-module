@@ -1,5 +1,5 @@
-import {getServiceSync} from "@aptero/axolotis-player/build/types/lib";
-import {MICROSOFT_STATIC_SERVICE, MsTeams} from "@root/lib";
+import { getServiceSync } from "@aptero/axolotis-player";
+import { MICROSOFT_STATIC_SERVICE, MsTeams } from "@root/lib";
 
 export const ERROR_LOG_NOTIFICATION = "ERROR_LOG_NOTIFICATION";
 export const WARN_LOG_NOTIFICATION = "WARN_LOG_NOTIFICATION";
@@ -7,38 +7,38 @@ export const THROW_NOTIFICATION = "THROW_NOTIFICATION";
 
 //window.postMessage(JSON.stringify({type:"THROW_NOTIFICATION", data:{}}), "*");
 function sendIframeMessage(type, data) {
-    if (window.parent && window.parent.postMessage) {
-        window.parent.postMessage(JSON.stringify({type, data}), "*");
-    }
+  if (window.parent && window.parent.postMessage) {
+    window.parent.postMessage(JSON.stringify({ type, data }), "*");
+  }
 }
 
-if(getServiceSync<MsTeams>(MICROSOFT_STATIC_SERVICE).msTeams()) {
-    //if we are in msTeams the app will always be in an iframe this file aims to help the CI in this case
-    const oldWarn = console.warn;
-    console.warn = (a,...args) => {
-        try {
-            sendIframeMessage(WARN_LOG_NOTIFICATION, "console warn reporter");
-        }catch (e){
-            /* ignore */
-        }
-        return oldWarn(a,args);
+if (getServiceSync<MsTeams>(MICROSOFT_STATIC_SERVICE).msTeams()) {
+  //if we are in msTeams the app will always be in an iframe this file aims to help the CI in this case
+  const oldWarn = console.warn;
+  console.warn = (a, ...args) => {
+    try {
+      sendIframeMessage(WARN_LOG_NOTIFICATION, "console warn reporter");
+    } catch (e) {
+      /* ignore */
     }
-    const oldError = console.error;
-    console.error = (a,...args) => {
-        try {
-            sendIframeMessage(ERROR_LOG_NOTIFICATION,"console error reporter");
-        }catch (e){
-            /* ignore */
-        }
-        return oldError(a,args);
+    return oldWarn(a, args);
+  };
+  const oldError = console.error;
+  console.error = (a, ...args) => {
+    try {
+      sendIframeMessage(ERROR_LOG_NOTIFICATION, "console error reporter");
+    } catch (e) {
+      /* ignore */
     }
-    const oldOnerror = window.onerror
-    window.onerror = (...args) => {
-        try {
-            sendIframeMessage(THROW_NOTIFICATION,"console error reporter");
-        }catch (e){
-            /* ignore */
-        }
-        return oldOnerror(...args);
+    return oldError(a, args);
+  };
+  const oldOnerror = window.onerror;
+  window.onerror = (...args) => {
+    try {
+      sendIframeMessage(THROW_NOTIFICATION, "console error reporter");
+    } catch (e) {
+      /* ignore */
     }
+    return oldOnerror(...args);
+  };
 }

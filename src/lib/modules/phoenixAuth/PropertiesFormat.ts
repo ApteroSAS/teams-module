@@ -1,5 +1,5 @@
-export const PROPERTY_KEY = "@aptero/axolotis-module-phoenix-auth/PropertyKey"
-export interface PropertiesFormat{
+export const PROPERTY_KEY = "@aptero/axolotis-module-phoenix-auth/PropertyKey";
+export interface PropertiesFormat {
   RETICULUM_SOCKET_PROTOCOL: string;
   RETICULUM_SERVER: string;
   RETICULUM_SOCKET_SERVER: string;

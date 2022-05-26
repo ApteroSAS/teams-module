@@ -4,10 +4,10 @@ import PropTypes from "prop-types";
 // TODO: We really shouldn't include these dependencies on every page. A dynamic import would work better.
 import jwtDecode from "jwt-decode";
 import {getService} from "@aptero/axolotis-player";
-import {MICROSOFT_SERVICE} from "@root/lib";
-import {connectToReticulum} from "@root/lib/modules/phoenixAuth/phoenix-utils";
-import AuthChannel from "@root/lib/modules/phoenixAuth/auth-channel";
-import {adminRole} from "@root/lib/modules/phoenixAuth/AdminRole";
+import {MICROSOFT_SERVICE, MicrosoftService, PHX_AUTH_SERVICE} from "@root/lib";
+import {getServiceSync} from "@aptero/axolotis-player";
+import {PhoenixAuthService} from "@root/lib/modules/phoenixAuth/PhoenixAuthService";
+let phxService = getServiceSync<PhoenixAuthService>(PHX_AUTH_SERVICE);
 
 export const AuthContext = createContext(null);
 declare const window;
@@ -51,7 +51,7 @@ async function checkIsAdmin(socket, store) {
 
   const isAdmin = perms.postgrest_role === "ret_admin";
 
-  adminRole.setIsAdmin(isAdmin);
+    phxService.getAdmin().setIsAdmin(isAdmin);
 
   return isAdmin;
 }
@@ -81,8 +81,8 @@ StorybookAuthContextProvider.propTypes = {
 export function AuthContextProvider({ children, store }) {
   const signIn = useCallback(
     async email => {
-      const authChannel:any = new AuthChannel(store);
-      const socket = await connectToReticulum();
+      const authChannel:any = phxService.createAuthChannel(store);
+      const socket = await phxService.connectToReticulum();
       authChannel.setSocket(socket);
       //const { authComplete } = await authChannel.startAuthentication(email);
       const { authComplete } = await authChannel.startAuthentication(email);
@@ -93,13 +93,13 @@ export function AuthContextProvider({ children, store }) {
   );
   const signInMicrosoft = useCallback(
     async () =>{
-      (await getService(MICROSOFT_SERVICE)).getLoginService().login();
+      (await getService<MicrosoftService>(MICROSOFT_SERVICE)).getLoginService().login();
     },[getService,MICROSOFT_SERVICE]
   );
   const verify = useCallback(
     async authParams => {
-      const authChannel = new AuthChannel(store);
-      const socket = await connectToReticulum();
+      const authChannel = phxService.createAuthChannel(store);
+      const socket = await phxService.connectToReticulum();
       authChannel.setSocket(socket);
       await authChannel.verifyAuthentication(authParams.topic, authParams.token, authParams.payload);
     },
@@ -108,10 +108,10 @@ export function AuthContextProvider({ children, store }) {
 
   const signOut = useCallback(
     async () => {
-      adminRole.setIsAdmin(false);
+        phxService.getAdmin().setIsAdmin(false);
       store.update({ credentials: { token: null, email: null } });
       await store.resetToRandomDefaultAvatar();
-      const authChannel=new AuthChannel(store);
+      const authChannel=phxService.createAuthChannel(store);
       await authChannel.signOut(null);
     },
     [store]
@@ -120,7 +120,7 @@ export function AuthContextProvider({ children, store }) {
   const [context, setContext] = useState({
     initialized: false,
     isSignedIn: !!store.state.credentials && !!store.state.credentials.token,
-    isAdmin: adminRole.isAdmin(),
+    isAdmin: phxService.getAdmin().isAdmin(),
     email: store.state.credentials && store.state.credentials.email,
     userId: store.credentialsAccountId,
     signIn,
@@ -136,7 +136,7 @@ export function AuthContextProvider({ children, store }) {
         setContext(state => ({
           ...state,
           isSignedIn: !!store.state.credentials && !!store.state.credentials.token,
-          isAdmin: adminRole.isAdmin(),
+          isAdmin: phxService.getAdmin().isAdmin(),
           email: store.state.credentials && store.state.credentials.email,
           userId: store.credentialsAccountId
         }));
@@ -147,7 +147,7 @@ export function AuthContextProvider({ children, store }) {
       // Check if the user is an admin on page load
       const runAsync = async () => {
         if (store.state.credentials && store.state.credentials.token) {
-          const socket = await connectToReticulum();
+          const socket = await phxService.connectToReticulum();
           return checkIsAdmin(socket, store);
         }
 

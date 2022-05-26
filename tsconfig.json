@@ -8,6 +8,7 @@
       "sourceMap": true,
       "declaration": true,
       "esModuleInterop":true,
+      "skipLibCheck": true,
       "emitDeclarationOnly": true,
       "suppressImplicitAnyIndexErrors": true,
       "lib": ["es2018", "dom"],
@@ -19,5 +20,5 @@
       }
     },
     "include": ["src/lib"],
-    "exclude": ["src/lib/**/tests"]
+    "exclude": ["src/lib/**/tests","node_modules"]
 }

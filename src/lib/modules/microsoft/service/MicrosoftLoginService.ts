@@ -1,4 +1,4 @@
-import { msTeams} from "./MsTeams";
+import { msTeams } from "./MsTeams";
 import { MicrosoftGraphService } from "./MicrosoftGraphService";
 import { MicrosoftOauthLoginService } from "./MicrosoftOauthLoginService";
 import { TeamsLoginService } from "./TeamsLoginService";
@@ -9,73 +9,73 @@ export class MicrosoftLoginService {
   authInProgress = false;
   msGraphService = new MicrosoftGraphService();
   msToNativeLoginBridge = new MsToNativeLoginBridge();
-  microsoftOauthLoginService = new MicrosoftOauthLoginService(this.msGraphService,this.msToNativeLoginBridge);
-  teamsLoginService = new TeamsLoginService(this.msGraphService,this.msToNativeLoginBridge);
+  microsoftOauthLoginService = new MicrosoftOauthLoginService(this.msGraphService, this.msToNativeLoginBridge);
+  teamsLoginService = new TeamsLoginService(this.msGraphService, this.msToNativeLoginBridge);
   private initialized: boolean = false;
 
   constructor() {
-    this.onReady().then(()=>{
-      this.initialized= true;
+    this.onReady().then(() => {
+      this.initialized = true;
     });
   }
 
-  async onReady(){
-    if(this.initialized){
+  async onReady() {
+    if (this.initialized) {
       return Promise.resolve(true);
-    }else{
-      return new Promise<boolean>((resolve) => {
+    } else {
+      return new Promise<boolean>(resolve => {
         const onInitialized = () => {
           getAuthEvents().off(AUTH_SERVICE_INITIALIZE, onInitialized);
           resolve(true);
         };
         getAuthEvents().on(AUTH_SERVICE_INITIALIZE, onInitialized);
-      })
+      });
     }
   }
 
   async passiveLogin() {
-    if(!this.authInProgress) {
+    if (!this.authInProgress) {
       this.authInProgress = true;
-      setTimeout(()=>{
+      setTimeout(() => {
         this.authInProgress = false;
-      },1000);
-        if(msTeams()){
-          await this.teamsLoginService.passiveLogin();
-          this.authInProgress = false;
-        }else{
-          await this.microsoftOauthLoginService.passiveLogin();
-          this.authInProgress = false;
-        }
-        getAuthEvents().emit(AUTH_SERVICE_INITIALIZE);
+      }, 1000);
+      if (msTeams()) {
+        await this.teamsLoginService.passiveLogin();
+        this.authInProgress = false;
+      } else {
+        await this.microsoftOauthLoginService.passiveLogin();
+        this.authInProgress = false;
+      }
+      getAuthEvents().emit(AUTH_SERVICE_INITIALIZE);
     }
   }
 
-  private async loginInternal(){
-    if(!this.authInProgress) {
+  private async loginInternal() {
+    if (!this.authInProgress) {
       this.authInProgress = true;
-      setTimeout(()=>{
+      setTimeout(() => {
         this.authInProgress = false;
-      },1000);
-      if(msTeams()){
+      }, 1000);
+      if (msTeams()) {
         await this.teamsLoginService.userInteractionAuth();
         this.authInProgress = false;
-      }else{
+      } else {
         await this.microsoftOauthLoginService.login();
         this.authInProgress = false;
       }
     }
   }
 
-  async login(nofail=true) {
-    if(nofail) {
+  async login(nofail = true) {
+    if (nofail) {
       try {
         return await this.loginInternal();
-      }catch (e){
+      } catch (e) {
         this.authInProgress = false;
         //avoid any throw
         console.error(e);
       }
-    }else{
+    } else {
       return await this.loginInternal();
     }
   }
@@ -89,16 +89,16 @@ export class MicrosoftLoginService {
   }
 
   async logout() {
-    if(!this.authInProgress) {
+    if (!this.authInProgress) {
       this.authInProgress = true;
-      setTimeout(()=>{
+      setTimeout(() => {
         this.authInProgress = false;
-      },1000);
+      }, 1000);
       this.msToNativeLoginBridge.clearProfile();
-      if(msTeams()){
+      if (msTeams()) {
         await this.teamsLoginService.logout();
         this.authInProgress = false;
-      }else{
+      } else {
         await this.microsoftOauthLoginService.logout();
         this.authInProgress = false;
       }
@@ -115,4 +115,3 @@ export class MicrosoftLoginService {
 }
 
 export const microsoftLoginService = new MicrosoftLoginService();
-

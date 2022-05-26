@@ -1,10 +1,9 @@
-import { Component } from "@aptero/axolotis-player";
+import { IService } from "@aptero/axolotis-player";
 export declare const MICROSOFT_AUTH_ERROR = "error_microsoft_not_authorized";
 export declare const MSTEAMS_QUERY_PARAM = "msteams";
-export declare function msTeams(): boolean;
-export declare function msPassiveLoginCheckNeeded(): any;
-export declare function preFetchConvertMicrosoftUrl(url: any): Promise<any>;
-export declare class MsTeams implements Component {
+export declare class MsTeams implements IService {
+    private msmode;
+    constructor();
     getType(): string;
     msTeams(): boolean;
     msPassiveLoginCheckNeeded(): any;

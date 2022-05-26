@@ -1,10 +1,10 @@
 import { PublicClientApplication } from "@azure/msal-browser";
 import { getScopesLight } from "./scope";
-import {MicrosoftGraphService} from "./MicrosoftGraphService";
-import {MsToNativeLoginBridge} from "../../phoenixAuth/MsToNativeLoginBridge";
-import {getService, getServiceSync} from "../../../../../../../../axolotis/axolotis-player/build/types/lib";
-import {PropertiesFormat, PROPERTY_KEY} from "@root/lib/modules/microsoft/PropertiesFormat";
-import {Properties} from "@root/lib";
+import { MicrosoftGraphService } from "./MicrosoftGraphService";
+import { MsToNativeLoginBridge } from "../../phoenixAuth/MsToNativeLoginBridge";
+import { PropertiesFormat, PROPERTY_KEY } from "@root/lib/modules/microsoft/PropertiesFormat";
+import { Properties } from "@root/lib";
+import { getServiceSync } from "@aptero/axolotis-player";
 let graph = require("@microsoft/microsoft-graph-client");
 
 declare const window;
@@ -13,8 +13,7 @@ export class MicrosoftOauthLoginService {
   accessToken = null;
   private publicClientApplication: PublicClientApplication | undefined;
 
-  constructor(private microsoftGraphService:MicrosoftGraphService, private msToNativeLoginBridge:MsToNativeLoginBridge) {}
-
+  constructor(private microsoftGraphService: MicrosoftGraphService, private msToNativeLoginBridge: MsToNativeLoginBridge) {}
 
   getPublicClientApplication() {
     let conf = getServiceSync<Properties>(Properties.name).get<PropertiesFormat>(PROPERTY_KEY);
@@ -24,7 +23,7 @@ export class MicrosoftOauthLoginService {
           clientId: conf.MICROSOFT_APP_ID,
           redirectUri: window.location.origin + "/signin",
           // to allow only AAD accounts: authority:https://login.microsoftonline.com/organizations
-          authority: conf.MICROSOFT_APP_AUTHORITY || "https://login.microsoftonline.com/common",
+          authority: conf.MICROSOFT_APP_AUTHORITY || "https://login.microsoftonline.com/common"
         },
         cache: {
           cacheLocation: "sessionStorage",
@@ -50,7 +49,7 @@ export class MicrosoftOauthLoginService {
         console.error(err);
         // logout Moz to be sync
         //this.store.state.profile.microsoftUser = false; //will be done by the logout/signout
-        this.accessToken = null;//passive clean of acces token
+        this.accessToken = null; //passive clean of acces token
         this.msToNativeLoginBridge.clearProfile();
       }
     }
@@ -58,11 +57,14 @@ export class MicrosoftOauthLoginService {
 
   setNewToken(token) {
     this.accessToken = token;
-    const client = graph.Client.init({
-      authProvider: (done) => {
-        done(null, this.accessToken);
-      }
-    },this.accessToken);
+    const client = graph.Client.init(
+      {
+        authProvider: done => {
+          done(null, this.accessToken);
+        }
+      },
+      this.accessToken
+    );
     this.microsoftGraphService.init(client);
   }
 
@@ -89,7 +91,7 @@ export class MicrosoftOauthLoginService {
       microsoftUser: user.id
     });
     const email = user.userPrincipalName || user.mail || user.email;
-    await this.msToNativeLoginBridge.nativeLogin(email,token);
+    await this.msToNativeLoginBridge.nativeLogin(email, token);
   }
 
   async login() {
@@ -103,7 +105,6 @@ export class MicrosoftOauthLoginService {
     } catch (error) {
       console.log("error", error);
     }
-
   }
 
   async logout() {
@@ -114,6 +115,4 @@ export class MicrosoftOauthLoginService {
       }
     }
   }
-
 }
-

@@ -1,11 +1,11 @@
 import { Socket } from "phoenix";
 
-import Store from "../storage/store";//TODO creat a generic store and allows phoenix to store its credentials in it
-import {sleep} from "@root/lib/modules/phoenixAuth/async-utils";
-import {generateHubName} from "@root/lib/modules/nameGeneration/name-generation";
-import {getServiceSync} from "../../../../../../../axolotis/axolotis-player/build/types/lib";
-import {Properties} from "@root/lib";
-import {PropertiesFormat, PROPERTY_KEY} from "@root/lib/modules/phoenixAuth/PropertiesFormat";
+import { sleep } from "@root/lib/modules/phoenixAuth/async-utils";
+import { generateHubName } from "@root/lib/modules/nameGeneration/name-generation";
+import { Properties, STORE_SERVICE } from "@root/lib";
+import { PropertiesFormat, PROPERTY_KEY } from "@root/lib/modules/phoenixAuth/PropertiesFormat";
+import { getServiceSync } from "@aptero/axolotis-player";
+import Store from "@root/lib/modules/store/Store";
 
 let configs = getServiceSync<Properties>(Properties.name).get<PropertiesFormat>(PROPERTY_KEY);
 
@@ -17,7 +17,7 @@ export function isLocalClient() {
   return hasReticulumServer() && document.location.host !== configs.RETICULUM_SERVER;
 }
 
-export function hubUrl(hubId, extraParams:any, slug) {
+export function hubUrl(hubId, extraParams: any, slug) {
   if (!hubId) {
     if (isLocalClient()) {
       hubId = new URLSearchParams(location.search).get("hub_id");
@@ -92,9 +92,7 @@ async function refreshDirectReticulumHostAndPort() {
   let host = qs.get("phx_host");
   const reticulumMeta = await getReticulumMeta();
   host = host || configs.RETICULUM_SOCKET_SERVER || reticulumMeta.phx_host;
-  const port =
-    qs.get("phx_port") ||
-    (hasReticulumServer() ? new URL(`${document.location.protocol}//${configs.RETICULUM_SERVER}`).port : "443");
+  const port = qs.get("phx_port") || (hasReticulumServer() ? new URL(`${document.location.protocol}//${configs.RETICULUM_SERVER}`).port : "443");
   directReticulumHostAndPort = { host, port };
 }
 
@@ -119,10 +117,7 @@ export async function connectToReticulum(debug = false, params = null, socketCla
   const getNewSocketUrl = async () => {
     await refreshDirectReticulumHostAndPort();
     const { host, port } = directReticulumHostAndPort;
-    const protocol =
-      qs.get("phx_protocol") ||
-      configs.RETICULUM_SOCKET_PROTOCOL ||
-      (document.location.protocol === "https:" ? "wss:" : "ws:");
+    const protocol = qs.get("phx_protocol") || configs.RETICULUM_SOCKET_PROTOCOL || (document.location.protocol === "https:" ? "wss:" : "ws:");
 
     return `${protocol}//${host}${port ? `:${port}` : ""}`;
   };
@@ -130,7 +125,7 @@ export async function connectToReticulum(debug = false, params = null, socketCla
   const socketUrl = await getNewSocketUrl();
   console.log(`Phoenix Socket URL: ${socketUrl}`);
 
-  const socketSettings:any = {};
+  const socketSettings: any = {};
 
   if (debug) {
     socketSettings.logger = (kind, msg, data) => {
@@ -165,9 +160,9 @@ export function getLandingPageForPhoto(photoUrl) {
 }
 
 export function fetchReticulumAuthenticated(url, method = "GET", payload) {
-  const { token } = window.APP.store.state.credentials;
+  const { token } = getServiceSync<Store>(STORE_SERVICE).state.credentials;
   const retUrl = getReticulumFetchUrl(url);
-  const params:any = {
+  const params: any = {
     headers: { "content-type": "application/json" },
     method
   };
@@ -177,32 +172,34 @@ export function fetchReticulumAuthenticated(url, method = "GET", payload) {
   if (payload) {
     params.body = JSON.stringify(payload);
   }
-  return fetch(retUrl, params).then(async response => {
-    if (!response.ok) {
-      throw new Error('API error');
-    }
-    const result = await response.text();
-    try {
-      return JSON.parse(result);
-    } catch (e) {
-      // Some reticulum responses, particularly DELETE requests, don't return json.
-      return result;
-    }
-  }).catch(() => {
-    return {entries:[]};
-  });
+  return fetch(retUrl, params)
+    .then(async response => {
+      if (!response.ok) {
+        throw new Error("API error");
+      }
+      const result = await response.text();
+      try {
+        return JSON.parse(result);
+      } catch (e) {
+        // Some reticulum responses, particularly DELETE requests, don't return json.
+        return result;
+      }
+    })
+    .catch(() => {
+      return { entries: [] };
+    });
 }
 
 export async function createAndRedirectToNewHub(name, sceneId, replace) {
   const createUrl = getReticulumFetchUrl("/api/v1/hubs");
-  const payload:any = { hub: { name: name || generateHubName() } };
+  const payload: any = { hub: { name: name || generateHubName() } };
 
   if (sceneId) {
     payload.hub.scene_id = sceneId;
   }
 
-  const headers:any = { "content-type": "application/json" };
-  const store = new Store();
+  const headers: any = { "content-type": "application/json" };
+  const store = getServiceSync<Store>(STORE_SERVICE);
   if (store.state && store.state.credentials.token) {
     headers.authorization = `bearer ${store.state.credentials.token}`;
   }
@@ -231,14 +228,18 @@ export async function createAndRedirectToNewHub(name, sceneId, replace) {
 
   const creatorAssignmentToken = hub.creator_assignment_token;
   if (creatorAssignmentToken) {
-    store.update({ creatorAssignmentTokens: [{ hubId: hub.hub_id, creatorAssignmentToken: creatorAssignmentToken }] });
+    store.update({
+      creatorAssignmentTokens: [{ hubId: hub.hub_id, creatorAssignmentToken: creatorAssignmentToken }]
+    });
 
     // Don't need to store the embed token if there's no creator assignment token, since that means
     // we are the owner and will get the embed token on page load.
     const embedToken = hub.embed_token;
 
     if (embedToken) {
-      store.update({ embedTokens: [{ hubId: hub.hub_id, embedToken: embedToken }] });
+      store.update({
+        embedTokens: [{ hubId: hub.hub_id, embedToken: embedToken }]
+      });
     }
   }
 
@@ -255,7 +256,7 @@ export async function createAndRedirectToNewHub(name, sceneId, replace) {
 
 export function getPresenceEntryForSession(presences, sessionId) {
   const entry = Object.entries(presences || {}).find(([k]) => k === sessionId) || [];
-  const presence:any = entry[1];
+  const presence: any = entry[1];
   return (presence && presence.metas && presence.metas[0]) || {};
 }
 
@@ -333,10 +334,13 @@ export function migrateToChannel(oldChannel, newChannel) {
 
 export function discordBridgesForPresences(presences) {
   const channels = [];
-  for (const p of (Object.values(presences) as any)) {
+  for (const p of Object.values(presences) as any) {
     for (const m of p.metas) {
       if (m.profile && m.profile.discordBridges) {
-        Array.prototype.push.apply(channels, m.profile.discordBridges.map(b => b.channel.name));
+        Array.prototype.push.apply(
+          channels,
+          m.profile.discordBridges.map(b => b.channel.name)
+        );
       }
     }
   }
@@ -344,7 +348,7 @@ export function discordBridgesForPresences(presences) {
 }
 
 export function hasEmbedPresences(presences) {
-  for (const p of (Object.values(presences) as any)) {
+  for (const p of Object.values(presences) as any) {
     for (const m of p.metas) {
       if (m.context && m.context.embed) {
         return true;
@@ -399,11 +403,7 @@ export const tryGetMatchingMeta = async ({ ret_pool, ret_version }, shouldAbando
     try {
       // Add randomness to the first request avoid flooding reticulum.
       const delayMS = attempt * backoffMS + (attempt === 0 ? Math.random() * randomMS : 0);
-      console.log(
-        `[reconnect] Getting reticulum meta in ${Math.ceil(delayMS / 1000)} seconds.${
-          attempt ? ` (Attempt ${attempt + 1} of ${maxAttempts})` : ""
-        }`
-      );
+      console.log(`[reconnect] Getting reticulum meta in ${Math.ceil(delayMS / 1000)} seconds.${attempt ? ` (Attempt ${attempt + 1} of ${maxAttempts})` : ""}`);
       await sleep(delayMS);
       invalidateReticulumMeta();
       console.log(`[reconnect] Getting reticulum meta.${attempt ? ` (Attempt ${attempt + 1} of ${maxAttempts})` : ""}`);

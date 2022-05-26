@@ -1,28 +1,27 @@
 import { Component, IServices } from "@aptero/axolotis-player";
-import {Service} from "@aptero/axolotis-player";
+import { Service } from "@aptero/axolotis-player";
 import { microsoftLoginService } from "./service/MicrosoftLoginService";
 import { redirectToTeamsSidePanel } from "./service/RedirectToSidePage";
 import { microsoftUrlService } from "./service/MicrosoftUrlService";
 import { processDeepLink } from "./service/MsTeams";
 import "./service/TeamsTestHelper";
 
-export class MicrosoftService implements Component{
-  constructor() {
-  }
+export class MicrosoftService implements Component {
+  constructor() {}
 
-  getLoginService(){
+  getLoginService() {
     return microsoftLoginService;
   }
 
-  async redirectToTeamsSidePanel(){
+  async redirectToTeamsSidePanel() {
     await redirectToTeamsSidePanel();
   }
 
-  getUrlService(){
+  getUrlService() {
     return microsoftUrlService;
   }
 
-  async processDeepLink(link){
+  async processDeepLink(link) {
     return processDeepLink(link);
   }
 
@@ -31,9 +30,9 @@ export class MicrosoftService implements Component{
   }
 }
 
-export class Factory implements Service<MicrosoftService>{
+export class Factory implements Service<MicrosoftService> {
   constructor() {}
-  async createService(services:IServices): Promise<MicrosoftService> {
+  async createService(services: IServices): Promise<MicrosoftService> {
     return new MicrosoftService();
   }
 }

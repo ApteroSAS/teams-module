@@ -1,34 +1,36 @@
 import uuid from "uuid/v4";
-import { MICROSOFT_SERVICE, getService } from "../aptero/module/axolotis/AxolotisSystem";//TODO invert dep for this MSAuth depends on Phoenix Auth
-import { msPassiveLoginCheckNeeded } from "../aptero/module/microsoft/MsTeams";//TODO invert dep for this MSAuth depends on Phoenix Auth
+//import { MICROSOFT_SERVICE, getService } from "../aptero/module/axolotis/AxolotisSystem";//TODO invert dep for this MSAuth depends on Phoenix Auth
+//import { msPassiveLoginCheckNeeded } from "../aptero/module/microsoft/MsTeams";
+import { AuthInterface } from "@root/lib/modules/phoenixAuth/AuthInterface";
+//TODO invert dep for this MSAuth depends on Phoenix Auth
 
 export default class AuthChannel {
   private store: any;
   private socket: any;
-  _signedIn:any;
-  private microsoftLoginService: any;
+  _signedIn: any;
+  authInterface: AuthInterface;
 
   constructor(store) {
     this.store = store;
     this.socket = null;
     this._signedIn = !!this.store.state.credentials.token;
-    if(msPassiveLoginCheckNeeded()) {
+    this.authInterface.passiveLogIn();
+    /*if(msPassiveLoginCheckNeeded()) {
       getService(MICROSOFT_SERVICE).then(async service => {
         await service.getLoginService().passiveLogin();
         this.microsoftLoginService = service;
       })
-    }
+    }*/
   }
 
   setSocket = socket => {
     this.socket = socket;
   };
 
-
   get email() {
-    return (this.microsoftLoginService && (this.microsoftLoginService.getUserAccount() && (this.microsoftLoginService.getUserAccount().mail))) || this.store.state.credentials.email;
+    // (this.microsoftLoginService && (this.microsoftLoginService.getUserAccount() && (this.microsoftLoginService.getUserAccount().mail)))
+    return (this.authInterface.getAccount() && this.authInterface.getAccount().email) || this.store.state.credentials.email;
   }
-
 
   get signedIn() {
     return this._signedIn;
@@ -41,9 +43,10 @@ export default class AuthChannel {
     this.store.update({ credentials: { token: null, email: null } });
     await this.store.resetToRandomDefaultAvatar();
     this._signedIn = false;
-    if(this.microsoftLoginService) {
+    await this.authInterface.signOut();
+    /*if(this.microsoftLoginService) {
       this.microsoftLoginService.getLoginService().logout();
-    }
+    }*/
   };
 
   verifyAuthentication(authTopic, authToken, authPayload) {
@@ -62,7 +65,10 @@ export default class AuthChannel {
             resolve(true);
           });
 
-          channel.push("auth_verified", { token: authToken, payload: authPayload });
+          channel.push("auth_verified", {
+            token: authToken,
+            payload: authPayload
+          });
         })
         .receive("error", reject);
     });

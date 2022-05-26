@@ -1,8 +1,8 @@
 import { TeamsFx } from "@microsoft/teamsfx";
 import { MicrosoftGraphService } from "./MicrosoftGraphService";
-import { MsToNativeLoginBridge } from "./MsToNativeLoginBridge";
+import { MsToNativeLoginBridge } from "../../phoenixAuth/MsToNativeLoginBridge";
 export declare const startLoginPageUrl: string;
-export declare const clientId: any;
+export declare const clientId: string;
 export declare function getCredential(): TeamsFx;
 export declare class TeamsLoginService {
     private microsoftGraphService;

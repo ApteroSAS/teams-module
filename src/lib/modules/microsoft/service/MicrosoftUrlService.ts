@@ -1,26 +1,30 @@
 import { microsoftLoginService } from "./MicrosoftLoginService";
-import { Buffer } from 'buffer/';
-import {deepLinkService} from "./DeepLinkService";
+import { Buffer } from "buffer/";
+import { deepLinkService } from "./DeepLinkService";
 import { MICROSOFT_AUTH_ERROR } from "../MsTeams";
 deepLinkService.start();
 
 export class MicrosoftUrlService {
   preloaded = {};
 
-  constructor() {
-  }
+  constructor() {}
 
   urlToToSharingToken(url) {
     let trimEnd = function(str, c) {
       c = c ? c : " ";
       let i = str.length - 1;
-      while(i >= 0 && str.charAt(i) === c){
+      while (i >= 0 && str.charAt(i) === c) {
         i--;
       }
       return str.substring(0, i + 1);
     };
     let value = Buffer.from(url).toString("base64");
-    return "u!" + trimEnd(value, "=").replace(/\//g, "_").replace(/\+/g, "-");
+    return (
+      "u!" +
+      trimEnd(value, "=")
+        .replace(/\//g, "_")
+        .replace(/\+/g, "-")
+    );
   }
 
   async preFetchConvertMicrosoftUrl(url) {
@@ -57,18 +61,21 @@ export class MicrosoftUrlService {
   }
 
   async convertSharingUrlToDownloadUrl(url) {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       const stoken = this.urlToToSharingToken(url);
-      microsoftLoginService.msGraphService.client.api("/shares/" + stoken + "/driveItem").get().then((res) => {
-        resolve(res["@microsoft.graph.downloadUrl"]);
-      }).catch((err) => {
-        console.warn(err);
-        //reject(err);
-        resolve(MICROSOFT_AUTH_ERROR);
-      });
+      microsoftLoginService.msGraphService.client
+        .api("/shares/" + stoken + "/driveItem")
+        .get()
+        .then(res => {
+          resolve(res["@microsoft.graph.downloadUrl"]);
+        })
+        .catch(err => {
+          console.warn(err);
+          //reject(err);
+          resolve(MICROSOFT_AUTH_ERROR);
+        });
     });
   }
-
 }
 
 export const microsoftUrlService = new MicrosoftUrlService();

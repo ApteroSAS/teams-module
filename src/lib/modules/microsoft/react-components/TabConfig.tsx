@@ -1,7 +1,6 @@
 import * as React from "react";
 import * as microsoftTeams from "@microsoft/teams-js";
 import { Loader } from "@fluentui/react-northstar";//https://fluentsite.z22.web.core.windows.net/0.60.1
-import { roomService } from "../service/RoomService";
 import { FormattedMessage } from "react-intl";
 import {CHANGE_SETTINGS_URL, getMSEvents} from "../service/MsTeams";
 import {MSTEAMS_QUERY_PARAM} from "../MsTeams";
@@ -10,8 +9,10 @@ import { RoomSection } from "./RoomSection";
 
 import { getCredential } from "../service/TeamsLoginService";
 import {microsoftLoginService} from "../service/MicrosoftLoginService";
+import {getServiceSync} from "@aptero/axolotis-player";
+import {RoomService} from "@root/lib/modules/roomAPI/RoomService";
+import {ROOM_SERVICE} from "@root/lib";
 
-declare const window;
 
 /**
  * The 'Config' component is used to display your group tabs
@@ -74,8 +75,8 @@ export class TabConfig extends React.Component {
       const roomurl = new URL(config.url);
       const teamsParams = btoa(encodeURIComponent(JSON.stringify(await getCredential().getUserInfo())));
       roomurl.searchParams.append(MSTEAMS_QUERY_PARAM, teamsParams);
-      let data = roomService.parseUrl(roomurl.toString());
-      let token = await roomService.getEmbedToken(data.roomSID, data.origin);
+      let data = getServiceSync<RoomService>(ROOM_SERVICE).parseUrl(roomurl.toString());
+      let token = await getServiceSync<RoomService>(ROOM_SERVICE).getEmbedToken(data.roomSID, data.origin);
       roomurl.searchParams.append("embed_token", token);
       config.url = roomurl.toString();
       microsoftTeams.settings.setSettings({

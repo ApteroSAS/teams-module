@@ -1,7 +1,7 @@
 import { MicrosoftGraphService } from "./MicrosoftGraphService";
 import { MicrosoftOauthLoginService } from "./MicrosoftOauthLoginService";
 import { TeamsLoginService } from "./TeamsLoginService";
-import { MsToNativeLoginBridge } from "./MsToNativeLoginBridge";
+import { MsToNativeLoginBridge } from "../../phoenixAuth/MsToNativeLoginBridge";
 export declare class MicrosoftLoginService {
     authInProgress: boolean;
     msGraphService: MicrosoftGraphService;

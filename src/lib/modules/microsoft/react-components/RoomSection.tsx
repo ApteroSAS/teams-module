@@ -2,197 +2,39 @@ import * as React from "react";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { FormattedMessage } from "react-intl";
 
-import {
-  connectToReticulum,
-  createAndRedirectToNewHub,
-  fetchReticulumAuthenticated,
-  getReticulumFetchUrl, isLocalClient
-} from "../../../../utils/phoenix-utils";
-import { scaledThumbnailUrlFor } from "../../../../utils/media-url-utils";
 import { changeUrlSettings } from "../service/MsTeams";
-import { generateHubName } from "../../../../utils/name-generation";
-import Store from "../../../../storage/store";
-import Cookies from "js-cookie";
-import { createHubChannelParams } from "../../../../utils/hub-utils";
 import { Button, Input } from "@fluentui/react-northstar";
 import {MediaGrid} from "@root/lib/modules/hubs/react-components/room/MediaGrid";
 import {MediaTile} from "@root/lib/modules/hubs/react-components/room/MediaTiles";
-import {PageContainer} from "@root/lib/modules/hubs/react-components/layout/PageContainer";
 import {usePaginatedAPI} from "@root/lib/modules/hubs/react-components/home/usePaginatedAPI";
 import {AuthContext} from "@root/lib/modules/hubs/react-components/auth/AuthContext";
 import {Container} from "@root/lib/modules/hubs/react-components/layout/Container";
 import {Column} from "@root/lib/modules/hubs/react-components/layout/Column";
+import {getServiceSync} from "@aptero/axolotis-player";
+import {RoomService} from "@root/lib/modules/roomAPI/RoomService";
+import {ROOM_SERVICE} from "@root/lib";
+
 //https://fluentsite.z22.web.core.windows.net/0.60.1
 
 declare const window;
 
-export function useSpokeProject() {
+function useSpokeProject() {
   const auth:any = useContext(AuthContext); // Re-render when you log in/out.
+  getServiceSync<RoomService>(ROOM_SERVICE)
   const getMoreRooms = useCallback(
-    cursor => {
-      if (auth.userId) {
-        //https://alphahub.aptero.co/api/v1/media/search?filter=my-scenes&source=scenes&user=640407050966269961
-        return fetchReticulumAuthenticated(
-          `/api/v1/media/search?filter=my-scenes&source=scenes&user=${auth.userId}&cursor=${cursor}`
-        );
-      } else {
-        return Promise.reject(new Error("Not signed in"));
-      }
-    },
-    [auth.userId]
+      getServiceSync<RoomService>(ROOM_SERVICE).fetchSpokeProject(auth.userId),
+      [auth.userId]
   );
   return usePaginatedAPI(getMoreRooms);
 }
 
-export function useFavoriteRooms() {
+function useFavoriteRooms() {
   const auth = useContext(AuthContext); // Re-render when you log in/out.
   const getMoreRooms = useCallback(
-    cursor => {
-      if (auth.userId) {
-        return fetchReticulumAuthenticated(
-          `/api/v1/media/search?source=favorites&type=rooms&user=${auth.userId}&cursor=${cursor}`
-        );
-      } else {
-        return Promise.reject(new Error("Not signed in"));
-      }
-    },
-    [auth.userId]
+      getServiceSync<RoomService>(ROOM_SERVICE).fetchFavoriteRoom(auth.userId),
+      [auth.userId]
   );
   return usePaginatedAPI(getMoreRooms);
-}
-
-async function setFavorite(hubId) {
-  const socket = await connectToReticulum(false);
-  socket.onClose(() => {
-  });
-  // Reticulum global channel
-  window.APP.retChannel = socket.channel(`ret`, { hub_id: hubId });
-  window.APP.retChannel
-    .join()
-    .receive("ok", () => {
-      const OAUTH_FLOW_PERMS_TOKEN_KEY = "ret-oauth-flow-perms-token";
-      const oauthFlowPermsToken = Cookies.get(OAUTH_FLOW_PERMS_TOKEN_KEY);
-      if (oauthFlowPermsToken) {
-        Cookies.remove(OAUTH_FLOW_PERMS_TOKEN_KEY);
-      }
-      const hubChannelParamsForPermsToken = permsToken => {
-        return createHubChannelParams({
-          profile: window.APP.store.state.profile,
-          pushSubscriptionEndpoint: null,
-          permsToken,
-          isMobile: false,
-          isMobileVR: false,
-          isEmbed: false,
-          hubInviteId: null,
-          authToken: window.APP.store.state.credentials && window.APP.store.state.credentials.token
-        });
-      };
-      const hubPhxChannel = socket.channel(`hub:${hubId}`, hubChannelParamsForPermsToken(oauthFlowPermsToken));
-      hubPhxChannel.join().receive("ok", async () => {
-        hubPhxChannel.push("favorite", {});
-      }).receive("error", res => {
-        console.error(res);
-      });
-    })
-    .receive("error", res => {
-      console.error(res);
-    });
-}
-
-export async function createAndSelect(sceneId, name = undefined) {
-  const createUrl = getReticulumFetchUrl("/api/v1/hubs");
-  const payload: any = { hub: { name: name || generateHubName() } };
-
-  if (sceneId) {
-    payload.hub.scene_id = sceneId;
-  }
-
-  const headers: any = { "content-type": "application/json" };
-  const store = new Store();
-  if (store.state && store.state.credentials.token) {
-    headers.authorization = `bearer ${store.state.credentials.token}`;
-  }
-
-  let res = await fetch(createUrl, {
-    body: JSON.stringify(payload),
-    headers,
-    method: "POST"
-  }).then(r => r.json());
-
-  if (res.error === "invalid_token") {
-    // Clear the invalid token from store.
-    store.update({ credentials: { token: null, email: null } });
-
-    // Create hub anonymously
-    delete headers.authorization;
-    res = await fetch(createUrl, {
-      body: JSON.stringify(payload),
-      headers,
-      method: "POST"
-    }).then(r => r.json());
-  }
-
-  const hub = res;
-  let url = hub.url;
-
-  const creatorAssignmentToken = hub.creator_assignment_token;
-  if (creatorAssignmentToken) {
-    store.update({ creatorAssignmentTokens: [{ hubId: hub.hub_id, creatorAssignmentToken: creatorAssignmentToken }] });
-
-    // Don't need to store the embed token if there's no creator assignment token, since that means
-    // we are the owner and will get the embed token on page load.
-    const embedToken = hub.embed_token;
-
-    if (embedToken) {
-      store.update({ embedTokens: [{ hubId: hub.hub_id, embedToken: embedToken }] });
-    }
-  }
-
-  if (isLocalClient()) {
-    url = window.location.origin + `/hub.html?hub_id=${hub.hub_id}`;
-  }
-  setFavorite(hub.hub_id);
-  return url;
-}
-
-async function createRoom(sceneid) {
-  let url = await createAndSelect(sceneid);
-  console.log("created room : " + url);
-  changeUrlSettings(url);
-}
-
-function createRoomEntry(name, sceneid, imageUrl) {
-  return {
-    "allow_remixing": false,
-    "attributions": {
-      "content": [
-        {
-          "title": "Salle"
-        },
-        {
-          "title": "Image"
-        },
-        {
-          "title": "Image 1"
-        },
-        {
-          "title": "Video"
-        }
-      ],
-      "creator": ""
-    },
-    "description": null,
-    "id": sceneid,//"EW4e3CG"
-    "images": {
-      "preview": {
-        "url": imageUrl //"https://alphahub.aptero.co/files/cb50c02d-585a-4feb-8461-e6d8cd34b656.jpg"
-      }
-    },
-    "name": name,
-    "project_id": "XXXXX",
-    "type": "scene",
-    "url": window.location.origin + "/" + sceneid
-  };
 }
 
 export function RoomSection(props:{
@@ -207,9 +49,9 @@ export function RoomSection(props:{
   const { results: spokeProject } = useSpokeProject();
 
   const sortedFeaturedScene = [
-    createRoomEntry("Room 1", "pywjaKD", "https://meet.aptero.co/files/20c63c61-0eb1-4945-a0dc-82e041983d17.jpg"),
-    createRoomEntry("Room 2", "ttQn7dJ", "https://meet.aptero.co/files/b3b8c2c8-3508-4916-a70e-4928eb23d380.jpg"),
-    createRoomEntry("Room 3", "HkZhZjU", "https://meet.aptero.co/files/9574cccb-5241-4900-b2f5-4af780ec714d.jpg")
+    getServiceSync<RoomService>(ROOM_SERVICE).createRoomEntry("Room 1", "pywjaKD", "https://meet.aptero.co/files/20c63c61-0eb1-4945-a0dc-82e041983d17.jpg"),
+    getServiceSync<RoomService>(ROOM_SERVICE).createRoomEntry("Room 2", "ttQn7dJ", "https://meet.aptero.co/files/b3b8c2c8-3508-4916-a70e-4928eb23d380.jpg"),
+    getServiceSync<RoomService>(ROOM_SERVICE).createRoomEntry("Room 3", "HkZhZjU", "https://meet.aptero.co/files/9574cccb-5241-4900-b2f5-4af780ec714d.jpg")
   ];
   const sortedFavoriteRooms = Array.from(favoriteRooms).sort((a, b) => b.member_count - a.member_count);
   const sortedSpokeProject = Array.from(spokeProject).sort((a, b) => b.member_count - a.member_count);
@@ -229,7 +71,7 @@ export function RoomSection(props:{
     }
 
     if (qs.has("new")) {
-      createAndRedirectToNewHub(null, null, true);
+      getServiceSync<RoomService>(ROOM_SERVICE).createAndRedirectToNewHub(null, null, true);
     }
   }, []);
 
@@ -238,7 +80,7 @@ export function RoomSection(props:{
   const featuredDisplay = myRoomDisplay || mySceneDisplay;
   const Column2: any = Column;
   return (<>
-    {!auth.userId && <p>Please Sign In to create your first 3d space.</p>}
+    {!auth.userId && <FormattedMessage id="microsoft.settings.room-display-sign-in" defaultMessage="Please Sign In to create your first 3d space."/>}
     {auth.userId && <>
       <h2><FormattedMessage id="microsoft.settings.room" defaultMessage="Room"/></h2>
       {props.roomUrl && <>
@@ -298,10 +140,10 @@ export function RoomSection(props:{
                 <MediaGrid center className={undefined} isVariableWidth={undefined} sm={undefined}>
                   {sortedFeaturedScene.map(room => {
                     return (
-                      <MediaTPageContainer.jsile
+                      <MediaTile
                         onClick={(event) => {
                           event.preventDefault();
-                          createRoom(room.id);
+                          getServiceSync<RoomService>(ROOM_SERVICE).createRoom(room.id);
                         }}
                         onEdit={(event) => {
                           event.preventDefault();
@@ -309,7 +151,10 @@ export function RoomSection(props:{
                         }}
                         key={room.id}
                         entry={room}
-                        processThumbnailUrl={(entry, width, height) => scaledThumbnailUrlFor(entry.images.preview.url, width, height)}
+                        processThumbnailUrl={(entry, width, height) => {
+                          //TODO add a thumbnail service here
+                          return entry.images.preview.url;
+                        }}
                         onShowSimilar={undefined} onCopy={undefined} onInfo={undefined}/>
                     );
                   })}
@@ -326,7 +171,7 @@ export function RoomSection(props:{
                       <MediaTile
                         onClick={(event) => {
                           event.preventDefault();
-                          createRoom(room.id);
+                          getServiceSync<RoomService>(ROOM_SERVICE).createRoom(room.id);
                         }}
                         onEdit={(event) => {
                           event.preventDefault();
@@ -334,7 +179,7 @@ export function RoomSection(props:{
                         }}
                         key={room.id}
                         entry={room}
-                        processThumbnailUrl={(entry, width, height) => scaledThumbnailUrlFor(entry.images.preview.url, width, height)}
+                        processThumbnailUrl={(entry, width, height) => entry.images.preview.url}
                         onShowSimilar={undefined} onCopy={undefined} onInfo={undefined}/>
                     );
                   })}
@@ -360,7 +205,7 @@ export function RoomSection(props:{
                         }}
                         key={room.id}
                         entry={room}
-                        processThumbnailUrl={(entry, width, height) => scaledThumbnailUrlFor(entry.images.preview.url, width, height)}
+                        processThumbnailUrl={(entry, width, height) => entry.images.preview.url}
                         onEdit={undefined} onShowSimilar={undefined} onCopy={undefined}
                         onInfo={undefined}/>
                     );
@@ -369,8 +214,6 @@ export function RoomSection(props:{
               </Column2>
             </Container>
           )}
-          <PageContainer className={undefined} style={{ backgroundColor: "#f3f2f1" }}>
-          </PageContainer>
         </>
       }
     </>}</>);

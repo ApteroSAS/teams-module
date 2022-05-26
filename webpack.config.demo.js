@@ -14,7 +14,7 @@ module.exports = {
     path: path.join(__dirname, "dist"),
   },
   entry: {
-    index: path.join(__dirname, "./src/demo/page/Index.ts"),
+    index: path.join(__dirname, "./src/demo/page/index.ts"),
   },
   optimization: {
     minimize: false,

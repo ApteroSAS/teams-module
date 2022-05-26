@@ -1,1 +1,11 @@
-export declare function load(): void;
+export declare const MICROSOFT_SERVICE = "@aptero/axolotis-module-teams/MicrosoftService";
+export declare const MICROSOFT_STATIC_SERVICE = "@aptero/axolotis-module-teams/MicrosoftStaticService";
+export declare const PROPERTIES_SERVICE = "@aptero/axolotis-module-teams/Properties";
+export declare const STORE_SERVICE = "@aptero/axolotis-module-storage/Store";
+export declare const COOKIE_STORE_SERVICE = "@aptero/axolotis-module-storage/CookieStore";
+export declare const PHX_AUTH_SERVICE = "@aptero/axolotis-module-phx-auth/PhoenixAuthService";
+export declare const NAME_SERVICE = "@aptero/axolotis-module-name/PhoenixAuthService";
+export declare const ROOM_SERVICE = "@aptero/axolotis-module-room/RoomService";
+export * from "./modules/microsoft/MsTeams";
+export * from "./modules/microsoft/MicrosoftService";
+export * from "./modules/properties/Properties";

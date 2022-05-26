@@ -1,16 +1,16 @@
 import { Buffer } from "buffer";
-import {Client} from "@microsoft/microsoft-graph-client";
+import { Client } from "@microsoft/microsoft-graph-client";
 
 Buffer.from("anything", "base64");
 
-export class MicrosoftGraphService{
+export class MicrosoftGraphService {
   client: Client;
 
-  init(client){
+  init(client) {
     this.client = client;
   }
 
-  isInitialized(){
+  isInitialized() {
     return this.client;
   }
 
@@ -19,7 +19,8 @@ export class MicrosoftGraphService{
   }
 
   async getUserDetailsBetaV() {
-    return await this.client.api("/me/profile")
+    return await this.client
+      .api("/me/profile")
       .version("beta")
       .get();
   }
@@ -27,16 +28,15 @@ export class MicrosoftGraphService{
   async getUserOrganization() {
     //https://graph.microsoft.com/v1.0/organization
     //check if the  user account is a work account (MSA For personal account and AAD for work account)
-    try{
+    try {
       const organization = await this.client.api("/organization").get();
       return organization.value[0].displayName;
-    } catch(e) {
+    } catch (e) {
       return null;
     }
-
   }
 
-  blobToBase64(blob):Promise<string> {
+  blobToBase64(blob): Promise<string> {
     return new Promise((resolve, _) => {
       const reader = new FileReader();
       reader.onloadend = () => resolve(reader.result as string);
@@ -44,7 +44,7 @@ export class MicrosoftGraphService{
     });
   }
 
-  async getUserPhotoAsBase64():Promise<string> {
+  async getUserPhotoAsBase64(): Promise<string> {
     try {
       let profile = await this.client.api("https://graph.microsoft.com/v1.0/me/photo/$value").get();
       let b64 = await this.blobToBase64(profile);
@@ -54,5 +54,4 @@ export class MicrosoftGraphService{
     }
     return null;
   }
-
 }

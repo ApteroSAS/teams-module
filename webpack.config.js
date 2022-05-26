@@ -34,7 +34,7 @@ module.exports = {
     maxAssetSize: 1000000
   },
   entry:{
-    index: path.join(__dirname, './src/lib/Index.ts'),
+    index: path.join(__dirname, './src/lib/index.ts'),
   },
   output: {
     chunkFilename: '[name].[chunkhash].js',

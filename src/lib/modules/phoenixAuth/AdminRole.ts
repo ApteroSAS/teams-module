@@ -7,5 +7,3 @@ export class AdminRole{
     return this.admin;
   }
 }
-
-export const adminRole = new AdminRole();

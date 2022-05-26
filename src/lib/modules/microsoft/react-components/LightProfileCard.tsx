@@ -1,12 +1,15 @@
 import * as React from "react";
 import { Avatar, Flex, Segment, Text } from "@fluentui/react-northstar";
-import { useData } from "./lib/useData";
 import { getCredential } from "../service/TeamsLoginService";
+import {useEffect, useState} from "react";
 
 export function LightProfileCard() {
-  const userProfile = useData(async () => {
-    return await getCredential().getUserInfo();
-  });
+    const [userProfile, setUserProfile] = useState(null);
+    useEffect(()=>{
+        getCredential().getUserInfo().then(value => {
+            setUserProfile(value);
+        })
+    })
   const userName = userProfile ? userProfile.data?.displayName : "Guest";
   //const preferedUserName = userProfile ? userProfile.data?.preferredUserName : "";
   return (
