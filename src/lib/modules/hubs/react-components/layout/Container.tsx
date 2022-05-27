@@ -1,7 +1,6 @@
-import React from "react";
+import * as React from "react";
 import PropTypes from "prop-types";
 import classNames from "classnames";
-// @ts-ignore
 import styles from "./Container.scss";
 
 export function Container({ as: Component, children, className, ...rest }) {

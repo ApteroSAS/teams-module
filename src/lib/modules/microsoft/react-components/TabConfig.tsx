@@ -1,18 +1,17 @@
 import * as React from "react";
 import * as microsoftTeams from "@microsoft/teams-js";
-import { Loader } from "@fluentui/react-northstar";//https://fluentsite.z22.web.core.windows.net/0.60.1
+import { Loader } from "@fluentui/react-northstar"; //https://fluentsite.z22.web.core.windows.net/0.60.1
 import { FormattedMessage } from "react-intl";
-import {CHANGE_SETTINGS_URL, getMSEvents} from "../service/MsTeams";
-import {MSTEAMS_QUERY_PARAM} from "../MsTeams";
+import { CHANGE_SETTINGS_URL, getMSEvents } from "../service/MsTeams";
+import { MSTEAMS_QUERY_PARAM } from "../MsTeams";
 import { LoginButton } from "./LoginButton";
 import { RoomSection } from "./RoomSection";
 
 import { getCredential } from "../service/TeamsLoginService";
-import {microsoftLoginService} from "../service/MicrosoftLoginService";
-import {getServiceSync} from "@aptero/axolotis-player";
-import {RoomService} from "@root/lib/modules/roomAPI/RoomService";
-import {ROOM_SERVICE} from "@root/lib";
-
+import { microsoftLoginService } from "../service/MicrosoftLoginService";
+import { getServiceSync } from "@aptero/axolotis-player";
+import { RoomService } from "@root/lib/modules/roomAPI/RoomService";
+import { ROOM_SERVICE } from "@root/lib";
 
 /**
  * The 'Config' component is used to display your group tabs
@@ -31,25 +30,24 @@ export class TabConfig extends React.Component {
     initialized: null,
     suggestedDisplayName: "Virtual Meeting"
   };
-  removeListeners = () => {
-  };
+  removeListeners = () => {};
 
   componentDidMount() {
     microsoftTeams.settings.setValidityState(false);
     document.getElementById("version").innerHTML = process.env.BUILD_VERSION;
-    microsoftTeams.settings.getSettings((instanceSettings) => {
+    microsoftTeams.settings.getSettings(instanceSettings => {
       if (instanceSettings.websiteUrl) {
         try {
-          new URL(instanceSettings.websiteUrl);//test url valide
+          new URL(instanceSettings.websiteUrl); //test url valide
           this.setState({ url: instanceSettings.websiteUrl });
         } catch (ex) {
           console.error(ex);
         }
       }
     });
-    const callbackUrl = (msg) => {
+    const callbackUrl = msg => {
       try {
-        new URL(msg.url);//test url valide
+        new URL(msg.url); //test url valide
         this.setState({ url: msg.url });
       } catch (ex) {
         console.error(ex);
@@ -63,14 +61,14 @@ export class TabConfig extends React.Component {
 
     microsoftLoginService.onReady().then(value => {
       this.setState({ initialized: true });
-    })
+    });
 
     /**
      * When the user clicks "Save", save the url for your configured tab.
      * This allows for the addition of query string parameters based on
      * the settings selected by the user.
      */
-    microsoftTeams.settings.registerOnSaveHandler(async (saveEvent) => {
+    microsoftTeams.settings.registerOnSaveHandler(async saveEvent => {
       let config = { ...this.state };
       const roomurl = new URL(config.url);
       const teamsParams = btoa(encodeURIComponent(JSON.stringify(await getCredential().getUserInfo())));
@@ -92,7 +90,6 @@ export class TabConfig extends React.Component {
   componentWillUnmount() {
     this.removeListeners();
   }
-
 
   render() {
     /**
@@ -120,24 +117,28 @@ export class TabConfig extends React.Component {
 
     return (
       <div style={{ margin: "8px" }}>
-        {!this.state.initialized && <Loader/>}
-        {this.state.initialized && <>
-          <h2><FormattedMessage id="microsoft.settings.identity" defaultMessage="Identity"/>
-          </h2>
-          <LoginButton/>
-          <RoomSection roomUrl={roomUrl}
-                       suggestedDisplayName={this.state.suggestedDisplayName}
-                       onChangeRoomUrl={text => {
-                         if (!text) {
-                           microsoftTeams.settings.setValidityState(false);
-                         }
-                         this.setState({ url: text });
-                       }}
-                       onChangeSuggestedDisplayName={text => {
-                         this.setState({ suggestedDisplayName: text });
-                       }}
-          />
-        </>}
+        {!this.state.initialized && <Loader />}
+        {this.state.initialized && (
+          <>
+            <h2>
+              <FormattedMessage id="microsoft.settings.identity" defaultMessage="Identity" />
+            </h2>
+            <LoginButton />
+            <RoomSection
+              roomUrl={roomUrl}
+              suggestedDisplayName={this.state.suggestedDisplayName}
+              onChangeRoomUrl={text => {
+                if (!text) {
+                  microsoftTeams.settings.setValidityState(false);
+                }
+                this.setState({ url: text });
+              }}
+              onChangeSuggestedDisplayName={text => {
+                this.setState({ suggestedDisplayName: text });
+              }}
+            />
+          </>
+        )}
       </div>
     );
   }

@@ -16,7 +16,9 @@
   background-color: theme.$tile-bg-color;
   border-radius: 12px;
 
-  img, video, :local(.create-tile-content) {
+  img,
+  video,
+  :local(.create-tile-content) {
     border-radius: 12px;
     width: 100%;
     height: 100%;
@@ -32,10 +34,13 @@
   }
 }
 
-:local(.tall) :local(.thumbnail-container), :local(.wide) :local(.thumbnail-container){
+:local(.tall) :local(.thumbnail-container),
+:local(.wide) :local(.thumbnail-container) {
   height: 0;
 
-  img, video, :local(.create-tile-content) {
+  img,
+  video,
+  :local(.create-tile-content) {
     position: absolute;
     top: 0;
     left: 0;
@@ -71,7 +76,8 @@
   margin-bottom: 0;
 }
 
-:local(.tile-action), :local(.member-count) {
+:local(.tile-action),
+:local(.member-count) {
   background: theme.$tile-button-bg-color;
   color: theme.$tile-button-text-color;
   height: 30px;
@@ -83,11 +89,11 @@
   border: 1px solid theme.$tile-button-border-color;
 
   svg {
-    *[stroke=\#000] {
+    *[stroke="\#000"] {
       stroke: theme.$tile-button-text-color;
     }
 
-    *[fill=\#000] {
+    *[fill="\#000"] {
       fill: theme.$tile-button-text-color;
     }
   }
@@ -119,11 +125,11 @@
   top: 8px;
   left: 8px;
 
-  *[stroke=\#000] {
+  *[stroke="\#000"] {
     stroke: theme.$favorite-color;
   }
 
-  *[fill=\#000] {
+  *[fill="\#000"] {
     fill: theme.$favorite-color;
   }
 }
@@ -161,30 +167,30 @@
   }
 
   a svg {
-    *[stroke=\#000] {
+    *[stroke="\#000"] {
       stroke: theme.$link-color;
     }
-  
-    *[fill=\#000] {
+
+    *[fill="\#000"] {
       fill: theme.$link-color;
     }
 
     &:hover {
-      *[stroke=\#000] {
+      *[stroke="\#000"] {
         stroke: theme.$link-color-hover;
       }
-    
-      *[fill=\#000] {
+
+      *[fill="\#000"] {
         fill: theme.$link-color-hover;
       }
     }
 
     &:active {
-      *[stroke=\#000] {
+      *[stroke="\#000"] {
         stroke: theme.$link-color-pressed;
       }
-    
-      *[fill=\#000] {
+
+      *[fill="\#000"] {
         fill: theme.$link-color-pressed;
       }
     }
@@ -213,11 +219,11 @@
   svg {
     margin-bottom: 16px;
 
-    *[stroke=\#000] {
+    *[stroke="\#000"] {
       stroke: theme.$tile-text-color;
     }
 
-    *[fill=\#000] {
+    *[fill="\#000"] {
       fill: theme.$tile-text-color;
     }
   }

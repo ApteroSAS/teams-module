@@ -1,14 +1,10 @@
 import React, { forwardRef } from "react";
 import PropTypes from "prop-types";
 import classNames from "classnames";
-// @ts-ignore
 import styles from "./Column.scss";
 
 export const Column = forwardRef(
-  (
-    { as: Component, lastChildMargin, className, gap, padding, center, centerMd, grow, overflow, children, ...rest }:any,
-    ref
-  ) => {
+  ({ as: Component, lastChildMargin, className, gap, padding, center, centerMd, grow, overflow, children, ...rest }: any, ref) => {
     const gapClass = gap === true ? styles.mdGap : styles[`${gap}Gap`];
     const paddingClass = padding === true ? styles.lgPadding : styles[`${padding}Padding`];
 

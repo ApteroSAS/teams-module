@@ -1,19 +1,11 @@
 import React from "react";
 import PropTypes from "prop-types";
 import classNames from "classnames";
-// @ts-ignore
 import styles from "./MediaGrid.scss";
 
 export function MediaGrid({ children, className, center, isVariableWidth, sm, ...rest }) {
   return (
-    <div
-      className={classNames(
-        styles.mediaGrid,
-        { [styles.center]: center, [styles.variableWidth]: isVariableWidth, [styles.sm]: sm },
-        className
-      )}
-      {...rest}
-    >
+    <div className={classNames(styles.mediaGrid, { [styles.center]: center, [styles.variableWidth]: isVariableWidth, [styles.sm]: sm }, className)} {...rest}>
       {children}
     </div>
   );

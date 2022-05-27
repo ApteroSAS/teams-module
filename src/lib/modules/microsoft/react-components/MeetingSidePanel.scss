@@ -1,9 +1,9 @@
 :local(.side-panel-body) {
   margin: 0;
-  font-family: 'Montserrat', sans-serif;
-  text-align: center ;
-  color : #172540 ;
-  background-color: white ;
+  font-family: "Montserrat", sans-serif;
+  text-align: center;
+  color: #172540;
+  background-color: white;
   scroll-behavior: smooth;
   width: 100%;
   min-height: 99vh;
@@ -36,14 +36,14 @@
 :local(.cubes) img {
   width: 30px;
   position: absolute;
-  transform: translate(-50%,-50%);
+  transform: translate(-50%, -50%);
   animation-duration: 4s;
   animation-iteration-count: infinite;
 }
 
 :local(.B) {
   left: 50%;
-  top : 0%;
+  top: 0%;
 
   animation-name: cubeB;
 }
@@ -57,30 +57,66 @@
 
 :local(.J) {
   left: 100%;
-  top : 100%;
+  top: 100%;
 
   animation-name: cubeJ;
 }
 
 @keyframes cubeB {
-  0%   {left:50%; top:0%;}
-  33%  {left:100%; top:100%;}
-  66%  {left:0%; top:100%;}
-  100% {left:50%; top:0%;}
+  0% {
+    left: 50%;
+    top: 0%;
+  }
+  33% {
+    left: 100%;
+    top: 100%;
+  }
+  66% {
+    left: 0%;
+    top: 100%;
+  }
+  100% {
+    left: 50%;
+    top: 0%;
+  }
 }
 
 @keyframes cubeR {
-  0%   {left:0%; top:100%;}
-  33%  {left:50%; top:0%;}
-  66%  {left:100%; top:100%;}
-  100% {left:0%; top:100%;}
+  0% {
+    left: 0%;
+    top: 100%;
+  }
+  33% {
+    left: 50%;
+    top: 0%;
+  }
+  66% {
+    left: 100%;
+    top: 100%;
+  }
+  100% {
+    left: 0%;
+    top: 100%;
+  }
 }
 
 @keyframes cubeJ {
-  0%   {left:100%; top:100%;}
-  33%  {left:0%; top:100%;}
-  66%  {left:50%; top:0%;}
-  100% {left:100%; top:100%;}
+  0% {
+    left: 100%;
+    top: 100%;
+  }
+  33% {
+    left: 0%;
+    top: 100%;
+  }
+  66% {
+    left: 50%;
+    top: 0%;
+  }
+  100% {
+    left: 100%;
+    top: 100%;
+  }
 }
 
 :local(.tuto) {
@@ -122,17 +158,37 @@
 }
 
 @keyframes look {
-  0%   {opacity: 1;}
-  40%  {opacity: 1;}
-  50%  {opacity: 0;}
-  90%  {opacity: 0;}
-  100% {opacity: 1;}
+  0% {
+    opacity: 1;
+  }
+  40% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  90% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 @keyframes walk {
-  0%   {opacity: 0;}
-  40%  {opacity: 0;}
-  50%  {opacity: 1;}
-  90%  {opacity: 1;}
-  100% {opacity: 0;}
+  0% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
