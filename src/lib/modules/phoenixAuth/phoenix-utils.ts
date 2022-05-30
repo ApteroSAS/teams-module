@@ -1,20 +1,23 @@
 import { Socket } from "phoenix";
 
-import { sleep } from "@root/lib/modules/phoenixAuth/async-utils";
-import { generateHubName } from "@root/lib/modules/nameGeneration/name-generation";
-import { Properties, STORE_SERVICE } from "@root/lib";
-import { PropertiesFormat, PROPERTY_KEY } from "@root/lib/modules/phoenixAuth/PropertiesFormat";
+import { sleep } from "@root/modules/phoenixAuth/async-utils";
+import { generateHubName } from "@root/modules/nameGeneration/name-generation";
+import { Properties, propertyService, STORE_SERVICE } from "@root/index";
+import { PropertiesFormat, PROPERTY_KEY } from "@root/modules/phoenixAuth/PropertiesFormat";
 import { getServiceSync } from "@aptero/axolotis-player";
-import Store from "@root/lib/modules/store/Store";
+import Store from "@root/modules/store/Store";
 
-let configs = getServiceSync<Properties>(Properties.name).get<PropertiesFormat>(PROPERTY_KEY);
+function config() {
+  //return propertyService().get<PropertiesFormat>(PROPERTY_KEY); // TODO better
+  return propertyService().getGlobalProperties<PropertiesFormat>();
+}
 
 export function hasReticulumServer() {
-  return !!configs.RETICULUM_SERVER;
+  return !!config().RETICULUM_SERVER;
 }
 
 export function isLocalClient() {
-  return hasReticulumServer() && document.location.host !== configs.RETICULUM_SERVER;
+  return hasReticulumServer() && document.location.host !== config().RETICULUM_SERVER;
 }
 
 export function hubUrl(hubId, extraParams: any, slug) {
@@ -50,7 +53,7 @@ let invalidatedReticulumMetaThisSession = false;
 
 export function getReticulumFetchUrl(path, absolute = false, host = null, port = null) {
   if (host || hasReticulumServer()) {
-    return `https://${host || configs.RETICULUM_SERVER}${port ? `:${port}` : ""}${path}`;
+    return `https://${host || config().RETICULUM_SERVER}${port ? `:${port}` : ""}${path}`;
   } else if (absolute) {
     resolverLink.href = path;
     return resolverLink.href;
@@ -91,8 +94,8 @@ async function refreshDirectReticulumHostAndPort() {
   const qs = new URLSearchParams(location.search);
   let host = qs.get("phx_host");
   const reticulumMeta = await getReticulumMeta();
-  host = host || configs.RETICULUM_SOCKET_SERVER || reticulumMeta.phx_host;
-  const port = qs.get("phx_port") || (hasReticulumServer() ? new URL(`${document.location.protocol}//${configs.RETICULUM_SERVER}`).port : "443");
+  host = host || config().RETICULUM_SOCKET_SERVER || reticulumMeta.phx_host;
+  const port = qs.get("phx_port") || (hasReticulumServer() ? new URL(`${document.location.protocol}//${config().RETICULUM_SERVER}`).port : "443");
   directReticulumHostAndPort = { host, port };
 }
 
@@ -117,7 +120,7 @@ export async function connectToReticulum(debug = false, params = null, socketCla
   const getNewSocketUrl = async () => {
     await refreshDirectReticulumHostAndPort();
     const { host, port } = directReticulumHostAndPort;
-    const protocol = qs.get("phx_protocol") || configs.RETICULUM_SOCKET_PROTOCOL || (document.location.protocol === "https:" ? "wss:" : "ws:");
+    const protocol = qs.get("phx_protocol") || config().RETICULUM_SOCKET_PROTOCOL || (document.location.protocol === "https:" ? "wss:" : "ws:");
 
     return `${protocol}//${host}${port ? `:${port}` : ""}`;
   };

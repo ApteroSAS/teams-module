@@ -1,13 +1,4 @@
-export function createHubChannelParams({
-  permsToken,
-  profile,
-  pushSubscriptionEndpoint,
-  isMobile,
-  isMobileVR,
-  isEmbed,
-  hubInviteId,
-  authToken
-}) {
+export function createHubChannelParams({ permsToken, profile, pushSubscriptionEndpoint, isMobile, isMobileVR, isEmbed, hubInviteId, authToken }) {
   return {
     profile,
     push_subscription_endpoint: pushSubscriptionEndpoint,

@@ -1,16 +1,22 @@
 import { IService, getService } from "@aptero/axolotis-player";
-import { MICROSOFT_SERVICE } from "@root/lib";
+import { MICROSOFT_SERVICE, microsoftService } from "@root/index";
+import { AuthInterface } from "@root/modules/phoenixAuth/AuthInterface";
+import { registerTeamsTestHelper } from "@root/modules/microsoft/service/TeamsTestHelper";
+import { getContext } from "@root/modules/microsoft/service/MsTeams";
 
 export const MICROSOFT_AUTH_ERROR = "error_microsoft_not_authorized";
 export const MSTEAMS_QUERY_PARAM = "msteams";
 
 declare const window;
 
-export class MsTeams implements IService {
+export class MsTeams implements IService, AuthInterface {
   private msmode: boolean;
   constructor() {
     const qs = new URLSearchParams(location.search);
     this.msmode = !!qs.get(MSTEAMS_QUERY_PARAM);
+    if (this.msmode) {
+      registerTeamsTestHelper();
+    }
   }
 
   getType(): string {
@@ -18,6 +24,18 @@ export class MsTeams implements IService {
   }
   msTeams() {
     return this.msmode;
+  }
+
+  getContext(callback) {
+    return getContext(callback);
+  }
+
+  redirectToTeamsSidePanel() {
+    if (this.msTeams()) {
+      microsoftService().then(async service => {
+        await service.redirectToTeamsSidePanel();
+      });
+    }
   }
 
   msPassiveLoginCheckNeeded() {
@@ -30,5 +48,42 @@ export class MsTeams implements IService {
       url = await urlService.preFetchConvertMicrosoftUrl(url);
     }
     return url;
+  }
+
+  getAccount(): { email; displayName; id } {
+    return { displayName: undefined, email: undefined, id: undefined };
+  }
+
+  async passiveLogIn(): Promise<true> {
+    return new Promise(resolve => {
+      if (this.msPassiveLoginCheckNeeded()) {
+        microsoftService().then(async service => {
+          await service.getLoginService().passiveLogin();
+          resolve(true);
+        });
+      }
+    });
+  }
+
+  signIn(): Promise<true> {
+    return new Promise(resolve => {
+      if (this.msTeams()) {
+        microsoftService().then(async service => {
+          await service.getLoginService().login();
+          resolve(true);
+        });
+      }
+    });
+  }
+
+  signOut(): Promise<true> {
+    return new Promise(resolve => {
+      if (this.msTeams()) {
+        microsoftService().then(async service => {
+          await service.getLoginService().logout();
+          resolve(true);
+        });
+      }
+    });
   }
 }

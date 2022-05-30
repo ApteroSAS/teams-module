@@ -1,26 +1,14 @@
 import uuid from "uuid/v4";
-//import { MICROSOFT_SERVICE, getService } from "../aptero/module/axolotis/AxolotisSystem";//TODO invert dep for this MSAuth depends on Phoenix Auth
-//import { msPassiveLoginCheckNeeded } from "../aptero/module/microsoft/MsTeams";
-import { AuthInterface } from "@root/lib/modules/phoenixAuth/AuthInterface";
-//TODO invert dep for this MSAuth depends on Phoenix Auth
 
 export default class AuthChannel {
   private store: any;
   private socket: any;
   _signedIn: any;
-  authInterface: AuthInterface;
 
   constructor(store) {
     this.store = store;
     this.socket = null;
     this._signedIn = !!this.store.state.credentials.token;
-    this.authInterface.passiveLogIn();
-    /*if(msPassiveLoginCheckNeeded()) {
-      getService(MICROSOFT_SERVICE).then(async service => {
-        await service.getLoginService().passiveLogin();
-        this.microsoftLoginService = service;
-      })
-    }*/
   }
 
   setSocket = socket => {
@@ -29,7 +17,7 @@ export default class AuthChannel {
 
   get email() {
     // (this.microsoftLoginService && (this.microsoftLoginService.getUserAccount() && (this.microsoftLoginService.getUserAccount().mail)))
-    return (this.authInterface.getAccount() && this.authInterface.getAccount().email) || this.store.state.credentials.email;
+    return this.store.state.credentials.email;
   }
 
   get signedIn() {
@@ -43,10 +31,6 @@ export default class AuthChannel {
     this.store.update({ credentials: { token: null, email: null } });
     await this.store.resetToRandomDefaultAvatar();
     this._signedIn = false;
-    await this.authInterface.signOut();
-    /*if(this.microsoftLoginService) {
-      this.microsoftLoginService.getLoginService().logout();
-    }*/
   };
 
   verifyAuthentication(authTopic, authToken, authPayload) {

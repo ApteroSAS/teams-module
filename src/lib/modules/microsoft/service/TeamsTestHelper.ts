@@ -1,5 +1,4 @@
-import { getServiceSync } from "@aptero/axolotis-player";
-import { MICROSOFT_STATIC_SERVICE, MsTeams } from "@root/lib";
+import { MSTEAMS_QUERY_PARAM } from "@root/index";
 
 export const ERROR_LOG_NOTIFICATION = "ERROR_LOG_NOTIFICATION";
 export const WARN_LOG_NOTIFICATION = "WARN_LOG_NOTIFICATION";
@@ -12,7 +11,7 @@ function sendIframeMessage(type, data) {
   }
 }
 
-if (getServiceSync<MsTeams>(MICROSOFT_STATIC_SERVICE).msTeams()) {
+export function registerTeamsTestHelper() {
   //if we are in msTeams the app will always be in an iframe this file aims to help the CI in this case
   const oldWarn = console.warn;
   console.warn = (a, ...args) => {

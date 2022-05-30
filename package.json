@@ -12,7 +12,7 @@
     "build": "webpack && tsc && ttsc --emitDeclarationOnly",
     "start": "cross-env OPEN=true yarn run dev",
     "dev": "cross-env NODE_ENV=development webpack serve --config webpack.config.demo.js",
-    "dev:watch": "tsc-watch --onSuccess \"yarn run only-build\"",
+    "dev:watch": "cross-env DEVTOOL=eval-source-map tsc-watch --onSuccess \"yarn run build\"",
     "ci:test": "cross-env NODE_ENV=development npx playwright test",
     "ci:test:debug": "cross-env NODE_ENV=development npx playwright test --headed",
     "ci:coverage:serve": "cross-env NODE_ENV=development USE_BABEL_PLUGIN_ISTANBUL=1 webpack --stats-error-details --config webpack.config.demo.js && npx http-server dist -p 9080",

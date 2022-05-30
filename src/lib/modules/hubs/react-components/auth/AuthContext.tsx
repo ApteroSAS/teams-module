@@ -4,10 +4,9 @@ import PropTypes from "prop-types";
 // TODO: We really shouldn't include these dependencies on every page. A dynamic import would work better.
 import jwtDecode from "jwt-decode";
 import { getService } from "@aptero/axolotis-player";
-import { MICROSOFT_SERVICE, MicrosoftService, PHX_AUTH_SERVICE } from "@root/lib";
+import { MICROSOFT_SERVICE, MicrosoftService, PHX_AUTH_SERVICE } from "@root/index";
 import { getServiceSync } from "@aptero/axolotis-player";
-import { PhoenixAuthService } from "@root/lib/modules/phoenixAuth/PhoenixAuthService";
-let phxService = getServiceSync<PhoenixAuthService>(PHX_AUTH_SERVICE);
+import { PhoenixAuthService } from "@root/modules/phoenixAuth/PhoenixAuthService";
 
 export const AuthContext = createContext(null);
 declare const window;
@@ -51,6 +50,7 @@ async function checkIsAdmin(socket, store) {
 
   const isAdmin = perms.postgrest_role === "ret_admin";
 
+  let phxService = getServiceSync<PhoenixAuthService>(PHX_AUTH_SERVICE);
   phxService.getAdmin().setIsAdmin(isAdmin);
 
   return isAdmin;
@@ -81,6 +81,7 @@ StorybookAuthContextProvider.propTypes = {
 export function AuthContextProvider({ children, store }) {
   const signIn = useCallback(
     async email => {
+      let phxService = getServiceSync<PhoenixAuthService>(PHX_AUTH_SERVICE);
       const authChannel: any = phxService.createAuthChannel(store);
       const socket = await phxService.connectToReticulum();
       authChannel.setSocket(socket);
@@ -96,6 +97,7 @@ export function AuthContextProvider({ children, store }) {
   }, [getService, MICROSOFT_SERVICE]);
   const verify = useCallback(
     async authParams => {
+      let phxService = getServiceSync<PhoenixAuthService>(PHX_AUTH_SERVICE);
       const authChannel = phxService.createAuthChannel(store);
       const socket = await phxService.connectToReticulum();
       authChannel.setSocket(socket);
@@ -105,6 +107,7 @@ export function AuthContextProvider({ children, store }) {
   );
 
   const signOut = useCallback(async () => {
+    let phxService = getServiceSync<PhoenixAuthService>(PHX_AUTH_SERVICE);
     phxService.getAdmin().setIsAdmin(false);
     store.update({ credentials: { token: null, email: null } });
     await store.resetToRandomDefaultAvatar();
@@ -112,6 +115,7 @@ export function AuthContextProvider({ children, store }) {
     await authChannel.signOut(null);
   }, [store]);
 
+  let phxService = getServiceSync<PhoenixAuthService>(PHX_AUTH_SERVICE);
   const [context, setContext] = useState({
     initialized: false,
     isSignedIn: !!store.state.credentials && !!store.state.credentials.token,

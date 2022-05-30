@@ -10,8 +10,8 @@ import { RoomSection } from "./RoomSection";
 import { getCredential } from "../service/TeamsLoginService";
 import { microsoftLoginService } from "../service/MicrosoftLoginService";
 import { getServiceSync } from "@aptero/axolotis-player";
-import { RoomService } from "@root/lib/modules/roomAPI/RoomService";
-import { ROOM_SERVICE } from "@root/lib";
+import { RoomService } from "@root/modules/roomAPI/RoomService";
+import { ROOM_SERVICE } from "@root/index";
 
 /**
  * The 'Config' component is used to display your group tabs

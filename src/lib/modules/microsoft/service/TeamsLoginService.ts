@@ -5,13 +5,10 @@ import { getAuthEvents, LOGGED_BASIC_INFO } from "./AuthEvent";
 import { getScopes, getScopesLight } from "./scope";
 import { MicrosoftGraphService } from "./MicrosoftGraphService";
 import { MsToNativeLoginBridge } from "../../phoenixAuth/MsToNativeLoginBridge";
-import { Properties } from "@root/lib";
-import { PropertiesFormat, PROPERTY_KEY } from "@root/lib/modules/microsoft/PropertiesFormat";
-import { getServiceSync } from "@aptero/axolotis-player";
+import { getMsProperties } from "@root/modules/microsoft/service/Properties";
 
 let credential: TeamsFx | null = null;
 export const startLoginPageUrl = window.location.origin + "/auth-start.html";
-export const clientId = getServiceSync<Properties>(Properties.name).get<PropertiesFormat>(PROPERTY_KEY).MICROSOFT_APP_ID; //process.env.REACT_APP_CLIENT_ID;
 
 declare const window;
 //To test and revoke application auth
@@ -30,7 +27,7 @@ function initTeamsFx(authorityHost) {
     authorityHost,
     initiateLoginEndpoint: startLoginPageUrl,
     //simpleAuthEndpoint: teamsfxEndpoint,//https://github.com/OfficeDev/TeamsFx/wiki/How-Authentication-Works-in-TeamsFx-Tab-Template
-    clientId: clientId
+    clientId: getMsProperties().MICROSOFT_APP_ID //process.env.REACT_APP_CLIENT_ID;
   });
 }
 

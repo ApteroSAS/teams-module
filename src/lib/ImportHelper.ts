@@ -1,9 +1,23 @@
 import { getService, getServiceSync } from "@aptero/axolotis-player";
-import { MsTeams } from "@root/lib/modules/microsoft/MsTeams";
-import { MICROSOFT_SERVICE, MICROSOFT_STATIC_SERVICE, MicrosoftService } from "@root/lib/index";
+import { MsTeams } from "@root/modules/microsoft/MsTeams";
+
+export const MICROSOFT_SERVICE = "@aptero/axolotis-module-teams/MicrosoftService";
+export const MICROSOFT_STATIC_SERVICE = "@aptero/axolotis-module-teams/MicrosoftStaticService";
+export const PROPERTIES_SERVICE = "@aptero/axolotis-module-properties/Properties";
+export const STORE_SERVICE = "@aptero/axolotis-module-storage/Store";
+export const COOKIE_STORE_SERVICE = "@aptero/axolotis-module-storage/CookieStore";
+export const PHX_AUTH_SERVICE = "@aptero/axolotis-module-phx-auth/PhoenixAuthService";
+export const NAME_SERVICE = "@aptero/axolotis-module-name/PhoenixAuthService";
+export const ROOM_SERVICE = "@aptero/axolotis-module-room/RoomService";
+
+import { MicrosoftService, Properties } from "@root/index";
 
 export function msTeamsService() {
   return getServiceSync<MsTeams>(MICROSOFT_STATIC_SERVICE);
+}
+
+export function propertyService() {
+  return getServiceSync<Properties>(PROPERTIES_SERVICE);
 }
 
 export async function microsoftService() {

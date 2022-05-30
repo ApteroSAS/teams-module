@@ -1,7 +1,7 @@
 import { getContext } from "./MsTeams";
 import { MsTeams, MSTEAMS_QUERY_PARAM } from "../MsTeams";
 import { getServiceSync } from "@aptero/axolotis-player";
-import { MICROSOFT_STATIC_SERVICE } from "@root/lib";
+import { MICROSOFT_STATIC_SERVICE } from "@root/index";
 
 export async function redirectToTeamsSidePanel() {
   if (getServiceSync<MsTeams>(MICROSOFT_STATIC_SERVICE).msTeams()) {

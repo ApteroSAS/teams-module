@@ -2,9 +2,7 @@ import { PublicClientApplication } from "@azure/msal-browser";
 import { getScopesLight } from "./scope";
 import { MicrosoftGraphService } from "./MicrosoftGraphService";
 import { MsToNativeLoginBridge } from "../../phoenixAuth/MsToNativeLoginBridge";
-import { PropertiesFormat, PROPERTY_KEY } from "@root/lib/modules/microsoft/PropertiesFormat";
-import { Properties } from "@root/lib";
-import { getServiceSync } from "@aptero/axolotis-player";
+import { getMsProperties } from "@root/modules/microsoft/service/Properties";
 let graph = require("@microsoft/microsoft-graph-client");
 
 declare const window;
@@ -16,14 +14,13 @@ export class MicrosoftOauthLoginService {
   constructor(private microsoftGraphService: MicrosoftGraphService, private msToNativeLoginBridge: MsToNativeLoginBridge) {}
 
   getPublicClientApplication() {
-    let conf = getServiceSync<Properties>(Properties.name).get<PropertiesFormat>(PROPERTY_KEY);
     if (!this.publicClientApplication) {
       this.publicClientApplication = new PublicClientApplication({
         auth: {
-          clientId: conf.MICROSOFT_APP_ID,
+          clientId: getMsProperties().MICROSOFT_APP_ID,
           redirectUri: window.location.origin + "/signin",
           // to allow only AAD accounts: authority:https://login.microsoftonline.com/organizations
-          authority: conf.MICROSOFT_APP_AUTHORITY || "https://login.microsoftonline.com/common"
+          authority: getMsProperties().MICROSOFT_APP_AUTHORITY || "https://login.microsoftonline.com/common"
         },
         cache: {
           cacheLocation: "sessionStorage",
@@ -44,6 +41,7 @@ export class MicrosoftOauthLoginService {
           account: account
         };
         let authenticationResult = await this.getPublicClientApplication().acquireTokenSilent(accessTokenRequest);
+        console.log(authenticationResult.accessToken);
         this.initWithToken(authenticationResult.accessToken);
       } catch (err) {
         console.error(err);
@@ -103,7 +101,7 @@ export class MicrosoftOauthLoginService {
       let response = await this.getPublicClientApplication().loginPopup(loginRequest);
       await this.initWithToken(response.accessToken);
     } catch (error) {
-      console.log("error", error);
+      console.error("error", error);
     }
   }
 

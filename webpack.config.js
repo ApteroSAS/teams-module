@@ -27,11 +27,10 @@ const banner = `
 
 module.exports = {
     mode: "production",
-    devtool: 'source-map', //for prod
-    //devtool: 'eval-source-map', //for debug
+    devtool: process.env.DEVTOOL || 'source-map',
     performance: {
-        maxEntrypointSize: 1000000,
-        maxAssetSize: 1000000
+        maxEntrypointSize: 2 * 1000 * 1000,
+        maxAssetSize: 2 * 1000 * 1000
     },
     entry: {
         index: path.join(__dirname, './src/lib/index.ts'),
@@ -104,11 +103,10 @@ module.exports = {
     ],
     resolve: {
         alias: {
-            "@root": path.join(__dirname, "./src")
+            "@root": path.join(__dirname, "./src/lib")
         },
         fallback: {
-            'fs': false,
-            'path': false, // ammo.js seems to also use path
+            'url': false,
         },
         extensions: ['.ts', '.tsx', '.js', '.jsx', '.json']
     }

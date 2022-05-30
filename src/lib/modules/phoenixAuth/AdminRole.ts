@@ -1,9 +1,9 @@
-export class AdminRole{
+export class AdminRole {
   private admin: boolean;
-  setIsAdmin(is){
+  setIsAdmin(is) {
     this.admin = is;
   }
-  isAdmin(){
+  isAdmin() {
     return this.admin;
   }
 }

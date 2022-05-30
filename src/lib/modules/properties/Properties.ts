@@ -3,14 +3,14 @@ declare const window;
 
 export class Properties implements IService {
   getType(): string {
-    return "";
+    return Properties.name;
   }
 
-  getGlobalProperties(): any {
+  getGlobalProperties<T>(): T {
     if (typeof window !== "undefined") {
       return window.APP_PROPS || {};
     } else {
-      return {};
+      return {} as T;
     }
   }
 

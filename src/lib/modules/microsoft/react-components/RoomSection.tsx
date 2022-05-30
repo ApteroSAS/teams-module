@@ -4,15 +4,15 @@ import { FormattedMessage } from "react-intl";
 
 import { changeUrlSettings } from "../service/MsTeams";
 import { Button, Input } from "@fluentui/react-northstar";
-import { MediaGrid } from "@root/lib/modules/hubs/react-components/room/MediaGrid";
+import { MediaGrid } from "@root/modules/hubs/react-components/room/MediaGrid";
 import { MediaTile } from "./../../hubs/react-components/room/MediaTiles";
-import { usePaginatedAPI } from "@root/lib/modules/hubs/react-components/home/usePaginatedAPI";
-import { AuthContext } from "@root/lib/modules/hubs/react-components/auth/AuthContext";
-import { Container } from "@root/lib/modules/hubs/react-components/layout/Container";
-import { Column } from "@root/lib/modules/hubs/react-components/layout/Column";
+import { usePaginatedAPI } from "@root/modules/hubs/react-components/home/usePaginatedAPI";
+import { AuthContext } from "@root/modules/hubs/react-components/auth/AuthContext";
+import { Container } from "@root/modules/hubs/react-components/layout/Container";
+import { Column } from "@root/modules/hubs/react-components/layout/Column";
 import { getServiceSync } from "@aptero/axolotis-player";
-import { RoomService } from "@root/lib/modules/roomAPI/RoomService";
-import { ROOM_SERVICE } from "@root/lib";
+import { RoomService } from "@root/modules/roomAPI/RoomService";
+import { ROOM_SERVICE } from "@root/index";
 
 //https://fluentsite.z22.web.core.windows.net/0.60.1
 

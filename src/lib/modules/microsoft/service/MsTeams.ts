@@ -5,7 +5,7 @@ const EventEmitter = require("eventemitter3");
 export const CHANGE_SETTINGS_URL = "ms-teams-change-settings-url";
 export const PROCESS_DEEPLINK = "ms-teams-deep-link";
 import * as microsoftTeams from "@microsoft/teams-js";
-import { MICROSOFT_STATIC_SERVICE, MsTeams } from "@root/lib";
+import { MICROSOFT_STATIC_SERVICE, MsTeams } from "@root/index";
 
 let eventListener = new EventEmitter();
 
