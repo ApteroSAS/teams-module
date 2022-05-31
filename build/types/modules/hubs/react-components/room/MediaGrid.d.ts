@@ -1,4 +1,3 @@
-/// <reference types="react" />
 import PropTypes from "prop-types";
 export declare function MediaGrid({ children, className, center, isVariableWidth, sm, ...rest }: {
     [x: string]: any;

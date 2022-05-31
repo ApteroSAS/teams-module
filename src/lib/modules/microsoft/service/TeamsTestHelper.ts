@@ -1,5 +1,3 @@
-import { MSTEAMS_QUERY_PARAM } from "@root/index";
-
 export const ERROR_LOG_NOTIFICATION = "ERROR_LOG_NOTIFICATION";
 export const WARN_LOG_NOTIFICATION = "WARN_LOG_NOTIFICATION";
 export const THROW_NOTIFICATION = "THROW_NOTIFICATION";
@@ -32,12 +30,15 @@ export function registerTeamsTestHelper() {
     return oldError(a, args);
   };
   const oldOnerror = window.onerror;
-  window.onerror = (...args) => {
+  //https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers/onerror
+  window.onerror = (message, source, lineno, colno, error) => {
     try {
       sendIframeMessage(THROW_NOTIFICATION, "console error reporter");
     } catch (e) {
       /* ignore */
     }
-    return oldOnerror(...args);
+    if (oldOnerror) {
+      return oldOnerror(message, source, lineno, colno, error);
+    }
   };
 }

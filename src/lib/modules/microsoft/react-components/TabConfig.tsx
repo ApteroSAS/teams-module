@@ -34,7 +34,6 @@ export class TabConfig extends React.Component {
 
   componentDidMount() {
     microsoftTeams.settings.setValidityState(false);
-    document.getElementById("version").innerHTML = process.env.BUILD_VERSION;
     microsoftTeams.settings.getSettings(instanceSettings => {
       if (instanceSettings.websiteUrl) {
         try {

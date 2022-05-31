@@ -46,7 +46,13 @@ module.exports = {
     optimization: {
         minimize: true,
         minimizer: [
-            new TerserPlugin({extractComments: false}),
+            new TerserPlugin({
+                extractComments: false, terserOptions: {
+                    //https://github.com/terser/terser#minify-options
+                    keep_classnames: true,
+                    keep_fnames: true
+                }
+            }),
             new OptimizeCSSAssetsPlugin({
                 cssProcessorOptions: {
                     map: {
@@ -101,6 +107,12 @@ module.exports = {
         }),
         new webpack.BannerPlugin(banner)
     ],
+    externals: {
+        'react': 'react',
+        'react-intl' : 'react-intl',
+        'react-dom': 'react-dom',
+        '@aptero/axolotis-player':'@aptero/axolotis-player',
+    },
     resolve: {
         alias: {
             "@root": path.join(__dirname, "./src/lib")

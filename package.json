@@ -9,7 +9,7 @@
   },
   "types": "build/types/index.d.ts",
   "scripts": {
-    "build": "webpack && tsc && ttsc --emitDeclarationOnly",
+    "build": "webpack && ttsc --emitDeclarationOnly",
     "start": "cross-env OPEN=true yarn run dev",
     "dev": "cross-env NODE_ENV=development webpack serve --config webpack.config.demo.js",
     "dev:watch": "cross-env DEVTOOL=eval-source-map tsc-watch --onSuccess \"yarn run build\"",
@@ -28,6 +28,7 @@
     "es6"
   ],
   "devDependencies": {
+    "@aptero/axolotis-player": "git+https://github.com/ApteroSAS/axolotis-player.git#semver:^1",
     "@babel/cli": "^7.17.6",
     "@babel/core": "^7.17.9",
     "@babel/plugin-proposal-class-properties": "^7.16.7",
@@ -41,7 +42,9 @@
     "@playwright/test": "^1.21.1",
     "@svgr/webpack": "^5.4.0",
     "@types/js-cookie": "^3.0.2",
-    "@types/react": "^18.0.9",
+    "@types/react": "^16",
+    "@types/react-dom": "^16",
+    "react-intl": "^5",
     "@types/sass-loader": "^8.0.3",
     "@types/three": "^0.139.0",
     "@typescript-eslint/eslint-plugin": "^5.19.0",
@@ -67,7 +70,7 @@
     "playwright": "^1.21.0",
     "prettier": "^1.7.0",
     "prettier-webpack-plugin": "^1.2.0",
-    "react-dom": "^16.13.1",
+    "scheduler": "^0.22.0",
     "source-map-support": "^0.5.21",
     "start-server-and-test": "^1.14.0",
     "style-loader": "^3.3.1",
@@ -83,8 +86,13 @@
     "webpack-cli": "^4.9.2",
     "webpack-dev-server": "4.8.1"
   },
+  "peerDependencies": {
+    "@aptero/axolotis-player": "git+https://github.com/ApteroSAS/axolotis-player.git#semver:^1",
+    "react": "^16 || ^17",
+    "react-dom": "^16 || ^17",
+    "react-intl": "^5 || ^6"
+  },
   "dependencies": {
-    "@aptero/axolotis-player": "https://github.com/ApteroSAS/axolotis-player.git#b125e1218ea7fc27a15116feaab259d85e3fbe78",
     "@azure/msal-browser": "2.16.1",
     "@fluentui/react-northstar": "^0.61.0",
     "@microsoft/microsoft-graph-client": "^3.0.2",
@@ -95,8 +103,6 @@
     "js-cookie": "^2.2.0",
     "jsonschema": "^1.2.2",
     "phoenix": "github:gfodor/phoenix-js#f4cebf1534dd7c503fe797ef396709c4d3ea8d69",
-    "react": "^16.13.1",
-    "react-intl": "^5.10.1",
     "sass": "^1.26.10",
     "sass-loader": "^9.0.2",
     "tsutils": "^3.21.0",
