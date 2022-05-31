@@ -108,10 +108,20 @@ module.exports = {
         new webpack.BannerPlugin(banner)
     ],
     externals: {
-        'react': 'react',
-        'react-intl' : 'react-intl',
-        'react-dom': 'react-dom',
-        '@aptero/axolotis-player':'@aptero/axolotis-player',
+        'react-intl' : 'umd react-intl',
+        react: {
+            commonjs: 'react',
+            commonjs2: 'react',
+            amd: 'React',
+            root: 'React',
+        },
+        'react-dom': {
+            commonjs: 'react-dom',
+            commonjs2: 'react-dom',
+            amd: 'ReactDOM',
+            root: 'ReactDOM',
+        },
+        '@aptero/axolotis-player':'umd @aptero/axolotis-player',
     },
     resolve: {
         alias: {
