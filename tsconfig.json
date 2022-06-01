@@ -1,9 +1,9 @@
 {
     "compilerOptions": {
       "noImplicitAny": false,
-      "outDir": "build/types",
+      "outDir": "build/",
       "module": "esnext",
-      "target": "ES6",
+      "target": "ES5",
       "allowJs": true,
       "sourceMap": true,
       "declaration": true,
@@ -14,7 +14,6 @@
       "lib": ["es2018", "dom"],
       "moduleResolution": "node",
       "baseUrl": "./",
-      "jsx": "react",
       "paths": {
         "@root/*": ["src/lib/*"]
       }

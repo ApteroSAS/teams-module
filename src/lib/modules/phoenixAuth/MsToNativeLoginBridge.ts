@@ -22,9 +22,9 @@ export class MsToNativeLoginBridge {
         jobTitle: null,
         companyName: null,
         microsoftUserprofilePicture: null,
-        microsoftUser: null
+        microsoftUser: null,
       },
-      activity: { hasChangedName: false, hasChangedPicture: false }
+      activity: { hasChangedName: false, hasChangedPicture: false },
     });
   }
 
@@ -49,18 +49,18 @@ export class MsToNativeLoginBridge {
   async setProfile(profile) {
     window.APP.store.update({
       profile: profile,
-      activity: { hasChangedName: true, hasChangedPicture: true }
+      activity: { hasChangedName: true, hasChangedPicture: true },
     });
-    await new Promise(resolve => {
+    await new Promise((resolve) => {
       setTimeout(resolve, 0);
     }); //await store.update()
   }
   async setCredential(email, token) {
     window.APP.store.update({
       credentials: { email, token },
-      activity: { hasChangedName: false, hasChangedPicture: false }
+      activity: { hasChangedName: false, hasChangedPicture: false },
     });
-    await new Promise(resolve => {
+    await new Promise((resolve) => {
       setTimeout(resolve, 0);
     }); //await store.update()
     if (window.APP.hubChannel) {
@@ -110,7 +110,7 @@ export class MsToNativeLoginBridge {
             });
             channel.push("auth_verified", {
               token: auth_token,
-              payload: auth_payload
+              payload: auth_payload,
             });
           });
           //TODO security ensure we always send acces token
@@ -120,7 +120,7 @@ export class MsToNativeLoginBridge {
           channel.push("auth_token_request", {
             email,
             authtoken: accessToken,
-            origin: "hubs"
+            origin: "hubs",
           });
         })
         .receive("error", reject);

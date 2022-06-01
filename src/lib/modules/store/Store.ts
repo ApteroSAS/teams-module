@@ -27,8 +27,8 @@ export const SCHEMA = {
         microsoftUserprofilePicture: { type: "string" },
         microsoftUser: { type: "string" },
         // personalAvatarId is obsolete, but we need it here for backwards compatibility.
-        personalAvatarId: { type: "string" }
-      }
+        personalAvatarId: { type: "string" },
+      },
     },
 
     credentials: {
@@ -36,8 +36,8 @@ export const SCHEMA = {
       additionalProperties: false,
       properties: {
         token: { type: ["null", "string"] },
-        email: { type: ["null", "string"] }
-      }
+        email: { type: ["null", "string"] },
+      },
     },
 
     activity: {
@@ -56,8 +56,8 @@ export const SCHEMA = {
         hasScaled: { type: "boolean" },
         hasHoveredInWorldHud: { type: "boolean" },
         hasOpenedShare: { type: "boolean" },
-        entryCount: { type: "number" }
-      }
+        entryCount: { type: "number" },
+      },
     },
 
     settings: {
@@ -65,8 +65,8 @@ export const SCHEMA = {
       additionalProperties: false,
       properties: {
         lastUsedMicDeviceId: { type: "string" },
-        micMuted: { type: "bool" }
-      }
+        micMuted: { type: "bool" },
+      },
     },
 
     preferences: {
@@ -114,19 +114,19 @@ export const SCHEMA = {
         enableAudioClipping: { type: "bool" },
         audioClippingThreshold: { type: "number" },
         theme: { type: "string" },
-        thirdPersonMode: { type: "bool" }
-      }
+        thirdPersonMode: { type: "bool" },
+      },
     },
 
     // Legacy
     confirmedDiscordRooms: {
       type: "array",
-      items: { type: "string" }
+      items: { type: "string" },
     },
 
     confirmedBroadcastedRooms: {
       type: "array",
-      items: { type: "string" }
+      items: { type: "string" },
     },
 
     uploadPromotionTokens: {
@@ -136,9 +136,9 @@ export const SCHEMA = {
         additionalProperties: false,
         properties: {
           fileId: { type: "string" },
-          promotionToken: { type: "string" }
-        }
-      }
+          promotionToken: { type: "string" },
+        },
+      },
     },
 
     creatorAssignmentTokens: {
@@ -148,9 +148,9 @@ export const SCHEMA = {
         additionalProperties: false,
         properties: {
           hubId: { type: "string" },
-          creatorAssignmentToken: { type: "string" }
-        }
-      }
+          creatorAssignmentToken: { type: "string" },
+        },
+      },
     },
 
     embedTokens: {
@@ -160,9 +160,9 @@ export const SCHEMA = {
         additionalProperties: false,
         properties: {
           hubId: { type: "string" },
-          embedToken: { type: "string" }
-        }
-      }
+          embedToken: { type: "string" },
+        },
+      },
     },
 
     onLoadActions: {
@@ -172,10 +172,10 @@ export const SCHEMA = {
         additionalProperties: false,
         properties: {
           action: { type: "string" },
-          args: { type: "object" }
-        }
-      }
-    }
+          args: { type: "object" },
+        },
+      },
+    },
   },
 
   type: "object",
@@ -191,10 +191,10 @@ export const SCHEMA = {
     uploadPromotionTokens: { $ref: "#/definitions/uploadPromotionTokens" },
     creatorAssignmentTokens: { $ref: "#/definitions/creatorAssignmentTokens" },
     embedTokens: { $ref: "#/definitions/embedTokens" },
-    onLoadActions: { $ref: "#/definitions/onLoadActions" }
+    onLoadActions: { $ref: "#/definitions/onLoadActions" },
   },
 
-  additionalProperties: false
+  additionalProperties: false,
 };
 
 export default class Store extends EventTarget implements IService {
@@ -206,7 +206,7 @@ export default class Store extends EventTarget implements IService {
     }
 
     // When storage is updated in another window
-    window.addEventListener("storage", e => {
+    window.addEventListener("storage", (e) => {
       if (e.key !== LOCAL_STORE_KEY) return;
       delete this[STORE_STATE_CACHE_KEY];
       this.dispatchEvent(new CustomEvent("statechanged") as any);

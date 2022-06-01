@@ -7,8 +7,8 @@ export function createHubChannelParams({ permsToken, profile, pushSubscriptionEn
     context: {
       mobile: isMobile || isMobileVR,
       embed: isEmbed,
-      hmd: isMobileVR
+      hmd: isMobileVR,
     },
-    hub_invite_id: hubInviteId
+    hub_invite_id: hubInviteId,
   };
 }

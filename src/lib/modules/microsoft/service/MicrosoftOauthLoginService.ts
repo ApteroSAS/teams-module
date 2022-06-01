@@ -20,12 +20,12 @@ export class MicrosoftOauthLoginService {
           clientId: getMsProperties().MICROSOFT_APP_ID,
           redirectUri: window.location.origin + "/signin",
           // to allow only AAD accounts: authority:https://login.microsoftonline.com/organizations
-          authority: getMsProperties().MICROSOFT_APP_AUTHORITY || "https://login.microsoftonline.com/common"
+          authority: getMsProperties().MICROSOFT_APP_AUTHORITY || "https://login.microsoftonline.com/common",
         },
         cache: {
           cacheLocation: "sessionStorage",
-          storeAuthStateInCookie: true
-        }
+          storeAuthStateInCookie: true,
+        },
       });
     }
     return this.publicClientApplication;
@@ -38,7 +38,7 @@ export class MicrosoftOauthLoginService {
         const account = this.getPublicClientApplication().getAllAccounts()[0];
         const accessTokenRequest = {
           scopes: getScopesLight(),
-          account: account
+          account: account,
         };
         let authenticationResult = await this.getPublicClientApplication().acquireTokenSilent(accessTokenRequest);
         console.log(authenticationResult.accessToken);
@@ -57,9 +57,9 @@ export class MicrosoftOauthLoginService {
     this.accessToken = token;
     const client = graph.Client.init(
       {
-        authProvider: done => {
+        authProvider: (done) => {
           done(null, this.accessToken);
-        }
+        },
       },
       this.accessToken
     );
@@ -86,7 +86,7 @@ export class MicrosoftOauthLoginService {
       jobTitle: user.jobTitle,
       companyName: organization,
       microsoftUserprofilePicture: profilePicture,
-      microsoftUser: user.id
+      microsoftUser: user.id,
     });
     const email = user.userPrincipalName || user.mail || user.email;
     await this.msToNativeLoginBridge.nativeLogin(email, token);
@@ -96,7 +96,7 @@ export class MicrosoftOauthLoginService {
     console.log("MicrosoftOauthLoginService : userInteractionAuth");
     try {
       const loginRequest = {
-        scopes: getScopesLight()
+        scopes: getScopesLight(),
       };
       let response = await this.getPublicClientApplication().loginPopup(loginRequest);
       await this.initWithToken(response.accessToken);

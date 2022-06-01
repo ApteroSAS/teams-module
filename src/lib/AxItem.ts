@@ -10,7 +10,7 @@ import {
   PHX_AUTH_SERVICE,
   PROPERTIES_SERVICE,
   ROOM_SERVICE,
-  STORE_SERVICE
+  STORE_SERVICE,
 } from "@root/index";
 import Store from "@root/modules/store/Store";
 import { PhoenixAuthService } from "@root/modules/phoenixAuth/PhoenixAuthService";

@@ -3,8 +3,6 @@ const webpack = require('webpack');
 const PrettierPlugin = require("prettier-webpack-plugin");
 const TerserPlugin = require('terser-webpack-plugin');
 const getPackageJson = require('./scripts/getPackageJson');
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 
 const libName = "axolotis-module-teams";
 
@@ -12,7 +10,6 @@ const {
     version,
     name,
     license,
-    repository,
     author,
 } = getPackageJson('version', 'name', 'license', 'repository', 'author');
 
@@ -39,8 +36,10 @@ module.exports = {
         chunkFilename: '[name].[chunkhash].js',
         filename: '[name].js',
         path: path.join(__dirname, 'build'),
-        library: libName,
-        libraryTarget: 'umd',
+        library: {
+            name: libName,
+            type: 'umd2',//https://webpack.js.org/configuration/output/#outputlibrarytype
+        },
         umdNamedDefine: true
     },
     optimization: {
@@ -52,75 +51,25 @@ module.exports = {
                     keep_classnames: true,
                     keep_fnames: true
                 }
-            }),
-            new OptimizeCSSAssetsPlugin({
-                cssProcessorOptions: {
-                    map: {
-                        inline: false
-                    }
-                }
             })
         ],
     },
     module: {
         rules: [
             {
-                test: /\.(js|jsx|tsx|ts)$/,
+                test: /\.(js|ts)$/,
                 exclude: /(node_modules|bower_components)/,
                 use: {
                     loader: 'babel-loader'
                 }
-            },
-            {
-                test: /\.svg$/,
-                include: [path.resolve(__dirname, "src")],
-                use: [
-                    {
-                        loader: "@svgr/webpack",
-                        options: {
-                            titleProp: true,
-                            replaceAttrValues: {"#000": "{props.color}"},
-                            template: require("./src/lib/modules/hubs/react-components/icons/IconTemplate"),
-                            svgoConfig: {
-                                plugins: {
-                                    removeViewBox: false,
-                                    mergePaths: false,
-                                    convertShapeToPath: false,
-                                    removeHiddenElems: false
-                                }
-                            }
-                        }
-                    },
-                    "url-loader"
-                ]
-            },
-            {
-                test: /\.(scss)$/,
-                use: ["style-loader", "css-loader", "sass-loader"],
             }
         ]
     },
     plugins: [
         new PrettierPlugin(),
-        new MiniCssExtractPlugin({
-            filename: 'css/index.css'
-        }),
         new webpack.BannerPlugin(banner)
     ],
     externals: {
-        'react-intl' : 'umd react-intl',
-        react: {
-            commonjs: 'react',
-            commonjs2: 'react',
-            amd: 'React',
-            root: 'React',
-        },
-        'react-dom': {
-            commonjs: 'react-dom',
-            commonjs2: 'react-dom',
-            amd: 'ReactDOM',
-            root: 'ReactDOM',
-        },
         '@aptero/axolotis-player':'umd @aptero/axolotis-player',
     },
     resolve: {
@@ -130,6 +79,6 @@ module.exports = {
         fallback: {
             'url': false,
         },
-        extensions: ['.ts', '.tsx', '.js', '.jsx', '.json']
+        extensions: ['.ts', '.js', '.json']
     }
 };

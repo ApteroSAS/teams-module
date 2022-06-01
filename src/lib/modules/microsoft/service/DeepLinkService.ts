@@ -3,7 +3,7 @@ import { getMSEvents, PROCESS_DEEPLINK } from "./MsTeams";
 
 export class DeepLinkService {
   start() {
-    getMSEvents().on(PROCESS_DEEPLINK, data => {
+    getMSEvents().on(PROCESS_DEEPLINK, (data) => {
       try {
         const link = data.link;
         microsoftTeams.executeDeepLink(link, (status, reason) => {

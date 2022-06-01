@@ -9,7 +9,7 @@ export async function redirectToTeamsSidePanel() {
     if (url.searchParams.get("msForceHub")) {
       return; //do not redirect in this case
     }
-    await getContext(context => {
+    await getContext((context) => {
       if (context.frameContext === "sidePanel") {
         window.location.replace(window.location.origin + "/microsoft-settings.html?" + MSTEAMS_QUERY_PARAM + "=true");
       }

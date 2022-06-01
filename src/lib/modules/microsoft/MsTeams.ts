@@ -32,7 +32,7 @@ export class MsTeams implements IService, AuthInterface {
 
   redirectToTeamsSidePanel() {
     if (this.msTeams()) {
-      microsoftService().then(async service => {
+      microsoftService().then(async (service) => {
         await service.redirectToTeamsSidePanel();
       });
     }
@@ -55,9 +55,9 @@ export class MsTeams implements IService, AuthInterface {
   }
 
   async passiveLogIn(): Promise<true> {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       if (this.msPassiveLoginCheckNeeded()) {
-        microsoftService().then(async service => {
+        microsoftService().then(async (service) => {
           await service.getLoginService().passiveLogin();
           resolve(true);
         });
@@ -66,9 +66,9 @@ export class MsTeams implements IService, AuthInterface {
   }
 
   signIn(): Promise<true> {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       if (this.msTeams()) {
-        microsoftService().then(async service => {
+        microsoftService().then(async (service) => {
           await service.getLoginService().login();
           resolve(true);
         });
@@ -77,9 +77,9 @@ export class MsTeams implements IService, AuthInterface {
   }
 
   signOut(): Promise<true> {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       if (this.msTeams()) {
-        microsoftService().then(async service => {
+        microsoftService().then(async (service) => {
           await service.getLoginService().logout();
           resolve(true);
         });

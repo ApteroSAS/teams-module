@@ -19,10 +19,7 @@ export class MicrosoftGraphService {
   }
 
   async getUserDetailsBetaV() {
-    return await this.client
-      .api("/me/profile")
-      .version("beta")
-      .get();
+    return await this.client.api("/me/profile").version("beta").get();
   }
 
   async getUserOrganization() {

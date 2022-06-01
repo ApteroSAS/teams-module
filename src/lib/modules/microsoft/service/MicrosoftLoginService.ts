@@ -23,7 +23,7 @@ export class MicrosoftLoginService {
     if (this.initialized) {
       return Promise.resolve(true);
     } else {
-      return new Promise<boolean>(resolve => {
+      return new Promise<boolean>((resolve) => {
         const onInitialized = () => {
           getAuthEvents().off(AUTH_SERVICE_INITIALIZE, onInitialized);
           resolve(true);

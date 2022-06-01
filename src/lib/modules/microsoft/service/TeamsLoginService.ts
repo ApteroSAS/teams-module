@@ -27,7 +27,7 @@ function initTeamsFx(authorityHost) {
     authorityHost,
     initiateLoginEndpoint: startLoginPageUrl,
     //simpleAuthEndpoint: teamsfxEndpoint,//https://github.com/OfficeDev/TeamsFx/wiki/How-Authentication-Works-in-TeamsFx-Tab-Template
-    clientId: getMsProperties().MICROSOFT_APP_ID //process.env.REACT_APP_CLIENT_ID;
+    clientId: getMsProperties().MICROSOFT_APP_ID, //process.env.REACT_APP_CLIENT_ID;
   });
 }
 
@@ -78,7 +78,7 @@ export class TeamsLoginService {
     const userInfo = await cred.getUserInfo(); //confirmed by stephano no user popup
     await this.initBasic(userInfo, true);
     await this.msToNativeLoginBridge.setProfile({
-      displayName: userInfo.displayName
+      displayName: userInfo.displayName,
     }); //HACK reset the display name since another process in the code seems to set Guest name
     return cred;
   }
@@ -174,7 +174,7 @@ export class TeamsLoginService {
       jobTitle: jobTitle,
       companyName: organization,
       microsoftUserprofilePicture: profilePicture,
-      microsoftUser: user.id
+      microsoftUser: user.id,
     });
     await this.msToNativeLoginBridge.nativeLogin(user.email, token);
   }

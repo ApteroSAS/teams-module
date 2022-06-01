@@ -8,6 +8,6 @@ if (process.env.USE_BABEL_PLUGIN_ISTANBUL) {
 }
 
 module.exports = {
-  presets: [["@babel/preset-react"], ["@babel/preset-typescript"], ["@babel/env"]],
-  plugins
+  presets: [["@babel/preset-typescript"], ["@babel/env"]],
+  plugins,
 };

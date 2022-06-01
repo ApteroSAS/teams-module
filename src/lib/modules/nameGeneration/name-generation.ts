@@ -597,7 +597,7 @@ const adjectives = [
   "tomato",
   "transparent",
   "turquoise",
-  "violet"
+  "violet",
 ];
 
 const nouns = [
@@ -654,11 +654,11 @@ const nouns = [
   "rendezvous",
   "huddle",
   "meet",
-  "soiree"
+  "soiree",
 ];
 
 export function generateHubName() {
-  const randItem = set => {
+  const randItem = (set) => {
     const s = set[Math.floor(Math.random() * set.length)];
     return s.charAt(0).toUpperCase() + s.slice(1);
   };

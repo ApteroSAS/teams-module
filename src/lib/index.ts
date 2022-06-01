@@ -1,6 +1,5 @@
 import { getGlobalStorageValue, GLOBAL_WORLDS_ENTITY, registerItem, WorldEntity } from "@aptero/axolotis-player";
 import { AxItem } from "@root/AxItem";
-import "react-dom";
 let worlds = getGlobalStorageValue<WorldEntity[]>(GLOBAL_WORLDS_ENTITY, false);
 if (!(worlds && worlds.length > 0)) {
   throw new Error("Axolotis World Needs to be initialized");
@@ -11,5 +10,3 @@ export * from "./modules/microsoft/MsTeams";
 export * from "./modules/microsoft/MicrosoftService";
 export * from "./modules/properties/Properties";
 export * from "./ImportHelper";
-export * from "./modules/microsoft/react-components/MeetingSidePanel";
-export * from "./modules/microsoft/react-components/TabConfig";

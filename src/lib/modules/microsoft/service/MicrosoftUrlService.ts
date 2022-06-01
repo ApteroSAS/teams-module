@@ -10,7 +10,7 @@ export class MicrosoftUrlService {
   constructor() {}
 
   urlToToSharingToken(url) {
-    let trimEnd = function(str, c) {
+    let trimEnd = function (str, c) {
       c = c ? c : " ";
       let i = str.length - 1;
       while (i >= 0 && str.charAt(i) === c) {
@@ -19,12 +19,7 @@ export class MicrosoftUrlService {
       return str.substring(0, i + 1);
     };
     let value = Buffer.from(url).toString("base64");
-    return (
-      "u!" +
-      trimEnd(value, "=")
-        .replace(/\//g, "_")
-        .replace(/\+/g, "-")
-    );
+    return "u!" + trimEnd(value, "=").replace(/\//g, "_").replace(/\+/g, "-");
   }
 
   async preFetchConvertMicrosoftUrl(url) {
@@ -61,15 +56,15 @@ export class MicrosoftUrlService {
   }
 
   async convertSharingUrlToDownloadUrl(url) {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       const stoken = this.urlToToSharingToken(url);
       microsoftLoginService.msGraphService.client
         .api("/shares/" + stoken + "/driveItem")
         .get()
-        .then(res => {
+        .then((res) => {
           resolve(res["@microsoft.graph.downloadUrl"]);
         })
-        .catch(err => {
+        .catch((err) => {
           console.warn(err);
           //reject(err);
           resolve(MICROSOFT_AUTH_ERROR);

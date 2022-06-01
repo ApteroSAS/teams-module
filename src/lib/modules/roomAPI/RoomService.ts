@@ -30,12 +30,12 @@ export class RoomService implements IService {
     if (window.location.origin.startsWith("https://localhost")) {
       return {
         origin: urlObj.origin,
-        roomSID: urlObj.searchParams.get("hub_id")
+        roomSID: urlObj.searchParams.get("hub_id"),
       };
     } else {
       return {
         origin: urlObj.origin,
-        roomSID: urlObj.pathname.split("/")[1]
+        roomSID: urlObj.pathname.split("/")[1],
       };
     }
   }
@@ -54,7 +54,7 @@ export class RoomService implements IService {
   }
 
   fetchSpokeProject(userId) {
-    return cursor => {
+    return (cursor) => {
       if (userId) {
         //https://alphahub.aptero.co/api/v1/media/search?filter=my-scenes&source=scenes&user=640407050966269961
         return getServiceSync<PhoenixAuthService>(PHX_AUTH_SERVICE).fetchReticulumAuthenticated(
@@ -67,7 +67,7 @@ export class RoomService implements IService {
   }
 
   fetchFavoriteRoom(userId) {
-    return cursor => {
+    return (cursor) => {
       if (userId) {
         return getServiceSync<PhoenixAuthService>(PHX_AUTH_SERVICE).fetchReticulumAuthenticated(
           `/api/v1/media/search?source=favorites&type=rooms&user=${userId}&cursor=${cursor}`
@@ -92,7 +92,7 @@ export class RoomService implements IService {
         if (oauthFlowPermsToken) {
           getServiceSync<CookieStore>(COOKIE_STORE_SERVICE).remove(OAUTH_FLOW_PERMS_TOKEN_KEY);
         }
-        const hubChannelParamsForPermsToken = permsToken => {
+        const hubChannelParamsForPermsToken = (permsToken) => {
           return createHubChannelParams({
             profile: getServiceSync<Store>(STORE_SERVICE).state.profile,
             pushSubscriptionEndpoint: null,
@@ -101,7 +101,7 @@ export class RoomService implements IService {
             isMobileVR: false,
             isEmbed: false,
             hubInviteId: null,
-            authToken: getServiceSync<Store>(STORE_SERVICE).state.credentials && getServiceSync<Store>(STORE_SERVICE).state.credentials.token
+            authToken: getServiceSync<Store>(STORE_SERVICE).state.credentials && getServiceSync<Store>(STORE_SERVICE).state.credentials.token,
           });
         };
         const hubPhxChannel = socket.channel(`hub:${hubId}`, hubChannelParamsForPermsToken(oauthFlowPermsToken));
@@ -110,11 +110,11 @@ export class RoomService implements IService {
           .receive("ok", async () => {
             hubPhxChannel.push("favorite", {});
           })
-          .receive("error", res => {
+          .receive("error", (res) => {
             console.error(res);
           });
       })
-      .receive("error", res => {
+      .receive("error", (res) => {
         console.error(res);
       });
   }
@@ -137,8 +137,8 @@ export class RoomService implements IService {
     let res = await fetch(createUrl, {
       body: JSON.stringify(payload),
       headers,
-      method: "POST"
-    }).then(r => r.json());
+      method: "POST",
+    }).then((r) => r.json());
 
     if (res.error === "invalid_token") {
       // Clear the invalid token from store.
@@ -149,8 +149,8 @@ export class RoomService implements IService {
       res = await fetch(createUrl, {
         body: JSON.stringify(payload),
         headers,
-        method: "POST"
-      }).then(r => r.json());
+        method: "POST",
+      }).then((r) => r.json());
     }
 
     const hub = res;
@@ -188,31 +188,31 @@ export class RoomService implements IService {
       attributions: {
         content: [
           {
-            title: "Salle"
+            title: "Salle",
           },
           {
-            title: "Image"
+            title: "Image",
           },
           {
-            title: "Image 1"
+            title: "Image 1",
           },
           {
-            title: "Video"
-          }
+            title: "Video",
+          },
         ],
-        creator: ""
+        creator: "",
       },
       description: null,
       id: sceneid, //"EW4e3CG"
       images: {
         preview: {
-          url: imageUrl //"https://alphahub.aptero.co/files/cb50c02d-585a-4feb-8461-e6d8cd34b656.jpg"
-        }
+          url: imageUrl, //"https://alphahub.aptero.co/files/cb50c02d-585a-4feb-8461-e6d8cd34b656.jpg"
+        },
       },
       name: name,
       project_id: "XXXXX",
       type: "scene",
-      url: window.location.origin + "/" + sceneid
+      url: window.location.origin + "/" + sceneid,
     };
   }
 }

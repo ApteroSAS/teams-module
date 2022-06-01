@@ -69,10 +69,10 @@ export async function getReticulumMeta() {
       reticulumMeta = {
         version: document.querySelector("meta[name='ret:version']").getAttribute("value"),
         pool: document.querySelector("meta[name='ret:pool']").getAttribute("value"),
-        phx_host: document.querySelector("meta[name='ret:phx_host']").getAttribute("value")
+        phx_host: document.querySelector("meta[name='ret:phx_host']").getAttribute("value"),
       };
     } else {
-      await fetch(getReticulumFetchUrl("/api/v1/meta")).then(async res => {
+      await fetch(getReticulumFetchUrl("/api/v1/meta")).then(async (res) => {
         reticulumMeta = await res.json();
       });
     }
@@ -167,7 +167,7 @@ export function fetchReticulumAuthenticated(url, method = "GET", payload) {
   const retUrl = getReticulumFetchUrl(url);
   const params: any = {
     headers: { "content-type": "application/json" },
-    method
+    method,
   };
   if (token) {
     params.headers.authorization = `bearer ${token}`;
@@ -176,7 +176,7 @@ export function fetchReticulumAuthenticated(url, method = "GET", payload) {
     params.body = JSON.stringify(payload);
   }
   return fetch(retUrl, params)
-    .then(async response => {
+    .then(async (response) => {
       if (!response.ok) {
         throw new Error("API error");
       }
@@ -210,8 +210,8 @@ export async function createAndRedirectToNewHub(name, sceneId, replace) {
   let res = await fetch(createUrl, {
     body: JSON.stringify(payload),
     headers,
-    method: "POST"
-  }).then(r => r.json());
+    method: "POST",
+  }).then((r) => r.json());
 
   if (res.error === "invalid_token") {
     // Clear the invalid token from store.
@@ -222,8 +222,8 @@ export async function createAndRedirectToNewHub(name, sceneId, replace) {
     res = await fetch(createUrl, {
       body: JSON.stringify(payload),
       headers,
-      method: "POST"
-    }).then(r => r.json());
+      method: "POST",
+    }).then((r) => r.json());
   }
 
   const hub = res;
@@ -232,7 +232,7 @@ export async function createAndRedirectToNewHub(name, sceneId, replace) {
   const creatorAssignmentToken = hub.creator_assignment_token;
   if (creatorAssignmentToken) {
     store.update({
-      creatorAssignmentTokens: [{ hubId: hub.hub_id, creatorAssignmentToken: creatorAssignmentToken }]
+      creatorAssignmentTokens: [{ hubId: hub.hub_id, creatorAssignmentToken: creatorAssignmentToken }],
     });
 
     // Don't need to store the embed token if there's no creator assignment token, since that means
@@ -241,7 +241,7 @@ export async function createAndRedirectToNewHub(name, sceneId, replace) {
 
     if (embedToken) {
       store.update({
-        embedTokens: [{ hubId: hub.hub_id, embedToken: embedToken }]
+        embedTokens: [{ hubId: hub.hub_id, embedToken: embedToken }],
       });
     }
   }
@@ -273,7 +273,7 @@ export function getPresenceProfileForSession(presences, sessionId) {
 
 function migrateBindings(oldChannel, newChannel) {
   const doNotDuplicate = ["phx_close", "phx_error", "phx_reply", "presence_state", "presence_diff"];
-  const shouldDuplicate = event => {
+  const shouldDuplicate = (event) => {
     return !event.startsWith("chan_reply_") && !doNotDuplicate.includes(event);
   };
   for (let i = 0, l = oldChannel.bindings.length; i < l; i++) {
@@ -308,7 +308,7 @@ export function migrateChannelToSocket(oldChannel, socket, params) {
     joinPush.receive(item.status, item.callback);
   }
 
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     joinPush.receive("ok", () => {
       // Clear all event handlers first so no duplicate messages come in.
       oldChannel.bindings = [];
@@ -323,12 +323,12 @@ export function migrateToChannel(oldChannel, newChannel) {
   return new Promise((resolve, reject) => {
     newChannel
       .join()
-      .receive("ok", data => {
+      .receive("ok", (data) => {
         oldChannel.leave();
         oldChannel.bindings = [];
         resolve(data);
       })
-      .receive("error", data => {
+      .receive("error", (data) => {
         newChannel.leave();
         reject(data);
       });
@@ -342,7 +342,7 @@ export function discordBridgesForPresences(presences) {
       if (m.profile && m.profile.discordBridges) {
         Array.prototype.push.apply(
           channels,
-          m.profile.discordBridges.map(b => b.channel.name)
+          m.profile.discordBridges.map((b) => b.channel.name)
         );
       }
     }
@@ -375,7 +375,7 @@ export function denoisePresence({ onJoin, onLeave, onChange }) {
       } else {
         onChange(key, removed.metas[removed.metas.length - 1], remaining.metas[remaining.metas.length - 1]);
       }
-    }
+    },
   };
 }
 
@@ -392,7 +392,7 @@ export function presenceEventsForHub(events) {
   return {
     onJoin,
     onLeave,
-    onChange
+    onChange,
   };
 }
 

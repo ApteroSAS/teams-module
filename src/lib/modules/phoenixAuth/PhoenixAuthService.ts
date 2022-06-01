@@ -4,7 +4,7 @@ import {
   createAndRedirectToNewHub,
   fetchReticulumAuthenticated,
   getReticulumFetchUrl,
-  isLocalClient
+  isLocalClient,
 } from "@root/modules/phoenixAuth/phoenix-utils";
 import AuthChannel from "@root/modules/phoenixAuth/auth-channel";
 import { IService } from "@aptero/axolotis-player";
