@@ -1,5 +1,6 @@
 import * as microsoftTeams from "@microsoft/teams-js";
-import { getMSEvents, PROCESS_DEEPLINK } from "./MsTeams";
+import { getMSEvents } from "./MsTeamsUtils";
+import { PROCESS_DEEPLINK } from "@root/modules/microsoft/Events";
 
 export class DeepLinkService {
   start() {

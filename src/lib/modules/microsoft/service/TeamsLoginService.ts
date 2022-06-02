@@ -1,8 +1,8 @@
-import { msTeams } from "./MsTeams";
+import { msTeamsUtils } from "./MsTeamsUtils";
 import { LogLevel, setLogLevel, setLogFunction, createMicrosoftGraphClient, TeamsFx, IdentityType } from "@microsoft/teamsfx";
 import * as microsoftTeams from "@microsoft/teams-js";
 import { getAuthEvents, LOGGED_BASIC_INFO } from "./AuthEvent";
-import { getScopes, getScopesLight } from "./scope";
+import { getScopes, getScopesLight } from "../scope";
 import { MicrosoftGraphService } from "./MicrosoftGraphService";
 import { MsToNativeLoginBridge } from "../../phoenixAuth/MsToNativeLoginBridge";
 import { getMsProperties } from "@root/modules/microsoft/service/Properties";
@@ -95,7 +95,7 @@ export class TeamsLoginService {
   }
 
   async passiveLogin() {
-    if (!msTeams()) {
+    if (!msTeamsUtils()) {
       throw new Error("not in teams");
     }
     try {

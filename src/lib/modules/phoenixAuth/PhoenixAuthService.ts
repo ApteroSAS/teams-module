@@ -8,7 +8,7 @@ import {
 } from "@root/modules/phoenixAuth/phoenix-utils";
 import AuthChannel from "@root/modules/phoenixAuth/auth-channel";
 import { IService } from "@aptero/axolotis-player";
-import { AuthInterface } from "@root/modules/phoenixAuth/AuthInterface";
+import { AuthInterface } from "@root/common/AuthInterface";
 
 export class PhoenixAuthService implements IService {
   adminRole = new AdminRole();

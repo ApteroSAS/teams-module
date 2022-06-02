@@ -16,8 +16,8 @@
       type="text/javascript"
       src="https://alcdn.msauth.net/browser/2.21.0/js/msal-browser.min.js"
       integrity="sha384-s/NxjjAgw1QgpDhOlVjTceLl4axrp5nqpUbCPOEQy1PqbFit9On6uw2XmEF1eq0s"
-      crossorigin="anonymous">
-    </script>
+      crossorigin="anonymous"
+    ></script>
     <script type="text/javascript">
       microsoftTeams.initialize();
 
@@ -33,19 +33,19 @@
           auth: {
             clientId: clientId,
             authority: `https://login.microsoftonline.com/common`,
-            navigateToLoginRequestUrl: false
+            navigateToLoginRequestUrl: false,
           },
           cache: {
             cacheLocation: "sessionStorage",
           },
-        }
+        };
 
         const msalInstance = new msal.PublicClientApplication(msalConfig);
         const scopesArray = scope.split(" ");
         const scopesRequest = {
           scopes: scopesArray,
           redirectUri: window.location.origin + `/auth-end.html?clientId=${clientId}`,
-          loginHint: loginHint
+          loginHint: loginHint,
         };
         await msalInstance.loginRedirect(scopesRequest);
       });

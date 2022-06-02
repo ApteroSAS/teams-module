@@ -2,10 +2,9 @@ import { getServiceSync } from "@aptero/axolotis-player";
 
 const EventEmitter = require("eventemitter3");
 
-export const CHANGE_SETTINGS_URL = "ms-teams-change-settings-url";
-export const PROCESS_DEEPLINK = "ms-teams-deep-link";
 import * as microsoftTeams from "@microsoft/teams-js";
-import { MICROSOFT_STATIC_SERVICE, MsTeams } from "@root/index";
+import { MICROSOFT_STATIC_SERVICE, MsTeamsAPILight } from "@root/index";
+import { CHANGE_SETTINGS_URL, PROCESS_DEEPLINK } from "@root/modules/microsoft/Events";
 
 let eventListener = new EventEmitter();
 
@@ -17,8 +16,8 @@ export function getMSEvents() {
   return eventListener;
 }
 
-export function msTeams() {
-  return getServiceSync<MsTeams>(MICROSOFT_STATIC_SERVICE).msTeams();
+export function msTeamsUtils() {
+  return getServiceSync<MsTeamsAPILight>(MICROSOFT_STATIC_SERVICE).msTeams();
 }
 
 export function changeUrlSettings(url) {
@@ -37,7 +36,7 @@ export async function getContext(callback) {
 }
 
 export function processDeepLink(link) {
-  if (msTeams()) {
+  if (msTeamsUtils()) {
     sendEvent(PROCESS_DEEPLINK, { link });
   } else {
     window.open(link, "_blank");

@@ -1,5 +1,12 @@
 import { getService, getServiceSync } from "@aptero/axolotis-player";
-import { MsTeams } from "@root/modules/microsoft/MsTeams";
+/**
+ * Should only import type to stay lightweight
+ */
+import type { MsTeamsAPILight } from "@root/modules/microsoft/MsTeamsAPILight";
+import type { Properties } from "@root/index";
+import type { RoomService } from "@root/modules/roomAPI/RoomService";
+import type { PhoenixAuthService } from "@root/modules/phoenixAuth/PhoenixAuthService";
+import type { MsTeamsAPI } from "@root/modules/microsoft/MsTeamsAPI";
 
 export const MICROSOFT_SERVICE = "@aptero/axolotis-module-teams/MicrosoftService";
 export const MICROSOFT_STATIC_SERVICE = "@aptero/axolotis-module-teams/MicrosoftStaticService";
@@ -10,16 +17,24 @@ export const PHX_AUTH_SERVICE = "@aptero/axolotis-module-phx-auth/PhoenixAuthSer
 export const NAME_SERVICE = "@aptero/axolotis-module-name/PhoenixAuthService";
 export const ROOM_SERVICE = "@aptero/axolotis-module-room/RoomService";
 
-import { MicrosoftService, Properties } from "@root/index";
-
-export function msTeamsService() {
-  return getServiceSync<MsTeams>(MICROSOFT_STATIC_SERVICE);
+//msTeamsAPILight
+export function msTeamsAPILight() {
+  return getServiceSync<MsTeamsAPILight>(MICROSOFT_STATIC_SERVICE);
 }
 
 export function propertyService() {
   return getServiceSync<Properties>(PROPERTIES_SERVICE);
 }
 
-export async function microsoftService() {
-  return getService<MicrosoftService>(MICROSOFT_SERVICE);
+export function roomService() {
+  return getServiceSync<RoomService>(ROOM_SERVICE);
+}
+
+export function phoenixAuth() {
+  return getServiceSync<PhoenixAuthService>(PHX_AUTH_SERVICE);
+}
+
+//msTeamsAPI
+export async function msTeamsAPI() {
+  return getService<MsTeamsAPI>(MICROSOFT_SERVICE);
 }

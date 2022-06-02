@@ -1,7 +1,7 @@
 import { AdminRole } from "@root/modules/phoenixAuth/AdminRole";
 import AuthChannel from "@root/modules/phoenixAuth/auth-channel";
 import { IService } from "@aptero/axolotis-player";
-import { AuthInterface } from "@root/modules/phoenixAuth/AuthInterface";
+import { AuthInterface } from "@root/common/AuthInterface";
 export declare class PhoenixAuthService implements IService {
     adminRole: AdminRole;
     private ret;

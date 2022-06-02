@@ -3,8 +3,8 @@ const webpack = require('webpack');
 const PrettierPlugin = require("prettier-webpack-plugin");
 const TerserPlugin = require('terser-webpack-plugin');
 const getPackageJson = require('./scripts/getPackageJson');
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 
-const libName = "axolotis-module-teams";
 
 const {
     version,
@@ -12,6 +12,8 @@ const {
     license,
     author,
 } = getPackageJson('version', 'name', 'license', 'repository', 'author');
+
+const libName = name;
 
 const banner = `
   ${name} v${version}
@@ -37,13 +39,29 @@ module.exports = {
         filename: '[name].js',
         path: path.join(__dirname, 'build'),
         library: {
-            name: libName,
+            name: libName.split("/")[libName.split("/").length-1],
             type: 'umd2',//https://webpack.js.org/configuration/output/#outputlibrarytype
         },
         umdNamedDefine: true
     },
     optimization: {
         minimize: true,
+        splitChunks: {
+            chunks: 'all',
+            maxInitialRequests: Infinity,
+            minSize: 0,
+            cacheGroups: {
+                vendor: {
+                    test: /[\\/]node_modules[\\/]/,
+                    //name: 'library/'+libName+"/[name]",
+                    // cacheGroupKey here is `commons` as the key of the cacheGroup
+                    filename: '[name].[fullhash].js',
+                    name : (module, chunks, cacheGroupKey) => {
+                        return 'library/'+module.resourceResolveData.descriptionFileData.name
+                    },
+                }
+            }
+        },
         minimizer: [
             new TerserPlugin({
                 extractComments: false, terserOptions: {
@@ -66,6 +84,17 @@ module.exports = {
         ]
     },
     plugins: [
+        new CopyWebpackPlugin({
+            patterns: [
+                {
+                    from: "./src/lib/modules/microsoft/page/auth-start.html",
+                    to: "library/@aptero/axolotis-module-teams/assets/auth-start.html"
+                },
+                {
+                    from: "./src/lib/modules/microsoft/page/auth-end.html",
+                    to: "library/@aptero/axolotis-module-teams/assets/auth-end.html"
+                }]
+        }),
         new PrettierPlugin(),
         new webpack.BannerPlugin(banner)
     ],

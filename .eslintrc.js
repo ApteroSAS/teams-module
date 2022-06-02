@@ -10,25 +10,11 @@ module.exports = {
             "experimentalObjectRestSpread": true
         }
     },
-    "plugins": ["@typescript-eslint","prettier", "react", "react-hooks", "@calm/react-intl"],
+    "plugins": ["@typescript-eslint","prettier"],
     "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
     "rules": {
         // https://github.com/prettier/eslint-plugin-prettier
         "prettier/prettier": "off",
-        // https://www.npmjs.com/package/eslint-plugin-react-hooks
-        "react-hooks/rules-of-hooks": "error",
-        "react-hooks/exhaustive-deps": "warn",
-        // https://github.com/calm/eslint-plugin-react-intl
-        "@calm/react-intl/missing-formatted-message": [
-            "error",
-            {
-                noTrailingWhitespace: true,
-                ignoreLinks: true,
-                enforceLabels: true,
-                enforceImageAlts: true,
-                enforceInputProps: false
-            }
-        ],
         "comma-dangle": 0,
         "no-unused-vars": "warn",
         "no-unexpected-multiline": "warn",

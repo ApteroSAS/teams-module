@@ -4,7 +4,7 @@ export interface AuthInterface {
         displayName: any;
         id: any;
     };
-    passiveLogIn(): Promise<true>;
-    signOut(): Promise<true>;
-    signIn(): Promise<true>;
+    passiveLogIn(): Promise<void>;
+    signOut(): Promise<void>;
+    signIn(): Promise<void>;
 }

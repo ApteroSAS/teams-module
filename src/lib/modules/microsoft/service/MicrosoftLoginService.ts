@@ -1,11 +1,12 @@
-import { msTeams } from "./MsTeams";
+import { msTeamsUtils } from "./MsTeamsUtils";
 import { MicrosoftGraphService } from "./MicrosoftGraphService";
 import { MicrosoftOauthLoginService } from "./MicrosoftOauthLoginService";
 import { TeamsLoginService } from "./TeamsLoginService";
 import { MsToNativeLoginBridge } from "../../phoenixAuth/MsToNativeLoginBridge";
 import { getAuthEvents, AUTH_SERVICE_INITIALIZE } from "./AuthEvent";
+import { AuthInterface } from "@root/common/AuthInterface";
 
-export class MicrosoftLoginService {
+export class MicrosoftLoginService implements AuthInterface {
   authInProgress = false;
   msGraphService = new MicrosoftGraphService();
   msToNativeLoginBridge = new MsToNativeLoginBridge();
@@ -19,7 +20,7 @@ export class MicrosoftLoginService {
     });
   }
 
-  async onReady() {
+  async onReady(): Promise<boolean> {
     if (this.initialized) {
       return Promise.resolve(true);
     } else {
@@ -39,7 +40,7 @@ export class MicrosoftLoginService {
       setTimeout(() => {
         this.authInProgress = false;
       }, 1000);
-      if (msTeams()) {
+      if (msTeamsUtils()) {
         await this.teamsLoginService.passiveLogin();
         this.authInProgress = false;
       } else {
@@ -56,7 +57,7 @@ export class MicrosoftLoginService {
       setTimeout(() => {
         this.authInProgress = false;
       }, 1000);
-      if (msTeams()) {
+      if (msTeamsUtils()) {
         await this.teamsLoginService.userInteractionAuth();
         this.authInProgress = false;
       } else {
@@ -95,7 +96,7 @@ export class MicrosoftLoginService {
         this.authInProgress = false;
       }, 1000);
       this.msToNativeLoginBridge.clearProfile();
-      if (msTeams()) {
+      if (msTeamsUtils()) {
         await this.teamsLoginService.logout();
         this.authInProgress = false;
       } else {
@@ -111,6 +112,22 @@ export class MicrosoftLoginService {
 
   isSignedIn() {
     return this.msToNativeLoginBridge.isLogged();
+  }
+
+  getAccount(): { email; displayName; id } {
+    return { displayName: undefined, email: undefined, id: undefined };
+  }
+
+  passiveLogIn(): Promise<void> {
+    return this.passiveLogin();
+  }
+
+  signIn(): Promise<void> {
+    return this.login();
+  }
+
+  signOut(): Promise<void> {
+    return this.signOut();
   }
 }
 

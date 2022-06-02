@@ -6,7 +6,7 @@ if (!(worlds && worlds.length > 0)) {
 }
 registerItem(new AxItem()); //auto registration of service
 
-export * from "./modules/microsoft/MsTeams";
-export * from "./modules/microsoft/MicrosoftService";
+export * from "./modules/microsoft/MsTeamsAPILight";
 export * from "./modules/properties/Properties";
 export * from "./ImportHelper";
+export * from "./modules/microsoft/Events";

@@ -2,14 +2,14 @@
   "name": "@aptero/axolotis-module-teams",
   "version": "1.0.0",
   "description": "Axolotis - Teams module",
-  "browser": "build/index.js",
+  "main": "build/index.js",
   "exports": {
     ".": "./build/index.js",
-    "./*": "./build/@aptero/axolotis-module-teams/*"
+    "./*": "./build/*"
   },
   "types": "build/index.d.ts",
   "scripts": {
-    "build": "webpack && ttsc --emitDeclarationOnly",
+    "build": "tsc && webpack && ttsc --emitDeclarationOnly",
     "start": "cross-env OPEN=true yarn run dev",
     "dev": "cross-env NODE_ENV=development webpack serve --config webpack.config.demo.js",
     "dev:watch": "cross-env DEVTOOL=eval-source-map tsc-watch --onSuccess \"yarn run build\"",
@@ -45,6 +45,7 @@
     "babel-loader": "^8.2.5",
     "babel-plugin-istanbul": "^6.1.1",
     "babel-preset-minify": "^0.5.2",
+    "copy-webpack-plugin": "^11.0.0",
     "cross-env": "^7.0.3",
     "eslint": "^8.16.0",
     "eslint-config-prettier": "^8.5.0",
@@ -73,7 +74,7 @@
     "@azure/msal-browser": "2.16.1",
     "@microsoft/microsoft-graph-client": "^3.0.2",
     "@microsoft/teams-js": "^1.12.1",
-    "@microsoft/teamsfx": "^0.7.1-beta.c23501411.0",
+    "@microsoft/teamsfx": "^1.0.0",
     "deepmerge": "^4.2.2",
     "event-target-shim": "^6.0.2",
     "eventemitter3": "^4.0.7",

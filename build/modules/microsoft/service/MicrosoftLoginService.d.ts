@@ -2,7 +2,8 @@ import { MicrosoftGraphService } from "./MicrosoftGraphService";
 import { MicrosoftOauthLoginService } from "./MicrosoftOauthLoginService";
 import { TeamsLoginService } from "./TeamsLoginService";
 import { MsToNativeLoginBridge } from "../../phoenixAuth/MsToNativeLoginBridge";
-export declare class MicrosoftLoginService {
+import { AuthInterface } from "@root/common/AuthInterface";
+export declare class MicrosoftLoginService implements AuthInterface {
     authInProgress: boolean;
     msGraphService: MicrosoftGraphService;
     msToNativeLoginBridge: MsToNativeLoginBridge;
@@ -19,5 +20,13 @@ export declare class MicrosoftLoginService {
     logout(): Promise<void>;
     displayProfilePhoto(): any;
     isSignedIn(): boolean;
+    getAccount(): {
+        email: any;
+        displayName: any;
+        id: any;
+    };
+    passiveLogIn(): Promise<void>;
+    signIn(): Promise<void>;
+    signOut(): Promise<void>;
 }
 export declare const microsoftLoginService: MicrosoftLoginService;

@@ -2,7 +2,7 @@ import axios from "axios";
 import { COOKIE_STORE_SERVICE, NAME_SERVICE, PHX_AUTH_SERVICE, Properties, STORE_SERVICE } from "@root/index";
 import { PropertiesFormat, PROPERTY_KEY } from "@root/modules/roomAPI/PropertiesFormat";
 import { getServiceSync, IService } from "@aptero/axolotis-player";
-import { changeUrlSettings } from "@root/modules/microsoft/service/MsTeams";
+import { changeUrlSettings } from "@root/modules/microsoft/service/MsTeamsUtils";
 
 //import Cookies from "js-cookie";
 import { createHubChannelParams } from "./hub-utils";

@@ -1,5 +1,5 @@
 import { PublicClientApplication } from "@azure/msal-browser";
-import { getScopesLight } from "./scope";
+import { getScopesLight } from "../scope";
 import { MicrosoftGraphService } from "./MicrosoftGraphService";
 import { MsToNativeLoginBridge } from "../../phoenixAuth/MsToNativeLoginBridge";
 import { getMsProperties } from "@root/modules/microsoft/service/Properties";
