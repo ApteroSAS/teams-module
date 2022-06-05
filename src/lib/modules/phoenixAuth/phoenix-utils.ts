@@ -2,8 +2,8 @@ import { Socket } from "phoenix";
 
 import { sleep } from "@root/modules/phoenixAuth/async-utils";
 import { generateHubName } from "@root/modules/nameGeneration/name-generation";
-import { Properties, propertyService, STORE_SERVICE } from "@root/index";
-import { PropertiesFormat, PROPERTY_KEY } from "@root/modules/phoenixAuth/PropertiesFormat";
+import { propertyService, STORE_SERVICE } from "@root/ImportHelper";
+import { PropertiesFormat } from "@root/modules/phoenixAuth/PropertiesFormat";
 import { getServiceSync } from "@aptero/axolotis-player";
 import Store from "@root/modules/store/Store";
 

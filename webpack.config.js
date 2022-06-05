@@ -14,6 +14,7 @@ const {
 } = getPackageJson('version', 'name', 'license', 'repository', 'author');
 
 const libName = name;
+console.log(libName);
 
 const banner = `
   ${name} v${version}
@@ -35,7 +36,7 @@ module.exports = {
         index: path.join(__dirname, './src/lib/index.ts'),
     },
     output: {
-        chunkFilename: '[name].[chunkhash].js',
+        chunkFilename: 'library/[name].[chunkhash].js',
         filename: '[name].js',
         path: path.join(__dirname, 'build'),
         library: {
@@ -47,17 +48,14 @@ module.exports = {
     optimization: {
         minimize: true,
         splitChunks: {
-            chunks: 'all',
-            maxInitialRequests: Infinity,
-            minSize: 0,
+            //https://webpack.js.org/plugins/split-chunks-plugin/
+            chunks: 'async',
+            //filename: 'library/[name].[fullhash].js',
             cacheGroups: {
                 vendor: {
-                    test: /[\\/]node_modules[\\/]/,
-                    //name: 'library/'+libName+"/[name]",
-                    // cacheGroupKey here is `commons` as the key of the cacheGroup
-                    filename: '[name].[fullhash].js',
+                    //each vendor a one async bundle
                     name : (module, chunks, cacheGroupKey) => {
-                        return 'library/'+module.resourceResolveData.descriptionFileData.name
+                        return module.resourceResolveData.descriptionFileData.name
                     },
                 }
             }
@@ -98,9 +96,6 @@ module.exports = {
         new PrettierPlugin(),
         new webpack.BannerPlugin(banner)
     ],
-    externals: {
-        '@aptero/axolotis-player':'umd @aptero/axolotis-player',
-    },
     resolve: {
         alias: {
             "@root": path.join(__dirname, "./src/lib")

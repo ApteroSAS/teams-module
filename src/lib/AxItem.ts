@@ -9,7 +9,7 @@ import {
   PROPERTIES_SERVICE,
   ROOM_SERVICE,
   STORE_SERVICE,
-} from "@root/index";
+} from "@root/ImportHelper";
 
 //These static imports should be lightweight
 import { MsTeamsAPILight } from "@root/modules/microsoft/MsTeamsAPILight";
@@ -22,6 +22,9 @@ import { CookieStore } from "@root/modules/store/CookieStore"; //TODO migrate to
 import { RoomService } from "@root/modules/roomAPI/RoomService"; //TODO migrate to own package
 
 export class AxItem implements Item {
+  constructor() {
+    console.log("@aptero/axolotis-module-teams installed");
+  }
   staticService(): { [id: string]: IService } {
     let ret = {};
     ret[MICROSOFT_STATIC_SERVICE] = new MsTeamsAPILight();
@@ -38,7 +41,7 @@ export class AxItem implements Item {
     let ret = {};
     ret[MICROSOFT_SERVICE] = async () => {
       const module = await import(
-        /*  webpackPrefetch: 0,  webpackMode: 'lazy',  webpackChunkName: "library/@aptero/axolotis-module-teams/MsTeamsAPI"  */
+        /*  webpackPrefetch: 0,  webpackMode: 'lazy',  webpackChunkName: "@aptero/axolotis-module-teams/MsTeamsAPI"  */
         "./modules/microsoft/MsTeamsAPI"
       );
       return { module, classname: module.Factory.name };

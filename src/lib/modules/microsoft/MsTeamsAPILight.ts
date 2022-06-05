@@ -1,5 +1,5 @@
 import { IService } from "@aptero/axolotis-player";
-import { msTeamsAPI } from "@root/index";
+import { msTeamsAPI } from "@root/ImportHelper";
 export const MICROSOFT_AUTH_ERROR = "error_microsoft_not_authorized";
 export const MSTEAMS_QUERY_PARAM = "msteams";
 

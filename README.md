@@ -1,15 +1,14 @@
-Exports: 
-a login logout button
-a Static axolotis component
-a Dynamic axolotis service (how to setup webpack)
-3 html pages (how to setup webpack)
-    auth-end.html
-    auth-start.html
-    microsoft-settings.html
-SidePanel Redirect Function
+This is the axolotis-teams-modules that allows the application
+to use the teams and microsoft service directly.
 
-TODO
-axolotis authInterface
-Service and component registration (with interface also)
-Properties service for Config
-doc to explain the files to copy
+library contains async files and should be served in the parent project example with webpack:
+```javascript
+new CopyWebpackPlugin({
+    patterns: [{
+        from: "node_modules/@aptero/axolotis-module-teams/build/library/",
+        to: "assets/js/library"
+    }]
+})
+```
+
+

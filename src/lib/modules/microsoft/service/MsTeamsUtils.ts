@@ -3,7 +3,8 @@ import { getServiceSync } from "@aptero/axolotis-player";
 const EventEmitter = require("eventemitter3");
 
 import * as microsoftTeams from "@microsoft/teams-js";
-import { MICROSOFT_STATIC_SERVICE, MsTeamsAPILight } from "@root/index";
+import { MICROSOFT_STATIC_SERVICE } from "@root/ImportHelper";
+import { MsTeamsAPILight } from "@root/modules/microsoft/MsTeamsAPILight";
 import { CHANGE_SETTINGS_URL, PROCESS_DEEPLINK } from "@root/modules/microsoft/Events";
 
 let eventListener = new EventEmitter();
