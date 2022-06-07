@@ -12,6 +12,7 @@ export declare class RoomService implements IService {
     setFavorite(hubId: any): Promise<void>;
     createAndSelect(sceneId: any, name?: any): Promise<any>;
     createRoom(sceneid: any): Promise<void>;
+    changeUrlSettings(url: any): void;
     createRoomEntry(name: any, sceneid: any, imageUrl: any): {
         allow_remixing: boolean;
         attributions: {

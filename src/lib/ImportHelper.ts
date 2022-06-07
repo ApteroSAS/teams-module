@@ -18,23 +18,28 @@ export const NAME_SERVICE = "@aptero/axolotis-module-name/PhoenixAuthService";
 export const ROOM_SERVICE = "@aptero/axolotis-module-room/RoomService";
 
 //msTeamsAPILight
-export function msTeamsAPILight() {
+export function msTeamsAPILight(): MsTeamsAPILight {
   return getServiceSync<MsTeamsAPILight>(MICROSOFT_STATIC_SERVICE);
 }
 
-export function propertyService() {
+export function propertyService(): Properties {
   return getServiceSync<Properties>(PROPERTIES_SERVICE);
 }
 
-export function roomService() {
+export function roomService(): RoomService {
   return getServiceSync<RoomService>(ROOM_SERVICE);
 }
 
-export function phoenixAuth() {
+export function phoenixAuth(): PhoenixAuthService {
   return getServiceSync<PhoenixAuthService>(PHX_AUTH_SERVICE);
 }
 
+//Helps to transition to 100% async
+export function msTeamsAPILightAsync(): Promise<MsTeamsAPILight> {
+  return getService<MsTeamsAPILight>(MICROSOFT_STATIC_SERVICE);
+}
+
 //msTeamsAPI
-export async function msTeamsAPI() {
+export async function msTeamsAPI(): Promise<MsTeamsAPI> {
   return getService<MsTeamsAPI>(MICROSOFT_SERVICE);
 }

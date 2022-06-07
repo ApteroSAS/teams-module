@@ -16,7 +16,14 @@
       "baseUrl": "./",
       "paths": {
         "@root/*": ["src/lib/*"]
-      }
+      },
+      "plugins": [
+        {
+          //used to replace the alias by relative path
+          "transform": "typescript-transform-paths",
+          "afterDeclarations": true
+        }
+      ]
     },
     "include": ["src/lib"],
     "exclude": ["src/lib/**/tests","node_modules"]

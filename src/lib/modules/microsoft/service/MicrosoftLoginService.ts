@@ -14,6 +14,10 @@ export class MicrosoftLoginService implements AuthInterface {
   teamsLoginService = new TeamsLoginService(this.msGraphService, this.msToNativeLoginBridge);
   private initialized: boolean = false;
 
+  getTeamsLoginService() {
+    return this.teamsLoginService;
+  }
+
   constructor() {
     this.onReady().then(() => {
       this.initialized = true;

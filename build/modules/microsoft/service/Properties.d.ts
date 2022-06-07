@@ -1,2 +1,2 @@
-import { PropertiesFormat } from "@root/modules/microsoft/PropertiesFormat";
+import { PropertiesFormat } from "../PropertiesFormat";
 export declare function getMsProperties(): PropertiesFormat;

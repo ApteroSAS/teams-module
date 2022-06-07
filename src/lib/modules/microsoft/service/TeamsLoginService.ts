@@ -31,21 +31,21 @@ function initTeamsFx(authorityHost) {
   });
 }
 
-export function getCredential() {
-  if (!credential) {
-    initTeamsFx("common");
-  }
-  if (!credential) {
-    throw new Error("");
-  }
-  return credential;
-}
-
 export class TeamsLoginService {
   constructor(private microsoftGraphService: MicrosoftGraphService, private msToNativeLoginBridge: MsToNativeLoginBridge) {}
 
+  getCredential() {
+    if (!credential) {
+      initTeamsFx("common");
+    }
+    if (!credential) {
+      throw new Error("");
+    }
+    return credential;
+  }
+
   async initBasicInfo() {
-    const cred = getCredential();
+    const cred = this.getCredential();
     await cred.getUserInfo();
     getAuthEvents().emit(LOGGED_BASIC_INFO);
     return cred;

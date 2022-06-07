@@ -2,11 +2,11 @@ import { TeamsFx } from "@microsoft/teamsfx";
 import { MicrosoftGraphService } from "./MicrosoftGraphService";
 import { MsToNativeLoginBridge } from "../../phoenixAuth/MsToNativeLoginBridge";
 export declare const startLoginPageUrl: string;
-export declare function getCredential(): TeamsFx;
 export declare class TeamsLoginService {
     private microsoftGraphService;
     private msToNativeLoginBridge;
     constructor(microsoftGraphService: MicrosoftGraphService, msToNativeLoginBridge: MsToNativeLoginBridge);
+    getCredential(): TeamsFx;
     initBasicInfo(): Promise<TeamsFx>;
     initGraph(scopes: any): Promise<void>;
     userInteractionAuth(): Promise<TeamsFx>;

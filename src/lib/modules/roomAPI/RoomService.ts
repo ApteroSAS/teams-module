@@ -1,5 +1,5 @@
 import axios from "axios";
-import { COOKIE_STORE_SERVICE, NAME_SERVICE, PHX_AUTH_SERVICE, STORE_SERVICE } from "@root/ImportHelper";
+import { COOKIE_STORE_SERVICE, NAME_SERVICE, PHX_AUTH_SERVICE, PROPERTIES_SERVICE, STORE_SERVICE } from "@root/ImportHelper";
 import { Properties } from "@root/modules/properties/Properties";
 import { PropertiesFormat, PROPERTY_KEY } from "@root/modules/roomAPI/PropertiesFormat";
 import { getServiceSync, IService } from "@aptero/axolotis-player";
@@ -47,7 +47,7 @@ export class RoomService implements IService {
 
   async getEmbedToken(roomSID, origin) {
     if (window.location.origin.startsWith("https://localhost")) {
-      let conf = getServiceSync<Properties>(Properties.name).get<PropertiesFormat>(PROPERTY_KEY);
+      let conf = getServiceSync<Properties>(PROPERTIES_SERVICE).get<PropertiesFormat>(PROPERTY_KEY);
       origin = conf.ROOM_TOKEN_SERVICE || window.location.origin;
     }
     let res = await axios.get(origin + "/service/room/" + "room/" + roomSID + "/embed/token");
@@ -181,6 +181,10 @@ export class RoomService implements IService {
     let url = await this.createAndSelect(sceneid);
     console.log("created room : " + url);
     changeUrlSettings(url);
+  }
+
+  changeUrlSettings(url) {
+    return changeUrlSettings(url);
   }
 
   createRoomEntry(name, sceneid, imageUrl) {
