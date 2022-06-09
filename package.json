@@ -70,9 +70,9 @@
   },
   "dependencies": {
     "@aptero/axolotis-player": "git+https://github.com/ApteroSAS/axolotis-player.git#semver:^1",
-    "@azure/msal-browser": "2.16.1",
+    "@azure/msal-browser": "2.25.0",
     "@microsoft/microsoft-graph-client": "^3.0.2",
-    "@microsoft/teams-js": "^1.12.1",
+    "@microsoft/teams-js": "^2.0.0",
     "@microsoft/teamsfx": "^1.0.0",
     "deepmerge": "^4.2.2",
     "event-target-shim": "^6.0.2",
