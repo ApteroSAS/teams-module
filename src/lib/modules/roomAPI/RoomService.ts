@@ -1,26 +1,29 @@
 import axios from "axios";
 import { COOKIE_STORE_SERVICE, NAME_SERVICE, PHX_AUTH_SERVICE, PROPERTIES_SERVICE, STORE_SERVICE } from "@root/ImportHelper";
-import { Properties } from "@root/modules/properties/Properties";
 import { PropertiesFormat, PROPERTY_KEY } from "@root/modules/roomAPI/PropertiesFormat";
-import { getServiceSync, IService } from "@aptero/axolotis-player";
+import { IService } from "@aptero/axolotis-player";
 import { changeUrlSettings } from "@root/modules/microsoft/service/MsTeamsUtils";
-
-//import Cookies from "js-cookie";
 import { createHubChannelParams } from "./hub-utils";
-/*import {
-    connectToReticulum,
-    createAndRedirectToNewHub,
-    fetchReticulumAuthenticated,
-    getReticulumFetchUrl, isLocalClient
-} from "../../../../utils/phoenix-utils";*/
+
+import Properties from "@root/modules/properties/Properties";
 import { NameGenerationService } from "@root/modules/nameGeneration/NameGenerationService";
 import Store from "@root/modules/store/Store";
-import { PhoenixAuthService } from "@root/modules/phoenixAuth/PhoenixAuthService";
+import PhoenixAuthService from "@root/modules/phoenixAuth/PhoenixAuthService";
 import { CookieStore } from "@root/modules/store/CookieStore";
 
 declare const window;
 
-export class RoomService implements IService {
+export default class RoomService implements IService {
+  public static dependencies: string[] = [PHX_AUTH_SERVICE, STORE_SERVICE, PROPERTIES_SERVICE, NAME_SERVICE, COOKIE_STORE_SERVICE];
+
+  constructor(
+    private phoenixAuthService: PhoenixAuthService,
+    private store: Store,
+    private properties: Properties,
+    private nameService: NameGenerationService,
+    private cookie: CookieStore
+  ) {}
+
   getType(): string {
     return RoomService.name;
   }
@@ -42,12 +45,12 @@ export class RoomService implements IService {
   }
 
   createAndRedirectToNewHub(a, b, c) {
-    return getServiceSync<PhoenixAuthService>(PHX_AUTH_SERVICE).createAndRedirectToNewHub(a, b, c);
+    return this.phoenixAuthService.createAndRedirectToNewHub(a, b, c);
   }
 
   async getEmbedToken(roomSID, origin) {
     if (window.location.origin.startsWith("https://localhost")) {
-      let conf = getServiceSync<Properties>(PROPERTIES_SERVICE).get<PropertiesFormat>(PROPERTY_KEY);
+      let conf = this.properties.get<PropertiesFormat>(PROPERTY_KEY);
       origin = conf.ROOM_TOKEN_SERVICE || window.location.origin;
     }
     let res = await axios.get(origin + "/service/room/" + "room/" + roomSID + "/embed/token");
@@ -58,9 +61,7 @@ export class RoomService implements IService {
     return (cursor) => {
       if (userId) {
         //https://alphahub.aptero.co/api/v1/media/search?filter=my-scenes&source=scenes&user=640407050966269961
-        return getServiceSync<PhoenixAuthService>(PHX_AUTH_SERVICE).fetchReticulumAuthenticated(
-          `/api/v1/media/search?filter=my-scenes&source=scenes&user=${userId}&cursor=${cursor}`
-        );
+        return this.phoenixAuthService.fetchReticulumAuthenticated(`/api/v1/media/search?filter=my-scenes&source=scenes&user=${userId}&cursor=${cursor}`);
       } else {
         return Promise.reject(new Error("Not signed in"));
       }
@@ -70,9 +71,7 @@ export class RoomService implements IService {
   fetchFavoriteRoom(userId) {
     return (cursor) => {
       if (userId) {
-        return getServiceSync<PhoenixAuthService>(PHX_AUTH_SERVICE).fetchReticulumAuthenticated(
-          `/api/v1/media/search?source=favorites&type=rooms&user=${userId}&cursor=${cursor}`
-        );
+        return this.phoenixAuthService.fetchReticulumAuthenticated(`/api/v1/media/search?source=favorites&type=rooms&user=${userId}&cursor=${cursor}`);
       } else {
         return Promise.reject(new Error("Not signed in"));
       }
@@ -80,29 +79,29 @@ export class RoomService implements IService {
   }
 
   async setFavorite(hubId) {
-    const socket = await getServiceSync<PhoenixAuthService>(PHX_AUTH_SERVICE).connectToReticulum(false);
+    const socket = await this.phoenixAuthService.connectToReticulum(false);
     socket.onClose(() => {});
     // Reticulum global channel
     window.APP.retChannel = socket.channel(`ret`, { hub_id: hubId });
-    getServiceSync<PhoenixAuthService>(PHX_AUTH_SERVICE).setGlobalReticulumChannel(window.APP.retChannel);
+    this.phoenixAuthService.setGlobalReticulumChannel(window.APP.retChannel);
     window.APP.retChannel
       .join()
       .receive("ok", () => {
         const OAUTH_FLOW_PERMS_TOKEN_KEY = "ret-oauth-flow-perms-token";
-        const oauthFlowPermsToken = getServiceSync<CookieStore>(COOKIE_STORE_SERVICE).get(OAUTH_FLOW_PERMS_TOKEN_KEY);
+        const oauthFlowPermsToken = this.cookie.get(OAUTH_FLOW_PERMS_TOKEN_KEY);
         if (oauthFlowPermsToken) {
-          getServiceSync<CookieStore>(COOKIE_STORE_SERVICE).remove(OAUTH_FLOW_PERMS_TOKEN_KEY);
+          this.cookie.remove(OAUTH_FLOW_PERMS_TOKEN_KEY);
         }
         const hubChannelParamsForPermsToken = (permsToken) => {
           return createHubChannelParams({
-            profile: getServiceSync<Store>(STORE_SERVICE).state.profile,
+            profile: this.store.state.profile,
             pushSubscriptionEndpoint: null,
             permsToken,
             isMobile: false,
             isMobileVR: false,
             isEmbed: false,
             hubInviteId: null,
-            authToken: getServiceSync<Store>(STORE_SERVICE).state.credentials && getServiceSync<Store>(STORE_SERVICE).state.credentials.token,
+            authToken: this.store.state.credentials && this.store.state.credentials.token,
           });
         };
         const hubPhxChannel = socket.channel(`hub:${hubId}`, hubChannelParamsForPermsToken(oauthFlowPermsToken));
@@ -121,16 +120,15 @@ export class RoomService implements IService {
   }
 
   async createAndSelect(sceneId, name = undefined) {
-    const createUrl = getServiceSync<PhoenixAuthService>(PHX_AUTH_SERVICE).getReticulumFetchUrl("/api/v1/hubs");
-    let nameService = getServiceSync<NameGenerationService>(NAME_SERVICE);
-    const payload: any = { hub: { name: name || nameService.generateHubName() } };
+    const createUrl = this.phoenixAuthService.getReticulumFetchUrl("/api/v1/hubs");
+    const payload: any = { hub: { name: name || this.nameService.generateHubName() } };
 
     if (sceneId) {
       payload.hub.scene_id = sceneId;
     }
 
     const headers: any = { "content-type": "application/json" };
-    const store = getServiceSync<Store>(STORE_SERVICE);
+    const store = this.store;
     if (store.state && store.state.credentials.token) {
       headers.authorization = `bearer ${store.state.credentials.token}`;
     }
@@ -170,7 +168,7 @@ export class RoomService implements IService {
       }
     }
 
-    if (getServiceSync<PhoenixAuthService>(PHX_AUTH_SERVICE).isLocalClient()) {
+    if (this.phoenixAuthService.isLocalClient()) {
       url = window.location.origin + `/hub.html?hub_id=${hub.hub_id}`;
     }
     this.setFavorite(hub.hub_id);

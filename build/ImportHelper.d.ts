@@ -1,10 +1,10 @@
 /**
  * Should only import type to stay lightweight
  */
-import type { MsTeamsAPILight } from "./modules/microsoft/MsTeamsAPILight";
-import type { Properties } from "./modules/properties/Properties";
-import type { RoomService } from "./modules/roomAPI/RoomService";
-import type { PhoenixAuthService } from "./modules/phoenixAuth/PhoenixAuthService";
+import type MsTeamsAPILight from "./modules/microsoft/MsTeamsAPILight";
+import type Properties from "./modules/properties/Properties";
+import type RoomService from "./modules/roomAPI/RoomService";
+import type PhoenixAuthService from "./modules/phoenixAuth/PhoenixAuthService";
 import type { MsTeamsAPI } from "./modules/microsoft/MsTeamsAPI";
 export declare const MICROSOFT_SERVICE = "@aptero/axolotis-module-teams/MicrosoftService";
 export declare const MICROSOFT_STATIC_SERVICE = "@aptero/axolotis-module-teams/MicrosoftStaticService";

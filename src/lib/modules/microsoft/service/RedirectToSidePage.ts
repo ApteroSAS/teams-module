@@ -1,5 +1,5 @@
 import { getContext } from "./MsTeamsUtils";
-import { MsTeamsAPILight, MSTEAMS_QUERY_PARAM } from "../MsTeamsAPILight";
+import MsTeamsAPILight, { MSTEAMS_QUERY_PARAM } from "../MsTeamsAPILight";
 import { getServiceSync } from "@aptero/axolotis-player";
 import { MICROSOFT_STATIC_SERVICE } from "@root/ImportHelper";
 

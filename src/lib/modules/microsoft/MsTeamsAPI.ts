@@ -43,7 +43,7 @@ export class MsTeamsAPI implements Component {
   }
 }
 
-export class Factory implements Service<MsTeamsAPI> {
+export default class Factory implements Service<MsTeamsAPI> {
   constructor() {}
   async createService(services: IServices): Promise<MsTeamsAPI> {
     return new MsTeamsAPI();

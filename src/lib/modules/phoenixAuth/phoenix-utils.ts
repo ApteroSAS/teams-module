@@ -2,14 +2,14 @@ import { Socket } from "phoenix";
 
 import { sleep } from "@root/modules/phoenixAuth/async-utils";
 import { generateHubName } from "@root/modules/nameGeneration/name-generation";
-import { propertyService, STORE_SERVICE } from "@root/ImportHelper";
+import { PROPERTIES_SERVICE, propertyService, STORE_SERVICE } from "@root/ImportHelper";
 import { PropertiesFormat } from "@root/modules/phoenixAuth/PropertiesFormat";
-import { getServiceSync } from "@aptero/axolotis-player";
+import { getService, getServiceSync } from "@aptero/axolotis-player";
 import Store from "@root/modules/store/Store";
+import Properties from "@root/modules/properties/Properties";
 
 function config() {
-  //return propertyService().get<PropertiesFormat>(PROPERTY_KEY); // TODO better
-  return propertyService().getGlobalProperties<PropertiesFormat>();
+  return getServiceSync<Properties>(PROPERTIES_SERVICE).getGlobalProperties<PropertiesFormat>();
 }
 
 export function hasReticulumServer() {
@@ -202,7 +202,7 @@ export async function createAndRedirectToNewHub(name, sceneId, replace) {
   }
 
   const headers: any = { "content-type": "application/json" };
-  const store = getServiceSync<Store>(STORE_SERVICE);
+  const store = await getService<Store>(STORE_SERVICE);
   if (store.state && store.state.credentials.token) {
     headers.authorization = `bearer ${store.state.credentials.token}`;
   }

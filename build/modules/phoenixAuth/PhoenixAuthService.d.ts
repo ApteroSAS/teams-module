@@ -2,7 +2,7 @@ import { AdminRole } from "./AdminRole";
 import AuthChannel from "./auth-channel";
 import { IService } from "@aptero/axolotis-player";
 import { AuthInterface } from "../../common/AuthInterface";
-export declare class PhoenixAuthService implements IService {
+export default class PhoenixAuthService implements IService {
     adminRole: AdminRole;
     private ret;
     setGlobalReticulumChannel(ret: any): void;

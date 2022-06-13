@@ -53,9 +53,13 @@ module.exports = {
             //filename: 'library/[name].[fullhash].js',
             cacheGroups: {
                 vendor: {
-                    //each vendor a one async bundle
+                    //each vendor has one async bundle
                     name : (module, chunks, cacheGroupKey) => {
-                        return module.resourceResolveData.descriptionFileData.name
+                        try {
+                            return module.resourceResolveData.descriptionFileData.name
+                        }catch (e){
+                            return "default";
+                        }
                     },
                 }
             }
@@ -96,6 +100,9 @@ module.exports = {
         new PrettierPlugin(),
         new webpack.BannerPlugin(banner)
     ],
+    externals: {
+        '@aptero/axolotis-player':'@aptero/axolotis-player',
+    },
     resolve: {
         alias: {
             "@root": path.join(__dirname, "./src/lib")

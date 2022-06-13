@@ -1,4 +1,4 @@
-import { IService, Module } from "@aptero/axolotis-player";
+import { getService, getServiceSync, Module } from "@aptero/axolotis-player";
 import { Item } from "@aptero/axolotis-player";
 import {
   COOKIE_STORE_SERVICE,
@@ -10,42 +10,56 @@ import {
   ROOM_SERVICE,
   STORE_SERVICE,
 } from "@root/ImportHelper";
-
-//These static imports should be lightweight
-import { MsTeamsAPILight } from "@root/modules/microsoft/MsTeamsAPILight";
-
-import { Properties } from "@root/modules/properties/Properties"; //TODO migrate to own package
-import Store from "@root/modules/store/Store"; //TODO migrate to own package
-import { PhoenixAuthService } from "@root/modules/phoenixAuth/PhoenixAuthService"; //TODO migrate to own package
-import { NameGenerationService } from "@root/modules/nameGeneration/NameGenerationService"; //TODO migrate to own package
-import { CookieStore } from "@root/modules/store/CookieStore"; //TODO migrate to own package
-import { RoomService } from "@root/modules/roomAPI/RoomService"; //TODO migrate to own package
+import Properties from "@root/modules/properties/Properties";
+import MsTeamsAPILight from "@root/modules/microsoft/MsTeamsAPILight";
 
 export class AxItem implements Item {
   constructor() {
     console.log("@aptero/axolotis-module-teams installed");
   }
-  staticService(): { [id: string]: IService } {
-    let ret = {};
-    ret[MICROSOFT_STATIC_SERVICE] = new MsTeamsAPILight();
-    ret[PROPERTIES_SERVICE] = new Properties(); //TODO migrate to own package
-    ret[STORE_SERVICE] = new Store(); //TODO migrate to own package
-    ret[PHX_AUTH_SERVICE] = new PhoenixAuthService(); //TODO migrate to own package
-    ret[NAME_SERVICE] = new NameGenerationService(); //TODO migrate to own package
-    ret[COOKIE_STORE_SERVICE] = new CookieStore(); //TODO migrate to own package
-    ret[ROOM_SERVICE] = new RoomService(); //TODO migrate to own package
-    return ret;
-  }
 
   modules(): { [id: string]: Module } {
     let ret = {};
-    ret[MICROSOFT_SERVICE] = async () => {
-      const module = await import(
+    ret[MICROSOFT_SERVICE] = () =>
+      import(
         /*  webpackPrefetch: 0,  webpackMode: 'lazy',  webpackChunkName: "@aptero/axolotis-module-teams/MsTeamsAPI"  */
         "./modules/microsoft/MsTeamsAPI"
       );
-      return { module, classname: module.Factory.name };
-    };
+    ret[MICROSOFT_STATIC_SERVICE] = () =>
+      import(
+        /*  webpackPrefetch: 0,  webpackMode: 'lazy',  webpackChunkName: "@aptero/axolotis-module-teams/MicrosoftStaticService"  */
+        "@root/modules/microsoft/MsTeamsAPILight"
+      );
+    ret[PROPERTIES_SERVICE] = () =>
+      import(
+        /*  webpackPrefetch: 0,  webpackMode: 'lazy',  webpackChunkName: "@aptero/axolotis-module-properties/Properties"  */
+        "@root/modules/properties/Properties"
+      );
+    ret[STORE_SERVICE] = () =>
+      import(
+        /*  webpackPrefetch: 0,  webpackMode: 'lazy',  webpackChunkName: "@aptero/axolotis-module-storage/Store"  */
+        "@root/modules/store/Store"
+      );
+    ret[PHX_AUTH_SERVICE] = () =>
+      import(
+        /*  webpackPrefetch: 0,  webpackMode: 'lazy',  webpackChunkName: "@aptero/axolotis-module-name/PhoenixAuthService"  */
+        "@root/modules/phoenixAuth/PhoenixAuthService"
+      );
+    ret[NAME_SERVICE] = () =>
+      import(
+        /*  webpackPrefetch: 0,  webpackMode: 'lazy',  webpackChunkName: "@aptero/axolotis-module-name/PhoenixAuthService"  */
+        "@root/modules/nameGeneration/NameGenerationService"
+      );
+    ret[COOKIE_STORE_SERVICE] = () =>
+      import(
+        /*  webpackPrefetch: 0,  webpackMode: 'lazy',  webpackChunkName: "@aptero/axolotis-module-storage/CookieStore"  */
+        "@root/modules/store/CookieStore"
+      );
+    ret[ROOM_SERVICE] = () =>
+      import(
+        /*  webpackPrefetch: 0,  webpackMode: 'lazy',  webpackChunkName: "@aptero/axolotis-module-room/RoomService"  */
+        "@root/modules/roomAPI/RoomService"
+      );
     return ret;
   }
 }

@@ -2,10 +2,10 @@ import { getService, getServiceSync } from "@aptero/axolotis-player";
 /**
  * Should only import type to stay lightweight
  */
-import type { MsTeamsAPILight } from "@root/modules/microsoft/MsTeamsAPILight";
-import type { Properties } from "@root/modules/properties/Properties";
-import type { RoomService } from "@root/modules/roomAPI/RoomService";
-import type { PhoenixAuthService } from "@root/modules/phoenixAuth/PhoenixAuthService";
+import type MsTeamsAPILight from "@root/modules/microsoft/MsTeamsAPILight";
+import type Properties from "@root/modules/properties/Properties";
+import type RoomService from "@root/modules/roomAPI/RoomService";
+import type PhoenixAuthService from "@root/modules/phoenixAuth/PhoenixAuthService";
 import type { MsTeamsAPI } from "@root/modules/microsoft/MsTeamsAPI";
 
 export const MICROSOFT_SERVICE = "@aptero/axolotis-module-teams/MicrosoftService";

@@ -9,7 +9,7 @@ declare const window;
  * aims of this class is to perform siple check to see if we need to load the complet MsTeams Bundle with its
  * dependencies. Thus this module should be lightweight and not import big library.
  */
-export class MsTeamsAPILight implements IService {
+export default class MsTeamsAPILight implements IService {
   private msmode: boolean;
 
   constructor() {

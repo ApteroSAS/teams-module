@@ -1,7 +1,7 @@
 import { IService } from "@aptero/axolotis-player";
 declare const window;
 
-export class Properties implements IService {
+export default class Properties implements IService {
   getType(): string {
     return Properties.name;
   }

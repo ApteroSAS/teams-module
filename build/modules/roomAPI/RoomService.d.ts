@@ -1,5 +1,17 @@
 import { IService } from "@aptero/axolotis-player";
-export declare class RoomService implements IService {
+import Properties from "../properties/Properties";
+import { NameGenerationService } from "../nameGeneration/NameGenerationService";
+import Store from "../store/Store";
+import PhoenixAuthService from "../phoenixAuth/PhoenixAuthService";
+import { CookieStore } from "../store/CookieStore";
+export default class RoomService implements IService {
+    private phoenixAuthService;
+    private store;
+    private properties;
+    private nameService;
+    private cookie;
+    static dependencies: string[];
+    constructor(phoenixAuthService: PhoenixAuthService, store: Store, properties: Properties, nameService: NameGenerationService, cookie: CookieStore);
     getType(): string;
     parseUrl(url: any): {
         origin: string;

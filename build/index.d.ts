@@ -1,7 +1,11 @@
-export type { MsTeamsAPILight } from "./modules/microsoft/MsTeamsAPILight";
-export type { Properties } from "./modules/properties/Properties";
-export type { RoomService } from "./modules/roomAPI/RoomService";
-export type { PhoenixAuthService } from "./modules/phoenixAuth/PhoenixAuthService";
+import type MsTeamsAPILightDefault from "./modules/microsoft/MsTeamsAPILight";
+export declare type MsTeamsAPILight = MsTeamsAPILightDefault;
+import type PropertiesDefault from "./modules/properties/Properties";
+export declare type Properties = PropertiesDefault;
+import type RoomServiceDefault from "./modules/roomAPI/RoomService";
+export declare type RoomService = RoomServiceDefault;
+import type PhoenixAuthServiceDefault from "./modules/phoenixAuth/PhoenixAuthService";
+export declare type PhoenixAuthService = PhoenixAuthServiceDefault;
 export type { MsTeamsAPI } from "./modules/microsoft/MsTeamsAPI";
 export * from "./modules/microsoft/MsTeamsAPILight";
 export * from "./modules/properties/Properties";
