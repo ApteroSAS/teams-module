@@ -23,9 +23,4 @@ export * from "./modules/microsoft/Events";
     throw new Error("Axolotis World Needs to be initialized");
   }
   registerItem(new AxItem()); //auto registration of service
-  /*
-  preload modules
-   */
-  await getService<Properties>(PROPERTIES_SERVICE);
-  await getService<MsTeamsAPILight>(MICROSOFT_STATIC_SERVICE);
 })();
