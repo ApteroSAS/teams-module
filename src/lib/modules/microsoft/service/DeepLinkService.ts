@@ -1,15 +1,13 @@
-import * as microsoftTeams from "@microsoft/teams-js";
 import { getMSEvents } from "./MsTeamsUtils";
 import { PROCESS_DEEPLINK } from "@root/modules/microsoft/Events";
+import { app } from "@microsoft/teams-js";
 
 export class DeepLinkService {
   start() {
     getMSEvents().on(PROCESS_DEEPLINK, (data) => {
       try {
         const link = data.link;
-        microsoftTeams.executeDeepLink(link, (status, reason) => {
-          console.log(status, reason);
-        });
+        app.openLink(link);
       } catch (err) {
         console.error(err);
       }

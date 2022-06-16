@@ -68,7 +68,7 @@
     "webpack": "^5.72.1",
     "webpack-cli": "^4.9.2",
     "webpack-dev-server": "4.9.1",
-    "@aptero/axolotis-player": "git+https://github.com/ApteroSAS/axolotis-player.git#semver:^1.1.0"
+    "@aptero/axolotis-player": "git+https://github.com/ApteroSAS/axolotis-player.git#3f8fff8508fa9dcb18c40214685ab28027e104a1"
   },
   "dependencies": {
     "@azure/msal-browser": "2.25.0",

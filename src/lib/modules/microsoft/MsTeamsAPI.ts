@@ -6,12 +6,17 @@ import { microsoftUrlService } from "./service/MicrosoftUrlService";
 import { getContext, getMSEvents, processDeepLink } from "./service/MsTeamsUtils";
 import "./service/TeamsTestHelper";
 import { registerTeamsTestHelper } from "./service/TeamsTestHelper";
+import { app, pages } from "@microsoft/teams-js";
 
 export class MsTeamsAPI implements Component {
   constructor() {}
 
   getLoginService(): MicrosoftLoginService {
     return microsoftLoginService;
+  }
+
+  getTeamsApp(): { app: typeof app; pages: typeof pages } {
+    return { app, pages };
   }
 
   async redirectToTeamsSidePanel() {
@@ -45,6 +50,7 @@ export class MsTeamsAPI implements Component {
 
 export default class Factory implements Service<MsTeamsAPI> {
   constructor() {}
+
   async createService(services: IServices): Promise<MsTeamsAPI> {
     return new MsTeamsAPI();
   }

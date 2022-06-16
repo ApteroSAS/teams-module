@@ -1,9 +1,9 @@
 import { IService } from "@aptero/axolotis-player";
 import Properties from "../properties/Properties";
-import { NameGenerationService } from "../nameGeneration/NameGenerationService";
+import NameGenerationService from "../nameGeneration/NameGenerationService";
 import Store from "../store/Store";
 import PhoenixAuthService from "../phoenixAuth/PhoenixAuthService";
-import { CookieStore } from "../store/CookieStore";
+import CookieStore from "../store/CookieStore";
 export default class RoomService implements IService {
     private phoenixAuthService;
     private store;

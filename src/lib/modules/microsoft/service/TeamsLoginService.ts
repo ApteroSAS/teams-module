@@ -6,6 +6,7 @@ import { getScopes, getScopesLight } from "../scope";
 import { MicrosoftGraphService } from "./MicrosoftGraphService";
 import { MsToNativeLoginBridge } from "../../phoenixAuth/MsToNativeLoginBridge";
 import { getMsProperties } from "@root/modules/microsoft/service/Properties";
+import { app } from "@microsoft/teams-js";
 
 let credential: TeamsFx | null = null;
 export const startLoginPageUrl = window.location.origin + "/auth-start.html";
@@ -99,9 +100,10 @@ export class TeamsLoginService {
       throw new Error("not in teams");
     }
     try {
-      await microsoftTeams.initialize();
+      await app.initialize();
     } catch (e) {
       console.warn("microsoftTeams.initialize failed (probably not in teams so we skip it)", e);
+      return;
     }
     if (!this.msToNativeLoginBridge.isLogged()) {
       return;

@@ -6,10 +6,10 @@ import { changeUrlSettings } from "@root/modules/microsoft/service/MsTeamsUtils"
 import { createHubChannelParams } from "./hub-utils";
 
 import Properties from "@root/modules/properties/Properties";
-import { NameGenerationService } from "@root/modules/nameGeneration/NameGenerationService";
+import NameGenerationService from "@root/modules/nameGeneration/NameGenerationService";
 import Store from "@root/modules/store/Store";
 import PhoenixAuthService from "@root/modules/phoenixAuth/PhoenixAuthService";
-import { CookieStore } from "@root/modules/store/CookieStore";
+import CookieStore from "@root/modules/store/CookieStore";
 
 declare const window;
 

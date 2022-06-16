@@ -6,6 +6,7 @@ import * as microsoftTeams from "@microsoft/teams-js";
 import { MICROSOFT_STATIC_SERVICE } from "@root/ImportHelper";
 import MsTeamsAPILight from "@root/modules/microsoft/MsTeamsAPILight";
 import { CHANGE_SETTINGS_URL, PROCESS_DEEPLINK } from "@root/modules/microsoft/Events";
+import { app } from "@microsoft/teams-js";
 
 let eventListener = new EventEmitter();
 
@@ -25,12 +26,19 @@ export function changeUrlSettings(url) {
   sendEvent(CHANGE_SETTINGS_URL, { url });
 }
 
-export async function getContext(callback) {
+export async function getContext(callback: (context: app.Context) => void) {
   try {
-    await microsoftTeams.initialize();
+    try {
+      await app.initialize();
+    } catch (e) {
+      callback(null);
+      console.warn("microsoftTeams.initialize failed (probably not in teams so we skip it)", e);
+      return;
+    }
     // https://docs.microsoft.com/en-us/microsoftteams/platform/tabs/how-to/access-teams-context
     //"frameContext": "The context where tab URL is loaded (for example, content, task, setting, remove, sidePanel)",
-    microsoftTeams.getContext(callback);
+    const context = await app.getContext();
+    callback(context);
   } catch (e) {
     console.error(e);
   }

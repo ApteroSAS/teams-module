@@ -1,4 +1,4 @@
-import { getService, getServiceSync, Module } from "@aptero/axolotis-player";
+import { ModulePromise } from "@aptero/axolotis-player";
 import { Item } from "@aptero/axolotis-player";
 import {
   COOKIE_STORE_SERVICE,
@@ -10,16 +10,14 @@ import {
   ROOM_SERVICE,
   STORE_SERVICE,
 } from "@root/ImportHelper";
-import Properties from "@root/modules/properties/Properties";
-import MsTeamsAPILight from "@root/modules/microsoft/MsTeamsAPILight";
 
 export class AxItem implements Item {
   constructor() {
     console.log("@aptero/axolotis-module-teams installed");
   }
 
-  modules(): { [id: string]: Module } {
-    let ret = {};
+  modules(): { [id: string]: ModulePromise } {
+    let ret: { [id: string]: ModulePromise } = {};
     ret[MICROSOFT_SERVICE] = () =>
       import(
         /*  webpackPrefetch: 0,  webpackMode: 'lazy',  webpackChunkName: "@aptero/axolotis-module-teams/MsTeamsAPI"  */
