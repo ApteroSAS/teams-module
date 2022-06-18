@@ -11,6 +11,8 @@ import type PhoenixAuthServiceDefault from "./modules/phoenixAuth/PhoenixAuthSer
 export type PhoenixAuthService = PhoenixAuthServiceDefault;
 export type { MsTeamsAPI } from "./modules/microsoft/MsTeamsAPI";
 
+export type {MicrosoftLoginService } from "./modules/microsoft/service/MicrosoftLoginService"
+
 export * from "./modules/microsoft/MsTeamsAPILight";
 export * from "./modules/properties/Properties";
 export * from "./ImportHelper";

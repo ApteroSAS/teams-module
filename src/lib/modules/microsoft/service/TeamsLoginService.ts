@@ -1,8 +1,7 @@
 import { msTeamsUtils } from "./MsTeamsUtils";
 import { LogLevel, setLogLevel, setLogFunction, createMicrosoftGraphClient, TeamsFx, IdentityType } from "@microsoft/teamsfx";
-import * as microsoftTeams from "@microsoft/teams-js";
 import { getAuthEvents, LOGGED_BASIC_INFO } from "./AuthEvent";
-import { getScopes, getScopesLight } from "../scope";
+import { getScopes } from "../scope";
 import { MicrosoftGraphService } from "./MicrosoftGraphService";
 import { MsToNativeLoginBridge } from "../../phoenixAuth/MsToNativeLoginBridge";
 import { getMsProperties } from "@root/modules/microsoft/service/Properties";
@@ -74,8 +73,7 @@ export class TeamsLoginService {
   async userInteractionAuth() {
     console.log("TeamsLoginService : userInteractionAuth");
     const cred = await this.initBasicInfo();
-    await cred.login(getScopesLight()); //Trigger authorization popup
-    await this.initGraph(getScopesLight());
+    //await cred.login(getScopesLight()); //Trigger authorization popup
     const userInfo = await cred.getUserInfo(); //confirmed by stephano no user popup
     await this.initBasic(userInfo, true);
     await this.msToNativeLoginBridge.setProfile({
@@ -116,7 +114,6 @@ export class TeamsLoginService {
       const cred = await this.initBasicInfo();
       const userInfo = await cred.getUserInfo();
       console.log("passiveAuth (basic):", cred);
-      await this.initGraph(getScopesLight());
       await this.initBasic(userInfo, false);
     } catch (e) {
       //passive login should never fail - just ignore
