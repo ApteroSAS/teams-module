@@ -79,6 +79,10 @@ export default class RoomService implements IService {
   }
 
   async setFavorite(hubId) {
+    if (!this.store.state.credentials.token) {
+      //the user is not logged in so we cannot set favourite
+      return;
+    }
     const socket = await this.phoenixAuthService.connectToReticulum(false);
     socket.onClose(() => {});
     // Reticulum global channel
@@ -155,7 +159,7 @@ export default class RoomService implements IService {
     const hub = res;
     let url = hub.url;
 
-    const creatorAssignmentToken = hub.creator_assignment_token;
+    /*const creatorAssignmentToken = hub.creator_assignment_token;
     if (creatorAssignmentToken) {
       store.update({ creatorAssignmentTokens: [{ hubId: hub.hub_id, creatorAssignmentToken: creatorAssignmentToken }] });
 
@@ -166,7 +170,7 @@ export default class RoomService implements IService {
       if (embedToken) {
         store.update({ embedTokens: [{ hubId: hub.hub_id, embedToken: embedToken }] });
       }
-    }
+    }*/
 
     if (this.phoenixAuthService.isLocalClient()) {
       url = window.location.origin + `/hub.html?hub_id=${hub.hub_id}`;

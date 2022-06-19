@@ -214,6 +214,7 @@ export async function createAndRedirectToNewHub(name, sceneId, replace) {
   }).then((r) => r.json());
 
   if (res.error === "invalid_token") {
+    console.log("created anonymously");
     // Clear the invalid token from store.
     store.update({ credentials: { token: null, email: null } });
 
