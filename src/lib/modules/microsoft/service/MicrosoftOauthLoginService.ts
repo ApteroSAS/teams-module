@@ -1,7 +1,7 @@
 import { PublicClientApplication } from "@azure/msal-browser";
 import { getScopesLight } from "../scope";
 import { MicrosoftGraphService } from "./MicrosoftGraphService";
-import { MsToNativeLoginBridge } from "../../phoenixAuth/MsToNativeLoginBridge";
+import { MsToNativeLoginBridge } from "@aptero/axolotis-module-basic";
 import { getMsProperties } from "@root/modules/microsoft/service/Properties";
 let graph = require("@microsoft/microsoft-graph-client");
 

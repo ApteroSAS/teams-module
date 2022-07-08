@@ -1,4 +1,4 @@
-import { microsoftLoginService } from "./MicrosoftLoginService";
+import { MicrosoftLoginService } from "./microsoftLoginService";
 import { Buffer } from "buffer/";
 import { deepLinkService } from "./DeepLinkService";
 import { MICROSOFT_AUTH_ERROR } from "../MsTeamsAPILight";
@@ -7,7 +7,7 @@ deepLinkService.start();
 export class MicrosoftUrlService {
   preloaded = {};
 
-  constructor() {}
+  constructor(private microsoftLoginService: MicrosoftLoginService) {}
 
   urlToToSharingToken(url) {
     let trimEnd = function (str, c) {
@@ -36,20 +36,20 @@ export class MicrosoftUrlService {
       return url;
     } else {
       console.log("convertMicrosoftUrl");
-      if (microsoftLoginService.getUserAccount()) {
+      if (this.microsoftLoginService.getUserAccount()) {
         let res = await this.convertSharingUrlToDownloadUrl(url);
         this.preloaded[url] = res;
         return res;
       } else {
         console.log("passiveLoginWithTeams");
-        await microsoftLoginService.passiveLogin();
-        if (microsoftLoginService.getUserAccount()) {
+        await this.microsoftLoginService.passiveLogin();
+        if (this.microsoftLoginService.getUserAccount()) {
           let res = await this.convertSharingUrlToDownloadUrl(url);
           this.preloaded[url] = res;
           return res;
         } else {
           console.log("loginWithRedirect");
-          await microsoftLoginService.login();
+          await this.microsoftLoginService.login();
         }
       }
     }
@@ -58,7 +58,7 @@ export class MicrosoftUrlService {
   async convertSharingUrlToDownloadUrl(url) {
     return new Promise((resolve) => {
       const stoken = this.urlToToSharingToken(url);
-      microsoftLoginService.msGraphService.client
+      this.microsoftLoginService.msGraphService.client
         .api("/shares/" + stoken + "/driveItem")
         .get()
         .then((res) => {
@@ -72,5 +72,3 @@ export class MicrosoftUrlService {
     });
   }
 }
-
-export const microsoftUrlService = new MicrosoftUrlService();

@@ -30,6 +30,7 @@
     "es6"
   ],
   "devDependencies": {
+    "@aptero/axolotis-player": "git+https://github.com/ApteroSAS/axolotis-player.git#3f8fff8508fa9dcb18c40214685ab28027e104a1",
     "@babel/cli": "^7.17.10",
     "@babel/core": "^7.18.2",
     "@babel/plugin-proposal-class-properties": "^7.17.12",
@@ -39,7 +40,6 @@
     "@babel/preset-typescript": "^7.17.12",
     "@istanbuljs/nyc-config-typescript": "^1.0.2",
     "@playwright/test": "^1.22.2",
-    "@types/js-cookie": "^3.0.2",
     "@typescript-eslint/eslint-plugin": "^5.27.0",
     "@typescript-eslint/parser": "^5.27.0",
     "babel-eslint": "^10.1.0",
@@ -68,23 +68,17 @@
     "webpack": "^5.72.1",
     "webpack-cli": "^4.9.2",
     "webpack-dev-server": "4.9.1",
-    "@aptero/axolotis-player": "git+https://github.com/ApteroSAS/axolotis-player.git#3f8fff8508fa9dcb18c40214685ab28027e104a1"
+    "@aptero/axolotis-module-basic": "https://github.com/ApteroSAS/basic-modules#3c4a3b71c1a30b5115b5e4e7220522c54d947af9"
   },
   "dependencies": {
     "@azure/msal-browser": "2.25.0",
     "@microsoft/microsoft-graph-client": "^3.0.2",
     "@microsoft/teams-js": "^2.0.0",
     "@microsoft/teamsfx": "^1.0.0",
-    "deepmerge": "^4.2.2",
-    "event-target-shim": "^6.0.2",
-    "eventemitter3": "^4.0.7",
-    "js-cookie": "^2.2.0",
-    "jsonschema": "^1.2.2",
-    "phoenix": "github:gfodor/phoenix-js#f4cebf1534dd7c503fe797ef396709c4d3ea8d69",
-    "tsutils": "^3.21.0",
-    "uuid": "^3.2.1"
+    "tsutils": "^3.21.0"
   },
   "peerDependencies": {
-    "@aptero/axolotis-player": "git+https://github.com/ApteroSAS/axolotis-player.git#semver:^1"
+    "@aptero/axolotis-module-basic": "https://github.com/ApteroSAS/basic-modules#semver:^1.0.0",
+    "@aptero/axolotis-player": "git+https://github.com/ApteroSAS/axolotis-player.git#semver:^1.0.0"
   }
 }

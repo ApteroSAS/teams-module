@@ -1,18 +1,26 @@
-import { Component, IServices } from "@aptero/axolotis-player";
-import { Service } from "@aptero/axolotis-player";
-import { MicrosoftLoginService, microsoftLoginService } from "./service/MicrosoftLoginService";
+import { Component } from "@aptero/axolotis-player";
+import { MicrosoftLoginService } from "./service/MicrosoftLoginService";
 import { redirectToTeamsSidePanel } from "./service/RedirectToSidePage";
-import { microsoftUrlService } from "./service/MicrosoftUrlService";
 import { getContext, getMSEvents, processDeepLink } from "./service/MsTeamsUtils";
 import "./service/TeamsTestHelper";
 import { registerTeamsTestHelper } from "./service/TeamsTestHelper";
 import { app, pages } from "@microsoft/teams-js";
+import { PhoenixAuthService } from "@aptero/axolotis-module-basic";
+import { PHX_AUTH_SERVICE } from "@aptero/axolotis-module-basic";
+import { MicrosoftUrlService } from "@root/modules/microsoft/service/MicrosoftUrlService";
 
 export class MsTeamsAPI implements Component {
-  constructor() {}
+  private microsoftLoginService: MicrosoftLoginService;
+  private microsoftUrlService: MicrosoftUrlService;
+
+  public static dependencies: string[] = [PHX_AUTH_SERVICE];
+  constructor(private phxAuth: PhoenixAuthService) {
+    this.microsoftLoginService = new MicrosoftLoginService(phxAuth.getNativeInterface());
+    this.microsoftUrlService = new MicrosoftUrlService(this.microsoftLoginService);
+  }
 
   getLoginService(): MicrosoftLoginService {
-    return microsoftLoginService;
+    return this.microsoftLoginService;
   }
 
   getTeamsApp(): { app: typeof app; pages: typeof pages } {
@@ -24,7 +32,7 @@ export class MsTeamsAPI implements Component {
   }
 
   getUrlService() {
-    return microsoftUrlService;
+    return this.microsoftUrlService;
   }
 
   getMSEvents() {
@@ -45,13 +53,5 @@ export class MsTeamsAPI implements Component {
 
   registerTeamsTestHelper() {
     return registerTeamsTestHelper();
-  }
-}
-
-export default class Factory implements Service<MsTeamsAPI> {
-  constructor() {}
-
-  async createService(services: IServices): Promise<MsTeamsAPI> {
-    return new MsTeamsAPI();
   }
 }

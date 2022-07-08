@@ -56,7 +56,11 @@ module.exports = {
                     //each vendor has one async bundle
                     name : (module, chunks, cacheGroupKey) => {
                         try {
-                            return module.resourceResolveData.descriptionFileData.name
+                            let modulePath = module.resourceResolveData.descriptionFileData.name
+                            if(modulePath.startsWith("node_modules")){
+                                modulePath.replace("node_modules/","");
+                            }
+                            return modulePath
                         }catch (e){
                             return "default";
                         }
@@ -95,7 +99,12 @@ module.exports = {
                 {
                     from: "./src/lib/modules/microsoft/page/auth-end.html",
                     to: "library/@aptero/axolotis-module-teams/assets/auth-end.html"
-                }]
+                },
+                {
+                    from: "./node_modules/@aptero/axolotis-module-basic/build/library/*",
+                    to: "library/"
+                },
+            ]
         }),
         new PrettierPlugin(),
         new webpack.BannerPlugin(banner)

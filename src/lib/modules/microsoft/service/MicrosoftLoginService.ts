@@ -2,23 +2,24 @@ import { msTeamsUtils } from "./MsTeamsUtils";
 import { MicrosoftGraphService } from "./MicrosoftGraphService";
 import { MicrosoftOauthLoginService } from "./MicrosoftOauthLoginService";
 import { TeamsLoginService } from "./TeamsLoginService";
-import { MsToNativeLoginBridge } from "../../phoenixAuth/MsToNativeLoginBridge";
+import { MsToNativeLoginBridge } from "@aptero/axolotis-module-basic";
 import { getAuthEvents, AUTH_SERVICE_INITIALIZE } from "./AuthEvent";
-import { AuthInterface } from "@root/common/AuthInterface";
+import { AuthInterface } from "@aptero/axolotis-module-basic";
 
 export class MicrosoftLoginService implements AuthInterface {
   authInProgress = false;
   msGraphService = new MicrosoftGraphService();
-  msToNativeLoginBridge = new MsToNativeLoginBridge();
-  microsoftOauthLoginService = new MicrosoftOauthLoginService(this.msGraphService, this.msToNativeLoginBridge);
-  teamsLoginService = new TeamsLoginService(this.msGraphService, this.msToNativeLoginBridge);
+  microsoftOauthLoginService: MicrosoftOauthLoginService;
+  teamsLoginService: TeamsLoginService;
   private initialized: boolean = false;
 
   getTeamsLoginService() {
     return this.teamsLoginService;
   }
 
-  constructor() {
+  constructor(private msToNativeLoginBridge: MsToNativeLoginBridge) {
+    this.microsoftOauthLoginService = new MicrosoftOauthLoginService(this.msGraphService, this.msToNativeLoginBridge);
+    this.teamsLoginService = new TeamsLoginService(this.msGraphService, this.msToNativeLoginBridge);
     this.onReady().then(() => {
       this.initialized = true;
     });
@@ -134,5 +135,3 @@ export class MicrosoftLoginService implements AuthInterface {
     return this.signOut();
   }
 }
-
-export const microsoftLoginService = new MicrosoftLoginService();

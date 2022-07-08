@@ -1,6 +1,6 @@
 import { PublicClientApplication } from "@azure/msal-browser";
 import { MicrosoftGraphService } from "./MicrosoftGraphService";
-import { MsToNativeLoginBridge } from "../../phoenixAuth/MsToNativeLoginBridge";
+import { MsToNativeLoginBridge } from "@aptero/axolotis-module-basic";
 export declare class MicrosoftOauthLoginService {
     private microsoftGraphService;
     private msToNativeLoginBridge;

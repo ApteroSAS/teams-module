@@ -1,6 +1,6 @@
 import { TeamsFx } from "@microsoft/teamsfx";
 import { MicrosoftGraphService } from "./MicrosoftGraphService";
-import { MsToNativeLoginBridge } from "../../phoenixAuth/MsToNativeLoginBridge";
+import { MsToNativeLoginBridge } from "@aptero/axolotis-module-basic";
 export declare const startLoginPageUrl: string;
 export declare class TeamsLoginService {
     private microsoftGraphService;

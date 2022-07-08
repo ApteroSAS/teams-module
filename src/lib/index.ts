@@ -3,18 +3,13 @@ import { AxItem } from "./AxItem";
 
 import type MsTeamsAPILightDefault from "./modules/microsoft/MsTeamsAPILight";
 export type MsTeamsAPILight = MsTeamsAPILightDefault;
-import type PropertiesDefault from "./modules/properties/Properties";
-export type Properties = PropertiesDefault;
 import type RoomServiceDefault from "./modules/roomAPI/RoomService";
 export type RoomService = RoomServiceDefault;
-import type PhoenixAuthServiceDefault from "./modules/phoenixAuth/PhoenixAuthService";
-export type PhoenixAuthService = PhoenixAuthServiceDefault;
 export type { MsTeamsAPI } from "./modules/microsoft/MsTeamsAPI";
 
 export type { MicrosoftLoginService } from "./modules/microsoft/service/MicrosoftLoginService";
 
 export * from "./modules/microsoft/MsTeamsAPILight";
-export * from "./modules/properties/Properties";
 export * from "./ImportHelper";
 export * from "./modules/microsoft/Events";
 

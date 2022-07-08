@@ -3,9 +3,9 @@ import { LogLevel, setLogLevel, setLogFunction, createMicrosoftGraphClient, Team
 import { getAuthEvents, LOGGED_BASIC_INFO } from "./AuthEvent";
 import { getScopes } from "../scope";
 import { MicrosoftGraphService } from "./MicrosoftGraphService";
-import { MsToNativeLoginBridge } from "../../phoenixAuth/MsToNativeLoginBridge";
 import { getMsProperties } from "@root/modules/microsoft/service/Properties";
 import { app } from "@microsoft/teams-js";
+import { MsToNativeLoginBridge } from "@aptero/axolotis-module-basic";
 
 let credential: TeamsFx | null = null;
 export const startLoginPageUrl = window.location.origin + "/auth-start.html";

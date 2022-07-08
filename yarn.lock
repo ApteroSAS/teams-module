@@ -10,6 +10,19 @@
     "@jridgewell/gen-mapping" "^0.1.0"
     "@jridgewell/trace-mapping" "^0.3.9"
 
+"@aptero/axolotis-module-basic@https://github.com/ApteroSAS/basic-modules#3c4a3b71c1a30b5115b5e4e7220522c54d947af9":
+  version "1.0.0"
+  resolved "https://github.com/ApteroSAS/basic-modules#3c4a3b71c1a30b5115b5e4e7220522c54d947af9"
+  dependencies:
+    deepmerge "^4.2.2"
+    event-target-shim "^6.0.2"
+    eventemitter3 "^4.0.7"
+    js-cookie "^2.2.0"
+    jsonschema "^1.2.2"
+    phoenix "github:gfodor/phoenix-js#f4cebf1534dd7c503fe797ef396709c4d3ea8d69"
+    tsutils "^3.21.0"
+    uuid "^3.2.1"
+
 "@aptero/axolotis-player@git+https://github.com/ApteroSAS/axolotis-player.git#3f8fff8508fa9dcb18c40214685ab28027e104a1":
   version "2.0.0"
   resolved "git+https://github.com/ApteroSAS/axolotis-player.git#3f8fff8508fa9dcb18c40214685ab28027e104a1"
@@ -1614,11 +1627,6 @@
   integrity sha512-QsbSjA/fSk7xB+UXlCT3wHBy5ai9wOcNDWwZAtud+jXhwOM3l+EYZh8Lng4+/6n8uar0J7xILzqftJdJ/Wdfkw==
   dependencies:
     "@types/node" "*"
-
-"@types/js-cookie@^3.0.2":
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/@types/js-cookie/-/js-cookie-3.0.2.tgz#451eaeece64c6bdac8b2dde0caab23b085899e0d"
-  integrity sha512-6+0ekgfusHftJNYpihfkMu8BWdeHs9EOJuGcSofErjstGPfPGEu9yTu4t460lTzzAMl2cM5zngQJqPMHbbnvYA==
 
 "@types/json-schema@*", "@types/json-schema@^7.0.5", "@types/json-schema@^7.0.8", "@types/json-schema@^7.0.9":
   version "7.0.11"
