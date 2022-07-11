@@ -35,29 +35,6 @@ module.exports = {
         }
       },
       {
-        test: /\.svg$/,
-        include: [path.resolve(__dirname, "src")],
-        use: [
-          {
-            loader: "@svgr/webpack",
-            options: {
-              titleProp: true,
-              replaceAttrValues: { "#000": "{props.color}" },
-              template: require("../../aptero_hub/hubs-wip/src/aptero/module/microsoft/react-components/hubs/react-components/icons/IconTemplate"),
-              svgoConfig: {
-                plugins: {
-                  removeViewBox: false,
-                  mergePaths: false,
-                  convertShapeToPath: false,
-                  removeHiddenElems: false
-                }
-              }
-            }
-          },
-          "url-loader"
-        ]
-      },
-      {
         test: /\.(sa|sc|c)ss$/,
         use: [
           MiniCssExtractPlugin.loader,
