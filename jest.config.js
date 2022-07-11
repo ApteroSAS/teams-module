@@ -3,7 +3,10 @@
  * https://jestjs.io/docs/configuration
  */
 
-export default {
+/** @type {import('ts-jest/dist/types').InitialOptionsTsJest} */
+module.exports = {
+  preset: 'ts-jest',
+  testEnvironment: 'node',
   // All imported modules in your tests should be mocked automatically
   // automock: false,
 
@@ -77,7 +80,7 @@ export default {
   ],
 
   // An array of file extensions your modules use
-  moduleFileExtensions: [
+  /*moduleFileExtensions: [
     "js",
     "mjs",
     "cjs",
@@ -90,7 +93,7 @@ export default {
     "web.ts",
     "web.tsx",
     "web.jsx",
-  ],
+  ],*/
 
   // A map from regular expressions to module names or to arrays of module names that allow to stub out resources with a single module
   "moduleNameMapper": {
@@ -181,20 +184,24 @@ export default {
 
   // A map from regular expressions to paths to transformers
   // transform: undefined,
+  transform: {}
 
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
   // transformIgnorePatterns: [
   //   "\\\\node_modules\\\\",
   //   "\\.pnp\\.[^\\\\]+$"
   // ],
-  "transformIgnorePatterns": [
-    //"node_modules/.*",
+  /*"transformIgnorePatterns": [
+    "node_modules/.*",
     //"node_modules/botbuilder.*",
     //"node_modules/(?!@ngrx|(?!deck.gl)|ng-dynamic)"
     //"node_modules/(?!your-module-name)/"
-    "node_modules/@microsoft.*",
-    "node_modules/botbuilder.*"
-  ],
+    //"node_modules/@microsoft.*",
+    "node_modules/(?!uuid)",
+    "node_modules/(?!@microsoft)",
+    "node_modules/(?!@azure)",
+    "node_modules/(?!botbuilder)",
+  ],*/
 
   // An array of regexp pattern strings that are matched against all modules before the module loader will automatically return a mock for them
   // unmockedModulePathPatterns: undefined,

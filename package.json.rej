@@ -1,0 +1,9 @@
+diff a/package.json b/package.json	(rejected hunks)
+@@ -14,7 +14,6 @@
+     "dev": "cross-env NODE_ENV=development webpack serve --config webpack.config.demo.js",
+     "build:dev": "cross-env DEVTOOL=eval-source-map yarn run build",
+     "dev:watch": "cross-env DEVTOOL=eval-source-map tsc-watch --onSuccess \"webpack\"",
+-    "ci:test:debug": "cross-env NODE_ENV=development npx playwright test --headed",
+     "ci": "yarn run coverage",
+     "coverage": "jest --silent --ci --runInBand --reporters=default --reporters=jest-junit --coverage --collectCoverageFrom='src/lib/**/*.ts'",
+     "test": "jest"
