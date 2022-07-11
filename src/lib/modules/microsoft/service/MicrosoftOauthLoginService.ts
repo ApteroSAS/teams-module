@@ -1,5 +1,5 @@
 import { PublicClientApplication } from "@azure/msal-browser";
-import { getScopesLight } from "../scope";
+import { getScopesLight } from "../../aptTeamsApp/scope";
 import { MicrosoftGraphService } from "./MicrosoftGraphService";
 import { MsToNativeLoginBridge } from "@aptero/axolotis-module-basic";
 import { getMsProperties } from "@root/modules/microsoft/service/Properties";

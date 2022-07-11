@@ -1,4 +1,4 @@
-import { getMSEvents } from "./MsTeamsUtils";
+import { getMSEvents } from "../../aptTeamsApp/MsTeamsUtils";
 import { PROCESS_DEEPLINK } from "@root/modules/microsoft/Events";
 import { app } from "@microsoft/teams-js";
 

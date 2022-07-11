@@ -1,7 +1,5 @@
 import type MsTeamsAPILightDefault from "./modules/microsoft/MsTeamsAPILight";
 export declare type MsTeamsAPILight = MsTeamsAPILightDefault;
-import type RoomServiceDefault from "./modules/roomAPI/RoomService";
-export declare type RoomService = RoomServiceDefault;
 export type { MsTeamsAPI } from "./modules/microsoft/MsTeamsAPI";
 export type { MicrosoftLoginService } from "./modules/microsoft/service/MicrosoftLoginService";
 export * from "./modules/microsoft/MsTeamsAPILight";

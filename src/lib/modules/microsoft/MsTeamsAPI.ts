@@ -1,9 +1,9 @@
 import { Component } from "@aptero/axolotis-player";
 import { MicrosoftLoginService } from "./service/MicrosoftLoginService";
-import { redirectToTeamsSidePanel } from "./service/RedirectToSidePage";
-import { getContext, getMSEvents, processDeepLink } from "./service/MsTeamsUtils";
-import "./service/TeamsTestHelper";
-import { registerTeamsTestHelper } from "./service/TeamsTestHelper";
+import { redirectToTeamsSidePanel } from "../aptTeamsApp/RedirectToSidePage";
+import { changeUrlSettings, getContext, getMSEvents, processDeepLink } from "../aptTeamsApp/MsTeamsUtils";
+import "../aptTeamsApp/TeamsTestHelper";
+import { registerTeamsTestHelper } from "../aptTeamsApp/TeamsTestHelper";
 import { app, pages } from "@microsoft/teams-js";
 import { PhoenixAuthService } from "@aptero/axolotis-module-basic";
 import { PHX_AUTH_SERVICE } from "@aptero/axolotis-module-basic";
@@ -45,6 +45,10 @@ export class MsTeamsAPI implements Component {
 
   async processDeepLink(link) {
     return processDeepLink(link);
+  }
+
+  changeUrlSettings(url) {
+    return changeUrlSettings(url);
   }
 
   getType(): string {

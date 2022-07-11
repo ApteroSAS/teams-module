@@ -1,6 +1,6 @@
 import { ModulePromise } from "@aptero/axolotis-player";
 import { Item } from "@aptero/axolotis-player";
-import { MICROSOFT_SERVICE, MICROSOFT_STATIC_SERVICE, ROOM_SERVICE } from "@root/ImportHelper";
+import { MICROSOFT_SERVICE, MICROSOFT_STATIC_SERVICE } from "@root/ImportHelper";
 
 export class AxItem implements Item {
   constructor() {
@@ -20,11 +20,6 @@ export class AxItem implements Item {
       import(
         /*  webpackPrefetch: 0,  webpackMode: 'lazy',  webpackChunkName: "@aptero/axolotis-module-teams/MicrosoftStaticService"  */
         "@root/modules/microsoft/MsTeamsAPILight"
-      );
-    ret[ROOM_SERVICE] = () =>
-      import(
-        /*  webpackPrefetch: 0,  webpackMode: 'lazy',  webpackChunkName: "@aptero/axolotis-module-room/RoomService"  */
-        "@root/modules/roomAPI/RoomService"
       );
     return ret;
   }

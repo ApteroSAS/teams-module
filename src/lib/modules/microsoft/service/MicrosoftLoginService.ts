@@ -1,4 +1,4 @@
-import { msTeamsUtils } from "./MsTeamsUtils";
+import { msTeamsUtils } from "../../aptTeamsApp/MsTeamsUtils";
 import { MicrosoftGraphService } from "./MicrosoftGraphService";
 import { MicrosoftOauthLoginService } from "./MicrosoftOauthLoginService";
 import { TeamsLoginService } from "./TeamsLoginService";

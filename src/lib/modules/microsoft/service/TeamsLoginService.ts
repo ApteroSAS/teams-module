@@ -1,7 +1,7 @@
-import { msTeamsUtils } from "./MsTeamsUtils";
+import { msTeamsUtils } from "../../aptTeamsApp/MsTeamsUtils";
 import { LogLevel, setLogLevel, setLogFunction, createMicrosoftGraphClient, TeamsFx, IdentityType } from "@microsoft/teamsfx";
 import { getAuthEvents, LOGGED_BASIC_INFO } from "./AuthEvent";
-import { getScopes } from "../scope";
+import { getScopes } from "../../aptTeamsApp/scope";
 import { MicrosoftGraphService } from "./MicrosoftGraphService";
 import { getMsProperties } from "@root/modules/microsoft/service/Properties";
 import { app } from "@microsoft/teams-js";

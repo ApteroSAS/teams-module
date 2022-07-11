@@ -3,8 +3,6 @@ import { AxItem } from "./AxItem";
 
 import type MsTeamsAPILightDefault from "./modules/microsoft/MsTeamsAPILight";
 export type MsTeamsAPILight = MsTeamsAPILightDefault;
-import type RoomServiceDefault from "./modules/roomAPI/RoomService";
-export type RoomService = RoomServiceDefault;
 export type { MsTeamsAPI } from "./modules/microsoft/MsTeamsAPI";
 
 export type { MicrosoftLoginService } from "./modules/microsoft/service/MicrosoftLoginService";

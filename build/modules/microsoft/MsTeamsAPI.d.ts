@@ -1,6 +1,6 @@
 import { Component } from "@aptero/axolotis-player";
 import { MicrosoftLoginService } from "./service/MicrosoftLoginService";
-import "./service/TeamsTestHelper";
+import "../aptTeamsApp/TeamsTestHelper";
 import { app, pages } from "@microsoft/teams-js";
 import { PhoenixAuthService } from "@aptero/axolotis-module-basic";
 import { MicrosoftUrlService } from "./service/MicrosoftUrlService";
@@ -20,6 +20,7 @@ export declare class MsTeamsAPI implements Component {
     getMSEvents(): any;
     getContext(callback: any): Promise<void>;
     processDeepLink(link: any): Promise<void>;
+    changeUrlSettings(url: any): void;
     getType(): string;
     registerTeamsTestHelper(): void;
 }

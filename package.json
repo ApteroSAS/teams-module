@@ -14,12 +14,9 @@
     "dev": "cross-env NODE_ENV=development webpack serve --config webpack.config.demo.js",
     "build:dev": "cross-env DEVTOOL=eval-source-map yarn run build",
     "dev:watch": "cross-env DEVTOOL=eval-source-map tsc-watch --onSuccess \"webpack\"",
-    "ci:test": "cross-env NODE_ENV=development npx playwright test",
-    "ci:test:debug": "cross-env NODE_ENV=development npx playwright test --headed",
-    "ci:coverage:serve": "cross-env NODE_ENV=development USE_BABEL_PLUGIN_ISTANBUL=1 webpack --stats-error-details --config webpack.config.demo.js && npx http-server dist -p 9080",
-    "ci:coverage:build": "cross-env NODE_ENV=development USE_BABEL_PLUGIN_ISTANBUL=1 yarn run build",
-    "ci:coverage": "cross-env NODE_ENV=development npx playwright test && nyc --no-clean yarn --version",
-    "ci": "cross-env CI=true start-server-and-test ci:coverage:serve http://localhost:9080 ci:coverage"
+    "ci": "yarn run coverage",
+    "coverage": "jest --silent --ci --runInBand --reporters=default --reporters=jest-junit --coverage --collectCoverageFrom='src/lib/**/*.ts'",
+    "test": "jest"
   },
   "author": "Aptero <admin@aptero.co>",
   "homepage": "https://aptero.co",
@@ -30,6 +27,7 @@
     "es6"
   ],
   "devDependencies": {
+    "@aptero/axolotis-module-basic": "https://github.com/ApteroSAS/basic-modules#d259f4c406cff014a52b1921dc40039076dd1ef5",
     "@aptero/axolotis-player": "git+https://github.com/ApteroSAS/axolotis-player.git#3f8fff8508fa9dcb18c40214685ab28027e104a1",
     "@babel/cli": "^7.17.10",
     "@babel/core": "^7.18.2",
@@ -39,7 +37,7 @@
     "@babel/preset-env": "^7.18.2",
     "@babel/preset-typescript": "^7.17.12",
     "@istanbuljs/nyc-config-typescript": "^1.0.2",
-    "@playwright/test": "^1.22.2",
+    "@types/jest": "^28.1.4",
     "@typescript-eslint/eslint-plugin": "^5.27.0",
     "@typescript-eslint/parser": "^5.27.0",
     "babel-eslint": "^10.1.0",
@@ -51,9 +49,13 @@
     "eslint": "^8.16.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.0.0",
+    "html-webpack-plugin": "^5.5.0",
     "http-server": "^14.1.1",
+    "jest": "^28.1.2",
+    "jest-environment-jsdom": "^28.1.2",
+    "jest-junit": "^14.0.0",
+    "mini-css-extract-plugin": "^2.6.1",
     "nyc": "^15.1.0",
-    "playwright": "^1.22.2",
     "prettier": "^2.6.2",
     "prettier-webpack-plugin": "^1.2.0",
     "source-map-support": "^0.5.21",
@@ -67,8 +69,7 @@
     "url-loader": "^4.1.1",
     "webpack": "^5.72.1",
     "webpack-cli": "^4.9.2",
-    "webpack-dev-server": "4.9.1",
-    "@aptero/axolotis-module-basic": "https://github.com/ApteroSAS/basic-modules#3c4a3b71c1a30b5115b5e4e7220522c54d947af9"
+    "webpack-dev-server": "4.9.1"
   },
   "dependencies": {
     "@azure/msal-browser": "2.25.0",
