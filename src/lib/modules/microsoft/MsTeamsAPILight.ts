@@ -15,7 +15,7 @@ export default class MsTeamsAPILight implements IService {
   constructor() {
     const qs = new URLSearchParams(location.search);
     this.msmode = !!qs.get(MSTEAMS_QUERY_PARAM);
-    if (this.msmode) {
+    if (this.msmode && (window.location.host.startsWith("localhost") || window.location.host.startsWith("127.0.0.1"))) {
       (async () => {
         (await msTeamsAPI()).registerTeamsTestHelper();
       })();
