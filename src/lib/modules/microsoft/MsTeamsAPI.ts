@@ -39,15 +39,15 @@ export class MsTeamsAPI implements Component {
     return getMSEvents();
   }
 
-  getContext(callback) {
+  getContext(callback: (context) => void) {
     return getContext(callback);
   }
 
-  async processDeepLink(link) {
+  async processDeepLink(link: string) {
     return processDeepLink(link);
   }
 
-  changeUrlSettings(url) {
+  changeUrlSettings(url: string) {
     return changeUrlSettings(url);
   }
 

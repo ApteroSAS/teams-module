@@ -18,9 +18,9 @@ export declare class MsTeamsAPI implements Component {
     redirectToTeamsSidePanel(): Promise<void>;
     getUrlService(): MicrosoftUrlService;
     getMSEvents(): any;
-    getContext(callback: any): Promise<void>;
-    processDeepLink(link: any): Promise<void>;
-    changeUrlSettings(url: any): void;
+    getContext(callback: (context: any) => void): Promise<void>;
+    processDeepLink(link: string): Promise<void>;
+    changeUrlSettings(url: string): void;
     getType(): string;
     registerTeamsTestHelper(): void;
 }
