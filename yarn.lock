@@ -10,9 +10,8 @@
     "@jridgewell/gen-mapping" "^0.1.0"
     "@jridgewell/trace-mapping" "^0.3.9"
 
-"@aptero/axolotis-module-basic@https://github.com/ApteroSAS/basic-modules#d259f4c406cff014a52b1921dc40039076dd1ef5":
+"@aptero/axolotis-module-basic@./modules/basic-modules":
   version "1.0.0"
-  resolved "https://github.com/ApteroSAS/basic-modules#d259f4c406cff014a52b1921dc40039076dd1ef5"
   dependencies:
     deepmerge "^4.2.2"
     event-target-shim "^6.0.2"

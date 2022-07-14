@@ -30,7 +30,7 @@
     "es6"
   ],
   "devDependencies": {
-    "@aptero/axolotis-module-basic": "https://github.com/ApteroSAS/basic-modules#d259f4c406cff014a52b1921dc40039076dd1ef5",
+    "@aptero/axolotis-module-basic": "./modules/basic-modules",
     "@aptero/axolotis-player": "git+https://github.com/ApteroSAS/axolotis-player.git#3f8fff8508fa9dcb18c40214685ab28027e104a1",
     "@babel/cli": "^7.18.6",
     "@babel/core": "^7.18.6",
