@@ -1,4 +1,4 @@
-import { MicrosoftLoginService } from "./microsoftLoginService";
+import { MicrosoftLoginService } from "./MicrosoftLoginService";
 import { Buffer } from "buffer/";
 import { deepLinkService } from "./DeepLinkService";
 import { MICROSOFT_AUTH_ERROR } from "../MsTeamsAPILight";
