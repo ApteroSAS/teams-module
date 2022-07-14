@@ -1,4 +1,4 @@
-import { MicrosoftLoginService } from "./microsoftLoginService";
+import { MicrosoftLoginService } from "./MicrosoftLoginService";
 export declare class MicrosoftUrlService {
     private microsoftLoginService;
     preloaded: {};
