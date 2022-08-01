@@ -28,7 +28,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.(m|j|t)s$/,
+                test: /\.(js|ts)$/,
         exclude: /(node_modules|bower_components)/,
         use: {
           loader: 'babel-loader'
@@ -67,11 +67,10 @@ module.exports = {
   resolve: {
     alias: {
       "@root": path.join(__dirname,"./src/lib")
-    },
-    fallback: {
-      'fs': false,
-      'path': false, // ammo.js seems to also use path
-    },
+        },
+        fallback: {
+            'url': false,
+        },
     extensions: ['.ts', '.js', '.json']
   }
 };
