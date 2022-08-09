@@ -6,6 +6,9 @@ import { MicrosoftGraphService } from "./MicrosoftGraphService";
 import { getMsProperties } from "@root/modules/microsoft/service/Properties";
 import { app } from "@microsoft/teams-js";
 import { MsToNativeLoginBridge } from "@aptero/axolotis-module-basic";
+import { getService } from "@aptero/axolotis-player";
+import { COOKIE_STORE_SERVICE } from "@aptero/axolotis-module-basic";
+import CookieStore from "@aptero/axolotis-module-basic/build/modules/store/CookieStore";
 
 let credential: TeamsFx | null = null;
 export const startLoginPageUrl = window.location.origin + "/auth-start.html";
@@ -30,6 +33,8 @@ function initTeamsFx(authorityHost) {
     clientId: getMsProperties().MICROSOFT_APP_ID, //process.env.REACT_APP_CLIENT_ID;
   });
 }
+
+const FORCE_STAY_LOGOUT = "ms_force_stay_logout";
 
 export class TeamsLoginService {
   constructor(private microsoftGraphService: MicrosoftGraphService, private msToNativeLoginBridge: MsToNativeLoginBridge) {}
@@ -72,6 +77,8 @@ export class TeamsLoginService {
   // JWT decripting of the token
   async userInteractionAuth() {
     console.log("TeamsLoginService : userInteractionAuth");
+    let cookieStore = await getService<CookieStore>(COOKIE_STORE_SERVICE);
+    cookieStore.remove(FORCE_STAY_LOGOUT); //Only in case of user requested login do we remove this flag
     const cred = await this.initBasicInfo();
     //await cred.login(getScopesLight()); //Trigger authorization popup
     const userInfo = await cred.getUserInfo(); //confirmed by stephano no user popup
@@ -103,7 +110,9 @@ export class TeamsLoginService {
       console.warn("microsoftTeams.initialize failed (probably not in teams so we skip it)", e);
       return;
     }
-    if (!this.msToNativeLoginBridge.isLogged()) {
+    let cookieStore = await getService<CookieStore>(COOKIE_STORE_SERVICE);
+    //!this.msToNativeLoginBridge.isLogged()
+    if (cookieStore.get(FORCE_STAY_LOGOUT)) {
       return;
     }
     try {
@@ -118,6 +127,8 @@ export class TeamsLoginService {
     } catch (e) {
       //passive login should never fail - just ignore
       console.warn("passive login failed", e);
+      let cookieStore = await getService<CookieStore>(COOKIE_STORE_SERVICE);
+      cookieStore.remove(FORCE_STAY_LOGOUT); //Only in case of user requested login do we remove this flag (avoid loop of login in case of fail)
     }
   }
 
@@ -179,6 +190,8 @@ export class TeamsLoginService {
   }
 
   async logout() {
+    let cookieStore = await getService<CookieStore>(COOKIE_STORE_SERVICE);
+    cookieStore.set(FORCE_STAY_LOGOUT, "true");
     await this.msToNativeLoginBridge.logout();
   }
 }
