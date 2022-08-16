@@ -47,6 +47,27 @@ module.exports = {
     },
     optimization: {
         minimize: true,
+        splitChunks: {
+            //https://webpack.js.org/plugins/split-chunks-plugin/
+            chunks: 'async',
+            //filename: 'library/[name].[fullhash].js',
+            cacheGroups: {
+                vendor: {
+                    //each vendor has one async bundle
+                    name : (module, chunks, cacheGroupKey) => {
+                        try {
+                            let modulePath = module.resourceResolveData.descriptionFileData.name
+                            if(modulePath.startsWith("node_modules")){
+                                modulePath.replace("node_modules/","");
+                            }
+                            return modulePath
+                        }catch (e){
+                            return "default";
+                        }
+                    },
+                }
+            }
+        },
         minimizer: [
             new TerserPlugin({
                 extractComments: false, terserOptions: {
@@ -80,7 +101,7 @@ module.exports = {
                     to: "library/@aptero/axolotis-module-teams/assets/auth-end.html"
                 },
                 {
-                    from: "./node_modules/@aptero/axolotis-module-basic/build/library/*",
+                    from: "./node_modules/@aptero/axolotis-module-basic/build/library/**",
                     to: "library/"
                 },
             ]
