@@ -1,15 +1,15 @@
 import { getGlobalStorageValue, GLOBAL_WORLDS_ENTITY, registerItem, WorldEntity } from "@aptero/axolotis-player";
 import { AxItem } from "./AxItem";
 
-import type MsTeamsAPILightDefault from "./modules/microsoft/MsTeamsAPILight";
-export type MsTeamsAPILight = MsTeamsAPILightDefault;
-export type { MsTeamsAPI } from "./modules/microsoft/MsTeamsAPI";
+export type { MsTeamsAPILight } from "@aptero/axolotis-module-teams-async";
+export type { MsTeamsAPI } from "@aptero/axolotis-module-teams-async";
+export type { MicrosoftLoginService } from "@aptero/axolotis-module-teams-async";
 
-export type { MicrosoftLoginService } from "./modules/microsoft/service/MicrosoftLoginService";
-
-export * from "./modules/microsoft/MsTeamsAPILight";
 export * from "./ImportHelper";
-export * from "./modules/microsoft/Events";
+
+export const CHANGE_SETTINGS_URL = "ms-teams-change-settings-url";
+export const PROCESS_DEEPLINK = "ms-teams-deep-link";
+export const MSTEAMS_QUERY_PARAM = "msteams";
 
 export const register = () => {
   const worlds = getGlobalStorageValue<WorldEntity[]>(GLOBAL_WORLDS_ENTITY, false);

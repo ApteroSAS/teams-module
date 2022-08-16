@@ -10,17 +10,13 @@ export class AxItem implements Item {
   modules(): { [id: string]: ModulePromise } {
     let ret: { [id: string]: ModulePromise } = {};
     ret[MICROSOFT_SERVICE] = async () => {
-      let module = await import(
-        /*  webpackPrefetch: 0,  webpackMode: 'lazy',  webpackChunkName: "@aptero/axolotis-module-teams/MsTeamsAPI"  */
-        "./modules/microsoft/MsTeamsAPI"
-      );
+      let module = await import("@aptero/axolotis-module-teams-async");
       return { module, classname: module.MsTeamsAPI.name };
     };
-    ret[MICROSOFT_STATIC_SERVICE] = () =>
-      import(
-        /*  webpackPrefetch: 0,  webpackMode: 'lazy',  webpackChunkName: "@aptero/axolotis-module-teams/MicrosoftStaticService"  */
-        "@root/modules/microsoft/MsTeamsAPILight"
-      );
+    ret[MICROSOFT_STATIC_SERVICE] = async () => {
+      let module = await import("@aptero/axolotis-module-teams-async");
+      return { module, classname: module.MsTeamsAPILight.name };
+    };
     return ret;
   }
 }

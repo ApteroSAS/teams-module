@@ -47,27 +47,6 @@ module.exports = {
     },
     optimization: {
         minimize: true,
-        splitChunks: {
-            //https://webpack.js.org/plugins/split-chunks-plugin/
-            chunks: 'async',
-            //filename: 'library/[name].[fullhash].js',
-            cacheGroups: {
-                vendor: {
-                    //each vendor has one async bundle
-                    name : (module, chunks, cacheGroupKey) => {
-                        try {
-                            let modulePath = module.resourceResolveData.descriptionFileData.name
-                            if(modulePath.startsWith("node_modules")){
-                                modulePath.replace("node_modules/","");
-                            }
-                            return modulePath
-                        }catch (e){
-                            return "default";
-                        }
-                    },
-                }
-            }
-        },
         minimizer: [
             new TerserPlugin({
                 extractComments: false, terserOptions: {
@@ -93,11 +72,11 @@ module.exports = {
         new CopyWebpackPlugin({
             patterns: [
                 {
-                    from: "./src/lib/modules/microsoft/page/auth-start.html",
+                    from: "./src-async/src/microsoft/page/auth-start.html",
                     to: "library/@aptero/axolotis-module-teams/assets/auth-start.html"
                 },
                 {
-                    from: "./src/lib/modules/microsoft/page/auth-end.html",
+                    from: "./src-async/src/microsoft/page/auth-end.html",
                     to: "library/@aptero/axolotis-module-teams/assets/auth-end.html"
                 },
                 {

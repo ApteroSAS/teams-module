@@ -1,8 +1,8 @@
-import type MsTeamsAPILightDefault from "./modules/microsoft/MsTeamsAPILight";
-export declare type MsTeamsAPILight = MsTeamsAPILightDefault;
-export type { MsTeamsAPI } from "./modules/microsoft/MsTeamsAPI";
-export type { MicrosoftLoginService } from "./modules/microsoft/service/MicrosoftLoginService";
-export * from "./modules/microsoft/MsTeamsAPILight";
+export type { MsTeamsAPILight } from "@aptero/axolotis-module-teams-async";
+export type { MsTeamsAPI } from "@aptero/axolotis-module-teams-async";
+export type { MicrosoftLoginService } from "@aptero/axolotis-module-teams-async";
 export * from "./ImportHelper";
-export * from "./modules/microsoft/Events";
+export declare const CHANGE_SETTINGS_URL = "ms-teams-change-settings-url";
+export declare const PROCESS_DEEPLINK = "ms-teams-deep-link";
+export declare const MSTEAMS_QUERY_PARAM = "msteams";
 export declare const register: () => void;

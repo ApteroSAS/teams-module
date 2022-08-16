@@ -2,8 +2,8 @@ import { getService, getServiceSync } from "@aptero/axolotis-player";
 /**
  * Should only import type to stay lightweight
  */
-import type MsTeamsAPILight from "@root/modules/microsoft/MsTeamsAPILight";
-import type { MsTeamsAPI } from "@root/modules/microsoft/MsTeamsAPI";
+import type { MsTeamsAPILight } from "@aptero/axolotis-module-teams-async";
+import type { MsTeamsAPI } from "@aptero/axolotis-module-teams-async";
 
 export const MICROSOFT_SERVICE = "@aptero/axolotis-module-teams/MicrosoftService";
 export const MICROSOFT_STATIC_SERVICE = "@aptero/axolotis-module-teams/MicrosoftStaticService";
