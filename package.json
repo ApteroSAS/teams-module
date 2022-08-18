@@ -9,7 +9,8 @@
   },
   "types": "build/index.d.ts",
   "scripts": {
-    "build": "rimraf ./build/ && ttsc && webpack",
+    "build": "rimraf ./build/ && yarn build:dep && ttsc && webpack",
+    "build:dep": "rimraf ./src-async/build/ && cd src-async && ttsc && webpack",
     "start": "cross-env OPEN=true yarn run dev",
     "dev": "cross-env NODE_ENV=development webpack serve --config webpack.config.demo.js",
     "build:dev": "cross-env DEVTOOL=eval-source-map yarn run build",

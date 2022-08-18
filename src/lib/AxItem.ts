@@ -1,6 +1,7 @@
 import { ModulePromise } from "@aptero/axolotis-player";
 import { Item } from "@aptero/axolotis-player";
 import { MICROSOFT_SERVICE, MICROSOFT_STATIC_SERVICE } from "@root/ImportHelper";
+import { MsTeamsAPIFactory } from "@aptero/axolotis-module-teams-async";
 
 export class AxItem implements Item {
   constructor() {
@@ -11,7 +12,7 @@ export class AxItem implements Item {
     let ret: { [id: string]: ModulePromise } = {};
     ret[MICROSOFT_SERVICE] = async () => {
       let module = await import("@aptero/axolotis-module-teams-async");
-      return { module, classname: module.MsTeamsAPI.name };
+      return { module, classname: module.MsTeamsAPIFactory.name };
     };
     ret[MICROSOFT_STATIC_SERVICE] = async () => {
       let module = await import("@aptero/axolotis-module-teams-async");

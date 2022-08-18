@@ -1,4 +1,4 @@
-import { Component } from "@aptero/axolotis-player";
+import { Component, IServices, Service } from "@aptero/axolotis-player";
 import { MicrosoftLoginService } from "./service/MicrosoftLoginService";
 import { redirectToTeamsSidePanel } from "../aptTeamsApp/RedirectToSidePage";
 import { changeUrlSettings, getContext, getMSEvents, processDeepLink } from "../aptTeamsApp/MsTeamsUtils";
@@ -9,11 +9,19 @@ import { PhoenixAuthService } from "@aptero/axolotis-module-basic";
 import { PHX_AUTH_SERVICE } from "@aptero/axolotis-module-basic";
 import { MicrosoftUrlService } from "./service/MicrosoftUrlService";
 
+export class MsTeamsAPIFactory implements Service<MsTeamsAPI> {
+  async createService(services: IServices): Promise<MsTeamsAPI> {
+    let service = await services.getService<PhoenixAuthService>(PHX_AUTH_SERVICE);
+    return new MsTeamsAPI(service);
+  }
+}
+
 export class MsTeamsAPI implements Component {
   private microsoftLoginService: MicrosoftLoginService;
   private microsoftUrlService: MicrosoftUrlService;
 
   public static dependencies: string[] = [PHX_AUTH_SERVICE];
+
   constructor(private phxAuth: PhoenixAuthService) {
     this.microsoftLoginService = new MicrosoftLoginService(phxAuth.getNativeInterface());
     this.microsoftUrlService = new MicrosoftUrlService(this.microsoftLoginService);

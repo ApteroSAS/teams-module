@@ -23,5 +23,8 @@
     "@microsoft/teams-js": "^2.2.0",
     "@microsoft/teamsfx": "^1.1.0",
     "tsutils": "^3.21.0"
+  },
+  "peerDependencies": {
+    "@aptero/axolotis-player": "github:ApteroSAS/axolotis-player.git#semver:^1.1.2"
   }
 }
