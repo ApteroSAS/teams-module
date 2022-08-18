@@ -9,6 +9,7 @@
   },
   "types": "build/index.d.ts",
   "scripts": {
+    "setup": "cross-env yarn && yarn --cwd ./src-async",
     "build": "rimraf ./build/ && yarn build:dep && ttsc && webpack",
     "build:dep": "rimraf ./src-async/build/ && cd src-async && ttsc && webpack",
     "start": "cross-env OPEN=true yarn run dev",
