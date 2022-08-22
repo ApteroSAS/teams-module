@@ -11,6 +11,7 @@ import { MicrosoftUrlService } from "./service/MicrosoftUrlService";
 
 export class MsTeamsAPIFactory implements Service<MsTeamsAPI> {
   async createService(services: IServices): Promise<MsTeamsAPI> {
+    console.log("MsTeamsAPIFactory");
     let service = await services.getService<PhoenixAuthService>(PHX_AUTH_SERVICE);
     return new MsTeamsAPI(service);
   }

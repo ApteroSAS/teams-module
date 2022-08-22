@@ -93,17 +93,18 @@ module.exports = {
         new CopyWebpackPlugin({
             patterns: [
                 {
-                    from: "./src-async/src/microsoft/page/auth-start.html",
+                    from: "./src/lib/microsoft/page/auth-start.html",
                     to: "library/@aptero/axolotis-module-teams/assets/auth-start.html"
                 },
                 {
-                    from: "./src-async/src/microsoft/page/auth-end.html",
+                    from: "./src/lib/microsoft/page/auth-end.html",
                     to: "library/@aptero/axolotis-module-teams/assets/auth-end.html"
                 },
-                {
+                //TODO should i add the files from the 3rd party
+                /*{
                     from: "./node_modules/@aptero/axolotis-module-basic/build/library/**",
                     to: "library/"
-                },
+                },*/
             ]
         }),
         new PrettierPlugin(),

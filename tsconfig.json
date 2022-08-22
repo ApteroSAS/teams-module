@@ -26,5 +26,5 @@
       ]
     },
     "include": ["src/lib"],
-    "exclude": ["src/lib/**/tests","node_modules"]
+    "exclude": ["src/lib/**/tests","src-async","node_modules"]
 }

@@ -20,7 +20,7 @@ export declare class MicrosoftLoginService implements AuthInterface {
     getName(): any;
     logout(): Promise<void>;
     displayProfilePhoto(): any;
-    isSignedIn(): any;
+    isSignedIn(): boolean;
     getAccount(): {
         email: any;
         displayName: any;

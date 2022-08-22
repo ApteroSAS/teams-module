@@ -9,11 +9,9 @@
   },
   "types": "build/index.d.ts",
   "scripts": {
-    "setup": "cross-env yarn && yarn --cwd ./src-async",
-    "build": "rimraf ./build/ && yarn build:dep && ttsc && webpack",
-    "build:dep": "rimraf ./src-async/build/ && cd src-async && ttsc && webpack",
+    "setup:link": "yarn link @aptero/axolotis-module-basic",
+    "build": "rimraf ./build/ && ttsc && webpack",
     "start": "cross-env OPEN=true yarn run dev",
-    "dev": "cross-env NODE_ENV=development webpack serve --config webpack.config.demo.js",
     "build:dev": "cross-env DEVTOOL=eval-source-map yarn run build",
     "dev:watch": "cross-env DEVTOOL=eval-source-map tsc-watch --onSuccess \"webpack\"",
     "ci:test": "cross-env NODE_ENV=development npx playwright test",
@@ -74,8 +72,11 @@
     "webpack-dev-server": "4.9.3"
   },
   "dependencies": {
-    "@aptero/axolotis-module-basic": "file:./modules/basic-modules",
-    "@aptero/axolotis-module-teams-async": "file:./src-async"
+    "@azure/msal-browser": "2.28.1",
+    "@microsoft/microsoft-graph-client": "^3.0.2",
+    "@microsoft/teams-js": "^2.2.0",
+    "@microsoft/teamsfx": "^1.1.0",
+    "tsutils": "^3.21.0"
   },
   "peerDependencies": {
     "@aptero/axolotis-player": "github:ApteroSAS/axolotis-player.git#semver:^1.1.2"
