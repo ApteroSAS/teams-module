@@ -10,9 +10,9 @@
     "@jridgewell/gen-mapping" "^0.1.0"
     "@jridgewell/trace-mapping" "^0.3.9"
 
-"@aptero/axolotis-player@github:ApteroSAS/axolotis-player.git#semver:^2.1.4":
-  version "2.1.4"
-  resolved "https://codeload.github.com/ApteroSAS/axolotis-player/tar.gz/baa676a5bc3c25d09a45f572c3055e59bb205173"
+"@aptero/axolotis-player@github:ApteroSAS/axolotis-player.git#semver:^2.1.5":
+  version "2.1.5"
+  resolved "https://codeload.github.com/ApteroSAS/axolotis-player/tar.gz/e5c393bfb396bc604339395c4ac9892f34973dae"
 
 "@azure/abort-controller@^1.0.0", "@azure/abort-controller@^1.0.4":
   version "1.1.0"
