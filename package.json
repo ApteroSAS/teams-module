@@ -2,7 +2,7 @@
   "name": "@aptero/axolotis-module-teams",
   "version": "1.0.0",
   "description": "Axolotis - Teams module",
-  "main": "build/index.js",
+  "module": "src/lib/index.ts",
   "exports": {
     ".": "./build/index.js",
     "./*": "./build/*"
