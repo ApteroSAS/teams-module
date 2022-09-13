@@ -34,7 +34,8 @@ module.exports = {
     },
     entry: {
         "dist-index": path.join(__dirname, './src/lib/index.ts'),
-        "dist-index-light": path.join(__dirname, './src/lib/indexLight.ts'),
+        "dist-index-ms": path.join(__dirname, './src/lib/bundle-MicrosoftService.ts'),
+        "dist-index-ms-light": path.join(__dirname, './src/lib/bundle-MicrosoftServiceLight.ts'),
     },
     output: {
         chunkFilename: 'library/[name].[chunkhash].js',

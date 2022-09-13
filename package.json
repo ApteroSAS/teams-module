@@ -2,12 +2,12 @@
   "name": "@aptero/axolotis-module-teams",
   "version": "1.0.0",
   "description": "Axolotis - Teams module",
-  "module": "src/lib/index.ts",
+  "module": "src/lib/bundle-MicrosoftService.ts",
   "exports": {
     ".": "./dist-index.js",
     "./*": "./*"
   },
-  "types": "build/index.d.ts",
+  "types": "lib/index.d.ts",
   "scripts": {
     "setup:link": "yarn link @aptero/axolotis-module-basic",
     "build": "rimraf ./lib/ && ttsc && webpack",
@@ -72,7 +72,7 @@
     "webpack-dev-server": "4.9.3"
   },
   "dependencies": {
-    "@aptero/axolotis-module-basic": "./modules/basic-modules",
+    "@aptero/axolotis-module-basic": "file:./modules/basic-modules",
     "@azure/msal-browser": "2.28.1",
     "@microsoft/microsoft-graph-client": "^3.0.2",
     "@microsoft/teams-js": "^2.2.0",

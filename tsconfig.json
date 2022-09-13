@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
       "noImplicitAny": false,
-      "outDir": "lib/",
+      "outDir": "./lib",
       "module": "esnext",
       "target": "ES5",
       "allowJs": true,
@@ -15,7 +15,7 @@
       "moduleResolution": "node",
       "baseUrl": "./",
       "paths": {
-        "@root/*": ["src/lib/*"]
+        "@root/*": ["src/*"]
       },
       "plugins": [
         {

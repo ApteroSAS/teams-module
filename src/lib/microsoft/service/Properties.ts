@@ -1,6 +1,6 @@
 import { PropertiesFormat, PROPERTY_KEY } from "../PropertiesFormat";
 import { getServiceSync } from "@aptero/axolotis-player";
-import { PROPERTIES_SERVICE } from "@root/const";
+import { PROPERTIES_SERVICE } from "../../const";
 import { Properties } from "@aptero/axolotis-module-basic";
 
 export function getMsProperties() {
