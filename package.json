@@ -4,13 +4,13 @@
   "description": "Axolotis - Teams module",
   "module": "src/lib/index.ts",
   "exports": {
-    ".": "./build/index.js",
-    "./*": "./build/*"
+    ".": "./dist-index.js",
+    "./*": "./*"
   },
   "types": "build/index.d.ts",
   "scripts": {
     "setup:link": "yarn link @aptero/axolotis-module-basic",
-    "build": "rimraf ./build/ && ttsc && webpack",
+    "build": "rimraf ./lib/ && ttsc && webpack",
     "start": "cross-env OPEN=true yarn run dev",
     "build:dev": "cross-env DEVTOOL=eval-source-map yarn run build",
     "dev:watch": "cross-env DEVTOOL=eval-source-map tsc-watch --onSuccess \"webpack\"",
@@ -80,5 +80,8 @@
   },
   "peerDependencies": {
     "@aptero/axolotis-player": "github:ApteroSAS/axolotis-player.git#semver:^2.1.6"
+  },
+  "browser": {
+    "[module-name]": false
   }
 }

@@ -33,12 +33,13 @@ module.exports = {
         maxAssetSize: 2 * 1000 * 1000
     },
     entry: {
-        index: path.join(__dirname, './src/lib/index.ts'),
+        "dist-index": path.join(__dirname, './src/lib/index.ts'),
+        "dist-index-light": path.join(__dirname, './src/lib/indexLight.ts'),
     },
     output: {
         chunkFilename: 'library/[name].[chunkhash].js',
         filename: '[name].js',
-        path: path.join(__dirname, 'build'),
+        path: path.join(__dirname, '.'),//NOTE multi export only works if its from root directory
         library: {
             name: libName.split("/")[libName.split("/").length-1],
             type: 'umd2',//https://webpack.js.org/configuration/output/#outputlibrarytype
@@ -47,7 +48,7 @@ module.exports = {
     },
     optimization: {
         minimize: true,
-        splitChunks: {
+        /*splitChunks: {
             //https://webpack.js.org/plugins/split-chunks-plugin/
             chunks: 'async',
             //filename: 'library/[name].[fullhash].js',
@@ -67,7 +68,7 @@ module.exports = {
                     },
                 }
             }
-        },
+        },*/
         minimizer: [
             new TerserPlugin({
                 extractComments: false, terserOptions: {
@@ -94,11 +95,11 @@ module.exports = {
             patterns: [
                 {
                     from: "./src/lib/microsoft/page/auth-start.html",
-                    to: "library/@aptero/axolotis-module-teams/assets/auth-start.html"
+                    to: path.join(__dirname,"lib/library/@aptero/axolotis-module-teams/assets/auth-start.html")
                 },
                 {
                     from: "./src/lib/microsoft/page/auth-end.html",
-                    to: "library/@aptero/axolotis-module-teams/assets/auth-end.html"
+                    to: path.join(__dirname,"lib/library/@aptero/axolotis-module-teams/assets/auth-end.html")
                 },
                 //TODO should i add the files from the 3rd party
                 /*{
