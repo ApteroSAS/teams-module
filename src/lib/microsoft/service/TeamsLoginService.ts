@@ -140,7 +140,7 @@ export class TeamsLoginService {
 
   isGraphDataFilled() {
     return (
-      this.msToNativeLoginBridge.getProfile().jobTitle ||
+      this.msToNativeLoginBridge.getProfile().jobTitleName ||
       this.msToNativeLoginBridge.getProfile().phoneNumber ||
       this.msToNativeLoginBridge.getProfile().companyName ||
       this.msToNativeLoginBridge.getProfile().microsoftUserprofilePicture
@@ -167,11 +167,11 @@ export class TeamsLoginService {
     let profilePicture = "";
     let organization = "";
     let phoneNumber = "";
-    let jobTitle = "";
+    let jobTitleName = "";
     if (this.microsoftGraphService.isInitialized()) {
       const user = await this.microsoftGraphService.getUserDetails();
       phoneNumber = user.mobilePhone;
-      jobTitle = user.jobTitle;
+      jobTitleName = user.jobTitle;
       profilePicture = await this.microsoftGraphService.getUserPhotoAsBase64();
       organization = await this.microsoftGraphService.getUserOrganization();
     }
@@ -181,7 +181,7 @@ export class TeamsLoginService {
       email: user.email,
       displayName: user.displayName,
       phoneNumber: phoneNumber,
-      jobTitle: jobTitle,
+      jobTitleName: jobTitleName,
       companyName: organization,
       microsoftUserprofilePicture: profilePicture,
       microsoftUser: user.id,

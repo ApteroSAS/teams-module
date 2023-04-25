@@ -83,7 +83,7 @@ export class MicrosoftOauthLoginService {
       email: user.userPrincipalName || user.mail || user.email,
       displayName: user.displayName,
       phoneNumber: user.mobilePhone,
-      jobTitle: user.jobTitle,
+      jobTitleName: user.jobTitle,
       companyName: organization,
       microsoftUserprofilePicture: profilePicture,
       microsoftUser: user.id,

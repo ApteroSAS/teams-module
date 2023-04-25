@@ -2,9 +2,9 @@ import { Item, ModulePromise } from "@aptero/axolotis-player";
 /**
  * Should only import type to stay lightweight
  */
-import type { MsTeamsAPILight } from "./microsoft/MsTeamsAPILight";
-import type { MsTeamsAPI } from "./microsoft/MsTeamsAPI";
-export type { MicrosoftLoginService } from "./microsoft/service/MicrosoftLoginService";
+import type { MsTeamsAPILight } from "@root/lib/microsoft/MsTeamsAPILight";
+import type { MsTeamsAPI } from "@root/lib/microsoft/MsTeamsAPI";
+export type { MicrosoftLoginService } from "@root/lib/microsoft/service/MicrosoftLoginService";
 export declare const MICROSOFT_SERVICE = "@aptero/axolotis-module-teams/MicrosoftService";
 export declare const MICROSOFT_STATIC_SERVICE = "@aptero/axolotis-module-teams/MicrosoftStaticService";
 export declare const PROPERTIES_SERVICE = "@aptero/axolotis-module-properties/Properties";
