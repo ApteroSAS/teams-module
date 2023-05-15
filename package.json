@@ -76,7 +76,7 @@
     "@azure/msal-browser": "2.30.0",
     "@microsoft/microsoft-graph-client": "^3.0.2",
     "@microsoft/teams-js": "^2.4.1",
-    "@microsoft/teamsfx": "^1.2.0",
+    "@microsoft/teamsfx": "^2.2.0",
     "tsutils": "^3.21.0"
   },
   "peerDependencies": {
