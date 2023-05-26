@@ -1,10 +1,11 @@
-import { msTeamsUtils } from "../../aptTeamsApp/MsTeamsUtils";
-import { MicrosoftGraphService } from "./MicrosoftGraphService";
-import { MicrosoftOauthLoginService } from "./MicrosoftOauthLoginService";
-import { TeamsLoginService } from "./TeamsLoginService";
-import { MsToNativeLoginBridge } from "@aptero/axolotis-module-basic";
-import { getAuthEvents, AUTH_SERVICE_INITIALIZE } from "./AuthEvent";
-import { AuthInterface } from "@aptero/axolotis-module-basic";
+import {MicrosoftGraphService} from "./MicrosoftGraphService";
+import {MicrosoftOauthLoginService} from "./MicrosoftOauthLoginService";
+import {TeamsLoginService} from "./TeamsLoginService";
+import type {CookieStore} from "@aptero/axolotis-module-basic";
+import {AuthInterface, MsToNativeLoginBridge, Properties} from "@aptero/axolotis-module-basic";
+import {AUTH_SERVICE_INITIALIZE, getAuthEvents} from "./AuthEvent";
+import {isMsTeams} from "@root/lib/microsoft/MsTeamsChecker";
+import {PropertiesFormat, PROPERTY_KEY} from "@root/lib/microsoft/PropertiesFormat";
 
 export class MicrosoftLoginService implements AuthInterface {
   authInProgress = false;
@@ -17,9 +18,22 @@ export class MicrosoftLoginService implements AuthInterface {
     return this.teamsLoginService;
   }
 
-  constructor(private msToNativeLoginBridge: MsToNativeLoginBridge) {
-    this.microsoftOauthLoginService = new MicrosoftOauthLoginService(this.msGraphService, this.msToNativeLoginBridge);
-    this.teamsLoginService = new TeamsLoginService(this.msGraphService, this.msToNativeLoginBridge);
+  constructor(
+      private properties:Properties,
+      private cookieStoreProvider :()=>Promise<CookieStore>,
+      private msToNativeLoginBridge: MsToNativeLoginBridge
+  ) {
+    this.microsoftOauthLoginService = new MicrosoftOauthLoginService(
+        properties.get<PropertiesFormat>(PROPERTY_KEY),
+        this.msGraphService,
+        this.msToNativeLoginBridge
+    );
+    this.teamsLoginService = new TeamsLoginService(
+        this.msGraphService,
+        this.msToNativeLoginBridge,
+        properties,
+        cookieStoreProvider
+    );
     this.onReady().then(() => {
       this.initialized = true;
     });
@@ -45,7 +59,7 @@ export class MicrosoftLoginService implements AuthInterface {
       setTimeout(() => {
         this.authInProgress = false;
       }, 1000);
-      if (msTeamsUtils()) {
+      if (isMsTeams()) {
         await this.teamsLoginService.passiveLogin();
         this.authInProgress = false;
       } else {
@@ -62,7 +76,7 @@ export class MicrosoftLoginService implements AuthInterface {
       setTimeout(() => {
         this.authInProgress = false;
       }, 1000);
-      if (msTeamsUtils()) {
+      if (isMsTeams()) {
         await this.teamsLoginService.userInteractionAuth();
         this.authInProgress = false;
       } else {
@@ -101,7 +115,7 @@ export class MicrosoftLoginService implements AuthInterface {
         this.authInProgress = false;
       }, 1000);
       this.msToNativeLoginBridge.clearProfile();
-      if (msTeamsUtils()) {
+      if (isMsTeams()) {
         await this.teamsLoginService.logout();
         this.authInProgress = false;
       } else {

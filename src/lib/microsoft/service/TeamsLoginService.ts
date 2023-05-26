@@ -1,14 +1,18 @@
-import { msTeamsUtils } from "../../aptTeamsApp/MsTeamsUtils";
-import { LogLevel, setLogLevel, setLogFunction, createMicrosoftGraphClient, TeamsFx, IdentityType } from "@microsoft/teamsfx";
-import { getAuthEvents, LOGGED_BASIC_INFO } from "./AuthEvent";
-import { getScopes } from "../../aptTeamsApp/scope";
-import { MicrosoftGraphService } from "./MicrosoftGraphService";
-import { getMsProperties } from "./Properties";
-import { app } from "@microsoft/teams-js";
-import { MsToNativeLoginBridge } from "@aptero/axolotis-module-basic";
-import { getService } from "@aptero/axolotis-player";
-import { COOKIE_STORE_SERVICE } from "@aptero/axolotis-module-basic";
-import { CookieStore } from "@aptero/axolotis-module-basic";
+import {
+    createMicrosoftGraphClient,
+    IdentityType,
+    LogLevel,
+    setLogFunction,
+    setLogLevel,
+    TeamsFx
+} from "@microsoft/teamsfx";
+import {getAuthEvents, LOGGED_BASIC_INFO} from "./AuthEvent";
+import {getScopes} from "../../aptTeamsApp/scope";
+import {MicrosoftGraphService} from "./MicrosoftGraphService";
+import {app} from "@microsoft/teams-js";
+import {CookieStore, MsToNativeLoginBridge, Properties} from "@aptero/axolotis-module-basic";
+import {PropertiesFormat, PROPERTY_KEY} from "../PropertiesFormat";
+import {isMsTeams} from "@root/lib/microsoft/MsTeamsChecker";
 
 let credential: TeamsFx | null = null;
 export const startLoginPageUrl = window.location.origin + "/auth-start.html";
@@ -18,7 +22,7 @@ declare const window;
 // https://myapplications.microsoft.com/
 // https://portal.office.com/account/?ref=MeControl#apps
 
-function initTeamsFx(authorityHost) {
+function initTeamsFx(authorityHost,ppt:PropertiesFormat) {
   if (process.env.NODE_ENV === "development") {
     setLogLevel(LogLevel.Warn);
     setLogFunction((leve, message) => {
@@ -30,18 +34,23 @@ function initTeamsFx(authorityHost) {
     authorityHost,
     initiateLoginEndpoint: startLoginPageUrl,
     //simpleAuthEndpoint: teamsfxEndpoint,//https://github.com/OfficeDev/TeamsFx/wiki/How-Authentication-Works-in-TeamsFx-Tab-Template
-    clientId: getMsProperties().MICROSOFT_APP_ID, //process.env.REACT_APP_CLIENT_ID;
+    clientId: ppt.MICROSOFT_APP_ID, //process.env.REACT_APP_CLIENT_ID;
   });
 }
 
 const FORCE_STAY_LOGOUT = "ms_force_stay_logout";
 
 export class TeamsLoginService {
-  constructor(private microsoftGraphService: MicrosoftGraphService, private msToNativeLoginBridge: MsToNativeLoginBridge) {}
+  constructor(
+      private microsoftGraphService: MicrosoftGraphService,
+      private msToNativeLoginBridge: MsToNativeLoginBridge,
+      private properties: Properties,
+      private cookieStoreProvider: ()=>Promise<CookieStore>,
+  ) {}
 
   getCredential() {
     if (!credential) {
-      initTeamsFx("common");
+      initTeamsFx("common",this.properties.get<PropertiesFormat>(PROPERTY_KEY));
     }
     if (!credential) {
       throw new Error("");
@@ -77,7 +86,7 @@ export class TeamsLoginService {
   // JWT decripting of the token
   async userInteractionAuth() {
     console.log("TeamsLoginService : userInteractionAuth");
-    let cookieStore = await getService<CookieStore>(COOKIE_STORE_SERVICE);
+    let cookieStore = await this.cookieStoreProvider();
     cookieStore.remove(FORCE_STAY_LOGOUT); //Only in case of user requested login do we remove this flag
     const cred = await this.initBasicInfo();
     //await cred.login(getScopesLight()); //Trigger authorization popup
@@ -101,7 +110,7 @@ export class TeamsLoginService {
   }
 
   async passiveLogin() {
-    if (!msTeamsUtils()) {
+    if (!isMsTeams()) {
       throw new Error("not in teams");
     }
     try {
@@ -110,7 +119,7 @@ export class TeamsLoginService {
       console.warn("microsoftTeams.initialize failed (probably not in teams so we skip it)", e);
       return;
     }
-    let cookieStore = await getService<CookieStore>(COOKIE_STORE_SERVICE);
+    let cookieStore = await this.cookieStoreProvider();
     //!this.msToNativeLoginBridge.isLogged()
     if (cookieStore.get(FORCE_STAY_LOGOUT)) {
       return;
@@ -127,7 +136,7 @@ export class TeamsLoginService {
     } catch (e) {
       //passive login should never fail - just ignore
       console.warn("passive login failed", e);
-      let cookieStore = await getService<CookieStore>(COOKIE_STORE_SERVICE);
+      let cookieStore = await this.cookieStoreProvider();
       cookieStore.remove(FORCE_STAY_LOGOUT); //Only in case of user requested login do we remove this flag (avoid loop of login in case of fail)
     }
   }
@@ -190,7 +199,7 @@ export class TeamsLoginService {
   }
 
   async logout() {
-    let cookieStore = await getService<CookieStore>(COOKIE_STORE_SERVICE);
+    let cookieStore = await this.cookieStoreProvider();
     cookieStore.set(FORCE_STAY_LOGOUT, "true");
     await this.msToNativeLoginBridge.logout();
   }

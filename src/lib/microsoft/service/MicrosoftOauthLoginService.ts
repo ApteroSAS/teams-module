@@ -1,9 +1,10 @@
-import { PublicClientApplication } from "@azure/msal-browser";
-import { getScopesLight } from "../../aptTeamsApp/scope";
-import { MicrosoftGraphService } from "./MicrosoftGraphService";
-import { MsToNativeLoginBridge } from "@aptero/axolotis-module-basic";
-import { getMsProperties } from "./Properties";
-let graph = require("@microsoft/microsoft-graph-client");
+
+import {PublicClientApplication} from "@azure/msal-browser";
+import {getScopesLight} from "../../aptTeamsApp/scope";
+import {MicrosoftGraphService} from "./MicrosoftGraphService";
+import {MsToNativeLoginBridge} from "@aptero/axolotis-module-basic";
+import {PropertiesFormat} from "@root/lib/microsoft/PropertiesFormat";
+import {Client} from "@microsoft/microsoft-graph-client";
 
 declare const window;
 
@@ -11,16 +12,20 @@ export class MicrosoftOauthLoginService {
   accessToken = null;
   private publicClientApplication: PublicClientApplication | undefined;
 
-  constructor(private microsoftGraphService: MicrosoftGraphService, private msToNativeLoginBridge: MsToNativeLoginBridge) {}
+  constructor(
+      private properties:PropertiesFormat,
+      private microsoftGraphService: MicrosoftGraphService,
+      private msToNativeLoginBridge: MsToNativeLoginBridge
+  ) {}
 
   getPublicClientApplication() {
     if (!this.publicClientApplication) {
       this.publicClientApplication = new PublicClientApplication({
         auth: {
-          clientId: getMsProperties().MICROSOFT_APP_ID,
+          clientId: this.properties.MICROSOFT_APP_ID,
           redirectUri: window.location.origin + "/signin",
           // to allow only AAD accounts: authority:https://login.microsoftonline.com/organizations
-          authority: getMsProperties().MICROSOFT_APP_AUTHORITY || "https://login.microsoftonline.com/common",
+          authority: this.properties.MICROSOFT_APP_AUTHORITY || "https://login.microsoftonline.com/common",
         },
         cache: {
           cacheLocation: "sessionStorage",
@@ -55,13 +60,12 @@ export class MicrosoftOauthLoginService {
 
   setNewToken(token) {
     this.accessToken = token;
-    const client = graph.Client.init(
+    const client = Client.init(
       {
         authProvider: (done) => {
           done(null, this.accessToken);
         },
-      },
-      this.accessToken
+      }
     );
     this.microsoftGraphService.init(client);
   }

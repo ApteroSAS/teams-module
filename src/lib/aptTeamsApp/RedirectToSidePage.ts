@@ -1,10 +1,9 @@
-import { getContext } from "./MsTeamsUtils";
-import { MsTeamsAPILight, MSTEAMS_QUERY_PARAM } from "../microsoft/MsTeamsAPILight";
-import { getServiceSync } from "@aptero/axolotis-player";
-import { MICROSOFT_STATIC_SERVICE } from "../index";
+import {getContext} from "./MsTeamsUtils";
+import {MSTEAMS_QUERY_PARAM} from "../microsoft/MsTeamsAPILight";
+import {isMsTeams} from "@root/lib/microsoft/MsTeamsChecker";
 
 export async function redirectToTeamsSidePanel() {
-  if (getServiceSync<MsTeamsAPILight>(MICROSOFT_STATIC_SERVICE).msTeams()) {
+  if (isMsTeams()) {
     let url = new URL(window.location.href);
     if (url.searchParams.get("msForceHub")) {
       return; //do not redirect in this case
