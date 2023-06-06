@@ -72,7 +72,7 @@
     "webpack-dev-server": "4.11.1"
   },
   "dependencies": {
-    "@aptero/axolotis-module-basic": "file:./modules/basic-modules",
+    "@aptero/axolotis-module-basic": "*",
     "@azure/msal-browser": "2.30.0",
     "@microsoft/microsoft-graph-client": "^3.0.2",
     "@microsoft/teams-js": "^2.4.1",
