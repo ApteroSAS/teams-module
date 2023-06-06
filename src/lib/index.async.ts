@@ -19,7 +19,7 @@ export const TeamsModule = () => {
       const module = await import("@root/lib/microsoft/MsTeamsAPI");
       return new module.MsTeamsAPI(
           context.container.get(PROPERTIES_SERVICE),
-          ()=> { return context.container.get(COOKIE_STORE_SERVICE)},
+          context.container.get(COOKIE_STORE_SERVICE),
           context.container.get(PHX_AUTH_SERVICE)
       );
     }).inSingletonScope();

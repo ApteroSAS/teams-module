@@ -14,9 +14,9 @@ export class MsTeamsAPI {
 
   constructor(
       private properties:Properties,
-      private cookieStoreProvider :()=>Promise<CookieStore>,
+      private cookieStore :CookieStore,
       private phxAuth: PhoenixAuthService) {
-    this.microsoftLoginService = new MicrosoftLoginService(properties,cookieStoreProvider,phxAuth.getNativeInterface());
+    this.microsoftLoginService = new MicrosoftLoginService(properties,cookieStore,phxAuth.getNativeInterface());
     this.microsoftUrlService = new MicrosoftUrlService(this.microsoftLoginService);
   }
 

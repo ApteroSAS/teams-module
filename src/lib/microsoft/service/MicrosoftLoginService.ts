@@ -20,7 +20,7 @@ export class MicrosoftLoginService implements AuthInterface {
 
   constructor(
       private properties:Properties,
-      private cookieStoreProvider :()=>Promise<CookieStore>,
+      private cookieStore :CookieStore,
       private msToNativeLoginBridge: MsToNativeLoginBridge
   ) {
     this.microsoftOauthLoginService = new MicrosoftOauthLoginService(
@@ -32,7 +32,7 @@ export class MicrosoftLoginService implements AuthInterface {
         this.msGraphService,
         this.msToNativeLoginBridge,
         properties,
-        cookieStoreProvider
+        cookieStore
     );
     this.onReady().then(() => {
       this.initialized = true;

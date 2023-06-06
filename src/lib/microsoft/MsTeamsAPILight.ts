@@ -21,7 +21,8 @@ export class MsTeamsAPILight {
     this.msmode = isMsTeams();
     if (this.msmode && (window.location.host.startsWith("localhost") || window.location.host.startsWith("127.0.0.1"))) {
       (async () => {
-        (await teamsApiProvider()).registerTeamsTestHelper();
+        const msTeamsAPI = await teamsApiProvider();
+        msTeamsAPI.registerTeamsTestHelper();
       })();
     }
   }

@@ -45,7 +45,7 @@ export class TeamsLoginService {
       private microsoftGraphService: MicrosoftGraphService,
       private msToNativeLoginBridge: MsToNativeLoginBridge,
       private properties: Properties,
-      private cookieStoreProvider: ()=>Promise<CookieStore>,
+      private cookieStore: CookieStore,
   ) {}
 
   getCredential() {
@@ -86,7 +86,7 @@ export class TeamsLoginService {
   // JWT decripting of the token
   async userInteractionAuth() {
     console.log("TeamsLoginService : userInteractionAuth");
-    let cookieStore = await this.cookieStoreProvider();
+    let cookieStore = this.cookieStore;
     cookieStore.remove(FORCE_STAY_LOGOUT); //Only in case of user requested login do we remove this flag
     const cred = await this.initBasicInfo();
     //await cred.login(getScopesLight()); //Trigger authorization popup
@@ -119,7 +119,7 @@ export class TeamsLoginService {
       console.warn("microsoftTeams.initialize failed (probably not in teams so we skip it)", e);
       return;
     }
-    let cookieStore = await this.cookieStoreProvider();
+    let cookieStore = this.cookieStore;
     //!this.msToNativeLoginBridge.isLogged()
     if (cookieStore.get(FORCE_STAY_LOGOUT)) {
       return;
@@ -136,7 +136,7 @@ export class TeamsLoginService {
     } catch (e) {
       //passive login should never fail - just ignore
       console.warn("passive login failed", e);
-      let cookieStore = await this.cookieStoreProvider();
+      let cookieStore = await this.cookieStore;
       cookieStore.remove(FORCE_STAY_LOGOUT); //Only in case of user requested login do we remove this flag (avoid loop of login in case of fail)
     }
   }
@@ -199,7 +199,7 @@ export class TeamsLoginService {
   }
 
   async logout() {
-    let cookieStore = await this.cookieStoreProvider();
+    let cookieStore = await this.cookieStore;
     cookieStore.set(FORCE_STAY_LOGOUT, "true");
     await this.msToNativeLoginBridge.logout();
   }
