@@ -1,13 +1,19 @@
 import { MicrosoftLoginService } from "./MicrosoftLoginService";
 import { Buffer } from "buffer/";
-import { deepLinkService } from "./DeepLinkService";
+import {DeepLinkService} from "./DeepLinkService";
 import { MICROSOFT_AUTH_ERROR } from "../MsTeamsAPILight";
-deepLinkService.start();
+import {MicrosoftGraphService} from "@root/lib/microsoft/service/MicrosoftGraphService";
 
 export class MicrosoftUrlService {
   preloaded = {};
 
-  constructor(private microsoftLoginService: MicrosoftLoginService) {}
+  constructor(
+      private microsoftLoginService: MicrosoftLoginService,
+      private msGraphService: MicrosoftGraphService,
+      private deepLinkService: DeepLinkService
+  ) {
+    deepLinkService.start();
+  }
 
   urlToToSharingToken(url) {
     let trimEnd = function (str, c) {
@@ -58,7 +64,7 @@ export class MicrosoftUrlService {
   async convertSharingUrlToDownloadUrl(url) {
     return new Promise((resolve) => {
       const stoken = this.urlToToSharingToken(url);
-      this.microsoftLoginService.msGraphService.client
+      this.msGraphService.client
         .api("/shares/" + stoken + "/driveItem")
         .get()
         .then((res) => {

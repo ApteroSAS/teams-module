@@ -6,22 +6,27 @@ import {registerTeamsTestHelper} from "../aptTeamsApp/TeamsTestHelper";
 import {app, pages} from "@microsoft/teams-js";
 import {CookieStore, PhoenixAuthService, Properties} from "@aptero/axolotis-module-basic";
 import {MicrosoftUrlService} from "./service/MicrosoftUrlService";
+import {MicrosoftGraphService} from "@root/lib/microsoft/service/MicrosoftGraphService";
 
 
 export class MsTeamsAPI {
-  private microsoftLoginService: MicrosoftLoginService;
-  private microsoftUrlService: MicrosoftUrlService;
 
   constructor(
       private properties:Properties,
       private cookieStore :CookieStore,
-      private phxAuth: PhoenixAuthService) {
-    this.microsoftLoginService = new MicrosoftLoginService(properties,cookieStore,phxAuth.getNativeInterface());
-    this.microsoftUrlService = new MicrosoftUrlService(this.microsoftLoginService);
+      private phxAuth: PhoenixAuthService,
+      private microsoftLoginService: MicrosoftLoginService,
+      private microsoftUrlService: MicrosoftUrlService,
+      private microsoftGraphService:MicrosoftGraphService
+  ) {
   }
 
   getLoginService(): MicrosoftLoginService {
     return this.microsoftLoginService;
+  }
+
+  getGraph(): MicrosoftGraphService {
+    return this.microsoftGraphService;
   }
 
   getTeamsApp(): { app: typeof app; pages: typeof pages } {

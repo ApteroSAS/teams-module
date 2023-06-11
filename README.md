@@ -11,4 +11,6 @@ new CopyWebpackPlugin({
 })
 ```
 
+Url for debug:
+https://teams.microsoft.com/_#/l/app/3501cb25-193e-48b5-baef-c0bbf37ff563?installAppPackage=true&webjoin=true&appTenantId=48caed5d-d20d-40ce-b0cd-9261fc5d8f83&login_hint=pierre.henri@aptero.co&deeplinkId=a19158ab-cd13-41c7-bb3f-26a6eb935842
 

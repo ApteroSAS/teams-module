@@ -14,5 +14,3 @@ export class DeepLinkService {
     });
   }
 }
-
-export const deepLinkService = new DeepLinkService();

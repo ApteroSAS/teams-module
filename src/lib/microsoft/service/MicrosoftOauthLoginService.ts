@@ -2,21 +2,24 @@
 import {PublicClientApplication} from "@azure/msal-browser";
 import {getScopesLight} from "../../aptTeamsApp/scope";
 import {MicrosoftGraphService} from "./MicrosoftGraphService";
-import {MsToNativeLoginBridge} from "@aptero/axolotis-module-basic";
-import {PropertiesFormat} from "@root/lib/microsoft/PropertiesFormat";
+import {NativeLoginBridge, Properties} from "@aptero/axolotis-module-basic";
+import {PropertiesFormat, PROPERTY_KEY} from "@root/lib/microsoft/PropertiesFormat";
 import {Client} from "@microsoft/microsoft-graph-client";
 
 declare const window;
 
 export class MicrosoftOauthLoginService {
-  accessToken = null;
+  private accessToken = null;
   private publicClientApplication: PublicClientApplication | undefined;
+  private properties: PropertiesFormat;
 
   constructor(
-      private properties:PropertiesFormat,
+      propertiesService:Properties,
       private microsoftGraphService: MicrosoftGraphService,
-      private msToNativeLoginBridge: MsToNativeLoginBridge
-  ) {}
+      private msToNativeLoginBridge: NativeLoginBridge
+  ) {
+    this.properties = propertiesService.get<PropertiesFormat>(PROPERTY_KEY)
+  }
 
   getPublicClientApplication() {
     if (!this.publicClientApplication) {

@@ -66,10 +66,11 @@
   },
   "dependencies": {
     "@aptero/axolotis-module-basic": "*",
-    "@azure/msal-browser": "2.37.0",
+    "@azure/msal-browser": "2.37.1",
     "@microsoft/microsoft-graph-client": "^3.0.5",
-    "@microsoft/teams-js": "^2.11.0",
+    "@microsoft/teams-js": "^2.12.0",
     "@microsoft/teamsfx": "^2.2.1",
+    "inversify-react": "^1.1.0",
     "reflect-metadata": "^0.1.13",
     "tsup": "^6.7.0",
     "tsutils": "^3.21.0"

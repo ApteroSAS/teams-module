@@ -5,9 +5,25 @@ Buffer.from("anything", "base64");
 
 export class MicrosoftGraphService {
   client: Client;
+  setReady = ()=>{};
+  ready = new Promise((resolve) => {this.setReady = resolve as any});
 
-  init(client) {
+  async init(client:Client) {
+    if(!client){
+      throw new Error("MicrosoftGraphService : init : client is null");
+    }
+    console.log("MicrosoftGraphService : init");
     this.client = client;
+    await this.getUserDetails();//this is used to trigger token access verification will throw error if not authorized
+    this.setReady();
+  }
+
+  public async awaitReady(){
+    return await this.ready;
+  }
+
+  getClient() {
+    return this.client;
   }
 
   isInitialized() {
