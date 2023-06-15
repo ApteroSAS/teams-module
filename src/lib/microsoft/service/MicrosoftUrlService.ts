@@ -64,7 +64,7 @@ export class MicrosoftUrlService {
   async convertSharingUrlToDownloadUrl(url) {
     return new Promise((resolve) => {
       const stoken = this.urlToToSharingToken(url);
-      this.msGraphService.client
+      this.msGraphService.getClient()
         .api("/shares/" + stoken + "/driveItem")
         .get()
         .then((res) => {

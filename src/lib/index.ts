@@ -52,7 +52,7 @@ export const TeamsModule = () => {
     }).inSingletonScope();
 
     bind(MICROSOFT_GRAPH_SERVICE).toDynamicValue((context) => {
-      return new MicrosoftGraphService();
+      return new MicrosoftGraphService(context.container.get<MicrosoftLoginService>(MICROSOFT_LOGIN_SERVICE));
     }).inSingletonScope();
 
     bind(MICROSOFT_LOGIN_SERVICE).toDynamicValue((context) => {
@@ -66,7 +66,6 @@ export const TeamsModule = () => {
     bind(MICROSOFT_OAUTH_LOGIN_SERVICE).toDynamicValue((context) => {
       return new MicrosoftOauthLoginService(
             context.container.get<Properties>(PROPERTIES_SERVICE),
-            context.container.get<MicrosoftGraphService>(MICROSOFT_GRAPH_SERVICE),
             context.container.get<NativeLoginBridge>(NATIVE_LOGIN_BRIDGE_SERVICE),
       );
     }).inSingletonScope();
@@ -81,7 +80,6 @@ export const TeamsModule = () => {
 
     bind(MICROSOFT_TEAMS_LOGIN_SERVICE).toDynamicValue((context) => {
       return new TeamsLoginService(
-            context.container.get<MicrosoftGraphService>(MICROSOFT_GRAPH_SERVICE),
             context.container.get<NativeLoginBridge>(NATIVE_LOGIN_BRIDGE_SERVICE),
             context.container.get<Properties>(PROPERTIES_SERVICE),
             context.container.get<CookieStore>(COOKIE_STORE_SERVICE)

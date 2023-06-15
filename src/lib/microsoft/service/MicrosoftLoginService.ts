@@ -3,9 +3,12 @@ import {TeamsLoginService} from "./TeamsLoginService";
 import {AuthInterface, NativeLoginBridge} from "@aptero/axolotis-module-basic";
 import {isMsTeams} from "@root/lib/microsoft/MsTeamsChecker";
 import {EventEmitter} from "eventemitter3";
+import {Client} from "@microsoft/microsoft-graph-client";
 
-const AUTH_SERVICE_INITIALIZE = "AUTH_SERVICE_INITIALIZE";
+const PASIVE_LOGIN_DONE = "PASIVE_LOGIN_DONE";
 const LOGOUT = "LOGOUT";
+const LOGIN_DONE = "LOGIN_DONE";
+
 
 export class MicrosoftLoginService implements AuthInterface {
     authInProgress = false;
@@ -26,27 +29,61 @@ export class MicrosoftLoginService implements AuthInterface {
         });
     }
 
+    /**
+     * Await the first passive login
+     */
     async onReady(): Promise<boolean> {
         if (this.initialized) {
-            return Promise.resolve(true);
+            return true;
         } else {
             return new Promise<boolean>((resolve) => {
                 const onInitialized = () => {
-                    this.eventEmitter.off(AUTH_SERVICE_INITIALIZE, onInitialized);
+                    this.eventEmitter.off(PASIVE_LOGIN_DONE, onInitialized);
                     resolve(true);
                 };
-                this.eventEmitter.on(AUTH_SERVICE_INITIALIZE, onInitialized);
+                this.eventEmitter.on(PASIVE_LOGIN_DONE, onInitialized);
             });
+        }
+    }
+
+    async updateProfile(profile:{
+        phoneNumber?: string,
+        jobTitle?: string,
+        companyName?: string,
+        picture?: string,
+        email?: string,
+        displayName?: string,
+        id?: string,
+    } = {}){
+        if (isMsTeams()) {
+            await this.teamsLoginService.updateProfile(profile);
+        } else {
+            await this.microsoftOauthLoginService.updateProfile(profile);
+        }
+    }
+
+    public async getGraphClient():Promise<Client> {
+        if (isMsTeams()) {
+            return await this.teamsLoginService.getGraph();
+        } else {
+            return await this.microsoftOauthLoginService.getGraph();
+        }
+    }
+
+    onLogin(callback: () => void): () => void {
+        this.eventEmitter.on(LOGIN_DONE, callback);
+        return () => {
+            this.eventEmitter.off(LOGIN_DONE, callback);
         }
     }
 
     onChange(callback: () => void): () => void {
         let r1 = this.teamsLoginService.onChange(callback);
-        this.eventEmitter.on(AUTH_SERVICE_INITIALIZE, callback);
+        this.eventEmitter.on(PASIVE_LOGIN_DONE, callback);
         this.eventEmitter.on(LOGOUT, callback);
         return () => {
             r1();
-            this.eventEmitter.off(AUTH_SERVICE_INITIALIZE, callback);
+            this.eventEmitter.off(PASIVE_LOGIN_DONE, callback);
             this.eventEmitter.off(LOGOUT, callback);
         }
     }
@@ -64,7 +101,8 @@ export class MicrosoftLoginService implements AuthInterface {
                 await this.microsoftOauthLoginService.passiveLogin();
                 this.authInProgress = false;
             }
-            this.eventEmitter.emit(AUTH_SERVICE_INITIALIZE);
+            this.eventEmitter.emit(PASIVE_LOGIN_DONE);
+            this.eventEmitter.emit(LOGIN_DONE);
         }
     }
 
@@ -98,6 +136,7 @@ export class MicrosoftLoginService implements AuthInterface {
         } else {
             return await this.loginInternal();
         }
+        this.eventEmitter.emit(LOGIN_DONE);
     }
 
     public getUserAccount() {

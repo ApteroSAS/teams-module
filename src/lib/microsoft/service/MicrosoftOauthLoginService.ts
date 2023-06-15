@@ -1,7 +1,5 @@
-
-import {PublicClientApplication} from "@azure/msal-browser";
+import {AuthenticationResult, PublicClientApplication} from "@azure/msal-browser";
 import {getScopesLight} from "../../aptTeamsApp/scope";
-import {MicrosoftGraphService} from "./MicrosoftGraphService";
 import {NativeLoginBridge, Properties} from "@aptero/axolotis-module-basic";
 import {PropertiesFormat, PROPERTY_KEY} from "@root/lib/microsoft/PropertiesFormat";
 import {Client} from "@microsoft/microsoft-graph-client";
@@ -12,13 +10,20 @@ export class MicrosoftOauthLoginService {
   private accessToken = null;
   private publicClientApplication: PublicClientApplication | undefined;
   private properties: PropertiesFormat;
+  private client: Client;
 
   constructor(
       propertiesService:Properties,
-      private microsoftGraphService: MicrosoftGraphService,
       private msToNativeLoginBridge: NativeLoginBridge
   ) {
     this.properties = propertiesService.get<PropertiesFormat>(PROPERTY_KEY)
+  }
+
+  async getGraph() {
+    if(!this.client){
+      await this.passiveLogin();
+    }
+    return this.client;
   }
 
   getPublicClientApplication() {
@@ -49,8 +54,7 @@ export class MicrosoftOauthLoginService {
           account: account,
         };
         let authenticationResult = await this.getPublicClientApplication().acquireTokenSilent(accessTokenRequest);
-        console.log(authenticationResult.accessToken);
-        this.initWithToken(authenticationResult.accessToken);
+        await this.basicAuth(authenticationResult);
       } catch (err) {
         console.error(err);
         // logout Moz to be sync
@@ -61,41 +65,38 @@ export class MicrosoftOauthLoginService {
     }
   }
 
-  setNewToken(token) {
+  createGraphClient(token) {
     this.accessToken = token;
-    const client = Client.init(
-      {
-        authProvider: (done) => {
-          done(null, this.accessToken);
-        },
-      }
+    this.client = Client.init(
+        {
+          authProvider: (done) => {
+            done(null, this.accessToken);
+          },
+        }
     );
-    this.microsoftGraphService.init(client);
   }
 
-  async initWithToken(token) {
-    this.setNewToken(token);
-    const user = await this.microsoftGraphService.getUserDetails();
-    let profilePicture = "";
-    let organization = "";
-    try {
-      profilePicture = await this.microsoftGraphService.getUserPhotoAsBase64();
-      organization = await this.microsoftGraphService.getUserOrganization();
-    } catch (e) {
-      //ignore error from beta organisation
-      console.error(e);
-    }
+  async updateProfile(profile:{
+    phoneNumber?: string,
+    jobTitle?: string,
+    companyName?: string,
+    picture?: string,
+    email?: string,
+    displayName?: string,
+    id?: string,
+  } = {}){
+    await this.msToNativeLoginBridge.setProfile(profile);
+  }
 
+  async basicAuth(auth:AuthenticationResult) {
+    this.createGraphClient(auth.accessToken);
+    console.log(auth);
+    const email = auth.account.homeAccountId;
+    const token = auth.accessToken;
     await this.msToNativeLoginBridge.setProfile({
-      email: user.userPrincipalName || user.mail || user.email,
-      displayName: user.displayName,
-      phoneNumber: user.mobilePhone,
-      jobTitle: user.jobTitle,
-      companyName: organization,
-      microsoftUserprofilePicture: profilePicture,
-      microsoftUser: user.id,
+      email: auth.account.homeAccountId,
+      displayName: auth.account.name,
     });
-    const email = user.userPrincipalName || user.mail || user.email;
     await this.msToNativeLoginBridge.nativeLogin(email, token);
   }
 
@@ -106,7 +107,7 @@ export class MicrosoftOauthLoginService {
         scopes: getScopesLight(),
       };
       let response = await this.getPublicClientApplication().loginPopup(loginRequest);
-      await this.initWithToken(response.accessToken);
+      await this.basicAuth(response);
     } catch (error) {
       console.error("error", error);
     }

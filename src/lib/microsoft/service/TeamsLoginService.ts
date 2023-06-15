@@ -5,10 +5,9 @@ import {
     LogLevel,
     setLogFunction,
     setLogLevel,
-    TeamsFx, TeamsUserCredential, TeamsUserCredentialAuthConfig, UserInfo
+    TeamsFx, TeamsUserCredential, UserInfo
 } from "@microsoft/teamsfx";
 import {getScopes, getScopesLight} from "../../aptTeamsApp/scope";
-import {MicrosoftGraphService} from "./MicrosoftGraphService";
 import {app} from "@microsoft/teams-js";
 import {CookieStore, NativeLoginBridge, Properties} from "@aptero/axolotis-module-basic";
 import {PropertiesFormat, PROPERTY_KEY} from "../PropertiesFormat";
@@ -28,22 +27,17 @@ export const LOGOUT = "ms-auth-service-logout";
 
 export class TeamsLoginService {
     private ppt: PropertiesFormat;
-    teamsFx: TeamsFx = null;
-    teamsUserCredential: TeamsUserCredential = null;
-    eventEmitter = new EventEmitter();
+    private teamsFx: TeamsFx = null;
+    private teamsUserCredential: TeamsUserCredential = null;
+    private eventEmitter = new EventEmitter();
+    private graph: Client;
+    private wip = null;
 
     getAuthLoginPageUrl(): string {
-        const startLoginPageUrlCommon = window.location.origin + "/auth-start.html";
-        const startLoginPageUrlTenant = window.location.origin + "/auth-start-tenant.html";
-        if(this.ppt.MICROSOFT_APP_AUTHORITY.indexOf("common") !== -1){
-            return startLoginPageUrlCommon;
-        }else{
-            return startLoginPageUrlTenant;
-        }
+        return window.location.origin + "/auth-start.html";
     }
 
     constructor(
-        private microsoftGraphService: MicrosoftGraphService,
         private msToNativeLoginBridge: NativeLoginBridge,
         properties: Properties,
         private cookieStore: CookieStore,
@@ -85,9 +79,9 @@ export class TeamsLoginService {
     private async initGraphTeamsFx(scope: string[], silent: boolean = true): Promise<{ graph: Client, scope: string[] }> {
         const teamsFx = this.getTeamsFx();
         try {
-            const graph = createMicrosoftGraphClient(teamsFx, scope);
-            await this.microsoftGraphService.init(graph);
-            return {graph, scope};
+            this.graph = createMicrosoftGraphClient(teamsFx, scope);
+            console.log(await this.graph.api("/me").get());//try to get basic scope
+            return {graph:this.graph, scope};
         } catch (err) {
             if (err.toString().indexOf("please login first") !== -1) {
                 console.info("app not authorized - no graph support - re-login");
@@ -95,9 +89,9 @@ export class TeamsLoginService {
                 console.info("auth page : " + this.getAuthLoginPageUrl());
                 if (!silent) {
                     await this.triggerScopeAuthPopUpTeamsFx(scope);//trigger login popup
-                    const graph = createMicrosoftGraphClient(teamsFx, scope);
-                    await this.microsoftGraphService.init(graph);
-                    return {graph, scope};
+                    this.graph = createMicrosoftGraphClient(teamsFx, scope);
+                    console.log(await this.graph.api("/me").get());//try to get basic scope
+                    return {graph:this.graph, scope};
                 }else {
                     throw err;
                 }
@@ -131,9 +125,9 @@ export class TeamsLoginService {
     async initGraphTeamsUserCredential<T>(scope: string[], silent: boolean = true): Promise<{ graph: Client, scope: string[] }> {
         let credential: TeamsUserCredential = this.getTeamsUserCredential();
         try {
-            const graph = createMicrosoftGraphClientWithCredential(credential, scope);
-            await this.microsoftGraphService.init(graph);
-            return {graph, scope};
+            this.graph = createMicrosoftGraphClientWithCredential(credential, scope);
+            console.log(await this.graph.api("/me").get());//try to get basic scope
+            return {graph:this.graph, scope};
         } catch (err: unknown) {
             console.info("app not authorized - no graph support - re-login");
             console.info("scopes : " + scope);
@@ -142,13 +136,20 @@ export class TeamsLoginService {
             if (!silent) {
                 // Silently fail for user didn't consent error
                 await this.triggerScopeAuthPopUpTeamsUserCredential(scope);
-                const graph = createMicrosoftGraphClientWithCredential(credential, scope);
-                await this.microsoftGraphService.init(graph);
-                return {graph, scope};
+                this.graph = createMicrosoftGraphClientWithCredential(credential, scope);
+                console.log(await this.graph.api("/me").get());//try to get basic scope
+                return {graph:this.graph, scope};
             } else {
                 throw err;
             }
         }
+    }
+
+    async getGraph(): Promise<Client> {
+        if(!this.graph){
+            await this.passiveLogin();
+        }
+        return this.graph;
     }
 
     ////////////
@@ -162,61 +163,59 @@ export class TeamsLoginService {
      * @param force relog the user even if he is already logged
      * @private
      */
-    private async nativeLogin(scope: string[], silent = true, force: boolean = false) {
+    private async nativeLogin(scope: string[], silent = true) {
         //basic login
         let teamsFx = this.getTeamsFx();
         const basicUserInfo: UserInfo = await teamsFx.getUserInfo();//confirmed by stephano no user popup
         console.log("basic login:", basicUserInfo);
         this.eventEmitter.emit(LOGGED_BASIC_INFO);
 
-        //complete login only if needed
-        if (this.isUserLogged() && this.microsoftGraphService.isInitialized() && this.isGraphDataFilled() && !force) {
-            //Do not  force login if user is already logged
-            return;
-        }
-
-        this.getTeamsFx();
-        this.getTeamsUserCredential();
-
-        console.log("native login : ", basicUserInfo);
-        //await this.triggerScopeAuthPopUpTeamsFx(scope);//trigger login popup
+        ///////////////
+        //Graph login
+        //////////////
         try {
+            this.getTeamsUserCredential();
             await this.initGraphTeamsUserCredential(scope, silent);
         }catch (e){
             console.error(e);
-            //TODO cancel login?
         }
 
-        //in this case we login without a graph token
-        //only this data available {"displayName":"Admin Aptero","objectId":"abb64646-d3e2-473d-8d13-0b6faff23605","preferredUserName":"admin@aptero.co"}
+        ///////////////
+        //Native login
+        //////////////
+        if(!this.isUserNativeLogged()) {
+            //log native user to match microsoft auth
+            //only this data available {"displayName":"Admin Aptero","objectId":"abb64646-d3e2-473d-8d13-0b6faff23605","preferredUserName":"admin@aptero.co"}
+            await this.updateProfile();
+            const email = basicUserInfo.preferredUserName;
+            const token = basicUserInfo.objectId;
+            await this.msToNativeLoginBridge.nativeLogin(email, token);
+            console.log("native login : ", basicUserInfo);
+            this.eventEmitter.emit(LOGIN);
+        }
+    }
+
+    async updateProfile(profile:{
+        phoneNumber?: string,
+        jobTitle?: string,
+        companyName?: string,
+        picture?: string,
+    } = {}){
+        let teamsFx = this.getTeamsFx();
+        const basicUserInfo: UserInfo = await teamsFx.getUserInfo();//confirmed by stephano no user popup
         const user: any = {};
         user.email = basicUserInfo.preferredUserName;
         user.displayName = basicUserInfo.displayName;
         user.id = basicUserInfo.objectId;
-
-        let profilePicture = "";
-        let organization = "";
-        let phoneNumber = "";
-        let jobTitle = "";
-        if (this.microsoftGraphService.isInitialized()) {
-            const user = await this.microsoftGraphService.getUserDetails();
-            phoneNumber = user.mobilePhone;
-            jobTitle = user.jobTitle;
-            profilePicture = await this.microsoftGraphService.getUserPhotoAsBase64();
-            organization = await this.microsoftGraphService.getUserOrganization();
-        }
-        let token = user.id;
         await this.msToNativeLoginBridge.setProfile({
             email: user.email,
             displayName: user.displayName,
-            phoneNumber: phoneNumber,
-            jobTitle: jobTitle,
-            companyName: organization,
-            microsoftUserprofilePicture: profilePicture,
+            phoneNumber: profile.phoneNumber,
+            jobTitle: profile.jobTitle,
+            companyName: profile.companyName,
+            microsoftUserprofilePicture: profile.picture,
             microsoftUser: user.id,
         });
-        await this.msToNativeLoginBridge.nativeLogin(user.email, token);
-        this.eventEmitter.emit(LOGIN);
     }
 
     /**
@@ -226,14 +225,16 @@ export class TeamsLoginService {
      * JWT decripting of the token
      */
     public async login() {
-        console.log("TeamsLoginService : login from user interaction");
-        this.cookieStore.remove(FORCE_STAY_LOGOUT); //Only in case of user requested login do we remove this flag
-        await this.nativeLogin(getScopesLight(), false, true);
-        await this.msToNativeLoginBridge.setProfile({
-            displayName: (await this.getTeamsFx().getUserInfo()).displayName,
-        }); //HACK reset the display name since another process in the code seems to set Guest name
-        this.eventEmitter.emit(LOGOUT);
-        return true;
+        return this.wipLoginWrap(async () => {
+            console.log("TeamsLoginService : login from user interaction");
+            this.cookieStore.remove(FORCE_STAY_LOGOUT); //Only in case of user requested login do we remove this flag
+            await this.nativeLogin(getScopesLight(), false);
+            await this.msToNativeLoginBridge.setProfile({
+                displayName: (await this.getTeamsFx().getUserInfo()).displayName,
+            }); //HACK reset the display name since another process in the code seems to set Guest name
+            this.eventEmitter.emit(LOGOUT);
+            return true;
+        });
     }
 
     public async upgrade() {
@@ -241,38 +242,58 @@ export class TeamsLoginService {
         let scope = getScopes();
         const teamsFx = this.getTeamsFx();
         await teamsFx.login(scope); //Trigger authorization popup
-        await this.nativeLogin(getScopes(), false, true);//update graph instance
+        await this.nativeLogin(getScopes(), false);//update graph instance
         return true;
+    }
+
+    private async wipLoginWrap<T>(cb: () => T):Promise<T> {
+        console.log(this.wip);
+        if(this.wip){
+            return await this.wip;
+        }
+        this.wip = new Promise(async (resolve, reject) => {
+            try {
+                resolve(await cb());
+            }catch (e){
+                reject(e);
+            }
+            this.wip = null;
+        });
+        return await this.wip;
     }
 
     /**
      * This is allways called on the start of the app to try to passive login should not trigger any popup - TODO will try to setup graph or logout the user if failled
      */
     public async passiveLogin() {
-        if (!isMsTeams()) {
-            throw new Error("not in teams");
-        }
-        try {
-            await app.initialize();
-        } catch (e) {
-            console.warn("microsoftTeams.initialize failed (probably not in teams so we skip it)", e);
-            return;
-        }
-        //!this.msToNativeLoginBridge.isLogged()
-        if (this.cookieStore.get(FORCE_STAY_LOGOUT)) {
-            return;
-        }
-        try {
-            //if msteams
-            // log using token from msteams
-            //if cookie oauth microsoft
-            // Initialize the Microsoft Teams SDK
-            await this.nativeLogin(getScopesLight(), true, false);
-        } catch (e) {
-            //passive login should never fail - just ignore
-            console.warn("passive login failed", e);
-            await this.msToNativeLoginBridge.logout();
-        }
+        return this.wipLoginWrap(async () => {
+            if (!isMsTeams()) {
+                throw new Error("not in teams");
+            }
+            try {
+                await app.initialize();
+            } catch (e) {
+                console.warn("microsoftTeams.initialize failed (probably not in teams so we skip it)", e);
+                return false;
+            }
+            //!this.msToNativeLoginBridge.isLogged()
+            if (this.cookieStore.get(FORCE_STAY_LOGOUT)) {
+                return false;
+            }
+            try {
+                //if msteams
+                // log using token from msteams
+                //if cookie oauth microsoft
+                // Initialize the Microsoft Teams SDK
+                await this.nativeLogin(getScopesLight(), true);
+            } catch (e) {
+                //passive login should never fail - just ignore
+                console.warn("passive login failed", e);
+                await this.msToNativeLoginBridge.logout();
+                return false;
+            }
+            return true;
+        });
     }
 
     public async logout() {
@@ -286,20 +307,11 @@ export class TeamsLoginService {
         return teamsFx.getUserInfo();
     }
 
-    private isUserLogged(): boolean {
+    private isUserNativeLogged(): boolean {
         return (
             this.msToNativeLoginBridge.getProfile().microsoftUser &&
             this.msToNativeLoginBridge.getProfile().displayName &&
             window.APP.store.state.credentials.token
-        );
-    }
-
-    private isGraphDataFilled() {
-        return (
-            this.msToNativeLoginBridge.getProfile().jobTitle ||
-            this.msToNativeLoginBridge.getProfile().phoneNumber ||
-            this.msToNativeLoginBridge.getProfile().companyName ||
-            this.msToNativeLoginBridge.getProfile().microsoftUserprofilePicture
         );
     }
 
