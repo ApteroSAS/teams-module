@@ -6,6 +6,7 @@ export type {MsTeamsAPILight} from "@root/lib/microsoft/MsTeamsAPILight";
 export type {MsTeamsAPI} from "@root/lib/microsoft/MsTeamsAPI";
 export type {MicrosoftGraphService} from "@root/lib/microsoft/service/MicrosoftGraphService";
 export * from "./Identifier";
+export * from "./microsoft/PropertiesFormat";
 
 export const CHANGE_SETTINGS_URL = "ms-teams-change-settings-url";
 export const PROCESS_DEEPLINK = "ms-teams-deep-link";

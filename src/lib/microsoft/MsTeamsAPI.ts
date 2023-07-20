@@ -3,13 +3,15 @@ import {redirectToTeamsSidePanel} from "../aptTeamsApp/RedirectToSidePage";
 import {changeUrlSettings, getContext, getMSEvents, processDeepLink} from "../aptTeamsApp/MsTeamsUtils";
 import "../aptTeamsApp/TeamsTestHelper";
 import {registerTeamsTestHelper} from "../aptTeamsApp/TeamsTestHelper";
-import {app, pages} from "@microsoft/teams-js";
+import {app, pages, appInstallDialog} from "@microsoft/teams-js";
 import {CookieStore, PhoenixAuthService, Properties} from "@aptero/axolotis-module-basic";
 import {MicrosoftUrlService} from "./service/MicrosoftUrlService";
 import {MicrosoftGraphService} from "@root/lib/microsoft/service/MicrosoftGraphService";
+import {PropertiesFormat, PROPERTY_KEY} from "@root/lib/microsoft/PropertiesFormat";
 
 
 export class MsTeamsAPI {
+  private appid: string;
 
   constructor(
       private properties:Properties,
@@ -19,6 +21,7 @@ export class MsTeamsAPI {
       private microsoftUrlService: MicrosoftUrlService,
       private microsoftGraphService:MicrosoftGraphService
   ) {
+    this.appid = properties.get<PropertiesFormat>(PROPERTY_KEY).MICROSOFT_APP_ID;
   }
 
   getLoginService(): MicrosoftLoginService {
@@ -29,8 +32,24 @@ export class MsTeamsAPI {
     return this.microsoftGraphService;
   }
 
-  getTeamsApp(): { app: typeof app; pages: typeof pages } {
+  getTeamsApp(): { app: typeof app; pages: typeof pages} {
     return { app, pages };
+  }
+
+  getPages(): typeof pages {
+    return pages;
+  }
+
+  getApp(): typeof app {
+    return app;
+  }
+
+  getAppId(): string {
+    return this.appid;
+  }
+
+  getAppInstallDialog():typeof appInstallDialog {
+    return appInstallDialog;
   }
 
   async redirectToTeamsSidePanel() {
