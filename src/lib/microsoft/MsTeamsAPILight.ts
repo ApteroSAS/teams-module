@@ -1,5 +1,6 @@
 import type {MsTeamsAPI} from "@root/lib/microsoft/MsTeamsAPI";
 import {isMsTeams} from "@root/lib/microsoft/MsTeamsChecker";
+import {msTeamsAPI} from "@aptero/aptero-meet/src/aptero/module/axolotis/modules/basic/ImportHelper";
 
 export const MICROSOFT_AUTH_ERROR = "error_microsoft_not_authorized";
 export const MSTEAMS_QUERY_PARAM = "msteams";

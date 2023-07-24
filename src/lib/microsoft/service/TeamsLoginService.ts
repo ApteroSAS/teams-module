@@ -276,6 +276,11 @@ export class TeamsLoginService {
                 console.warn("microsoftTeams.initialize failed (probably not in teams so we skip it)", e);
                 return false;
             }
+
+            await app.getContext();
+            console.log("notifySuccess");
+            app.notifySuccess();//end the default loading screen once the app is initialized
+
             //!this.msToNativeLoginBridge.isLogged()
             if (this.cookieStore.get(FORCE_STAY_LOGOUT)) {
                 return false;

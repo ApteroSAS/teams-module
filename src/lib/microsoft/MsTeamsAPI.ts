@@ -11,7 +11,7 @@ import {PropertiesFormat, PROPERTY_KEY} from "@root/lib/microsoft/PropertiesForm
 
 
 export class MsTeamsAPI {
-  private appid: string;
+  private appid: string;//internal app id https://admin.teams.microsoft.com/policies/manage-apps/934817ce-ddcc-48b6-9a8b-1f7ac5f654ce
 
   constructor(
       private properties:Properties,
@@ -21,7 +21,7 @@ export class MsTeamsAPI {
       private microsoftUrlService: MicrosoftUrlService,
       private microsoftGraphService:MicrosoftGraphService
   ) {
-    this.appid = properties.get<PropertiesFormat>(PROPERTY_KEY).MICROSOFT_APP_ID;
+    this.appid = properties.get<PropertiesFormat>(PROPERTY_KEY).TEAMS_APP_ID;
   }
 
   getLoginService(): MicrosoftLoginService {
