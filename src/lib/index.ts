@@ -24,7 +24,6 @@ import {MicrosoftGraphService} from "@root/lib/microsoft/service/MicrosoftGraphS
 import {MicrosoftLoginService} from "@root/lib/microsoft/service/MicrosoftLoginService";
 import {MicrosoftUrlService} from "@root/lib/microsoft/service/MicrosoftUrlService";
 import {DeepLinkService} from "@root/lib/microsoft/service/DeepLinkService";
-import {MicrosoftOauthLoginService} from "@root/lib/microsoft/service/MicrosoftOauthLoginService";
 
 export * from "./BasicExport";
 
@@ -58,15 +57,7 @@ export const TeamsModule = () => {
     bind(MICROSOFT_LOGIN_SERVICE).toDynamicValue((context) => {
       return new MicrosoftLoginService(
             context.container.get<NativeLoginBridge>(NATIVE_LOGIN_BRIDGE_SERVICE),
-            context.container.get<MicrosoftOauthLoginService>(MICROSOFT_OAUTH_LOGIN_SERVICE),
             context.container.get<TeamsLoginService>(MICROSOFT_TEAMS_LOGIN_SERVICE),
-      );
-    }).inSingletonScope();
-
-    bind(MICROSOFT_OAUTH_LOGIN_SERVICE).toDynamicValue((context) => {
-      return new MicrosoftOauthLoginService(
-            context.container.get<Properties>(PROPERTIES_SERVICE),
-            context.container.get<NativeLoginBridge>(NATIVE_LOGIN_BRIDGE_SERVICE),
       );
     }).inSingletonScope();
 

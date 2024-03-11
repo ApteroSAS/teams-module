@@ -1,5 +1,5 @@
 import { MicrosoftLoginService } from "./MicrosoftLoginService";
-import { Buffer } from "buffer/";
+import { Buffer } from "buffer";
 import {DeepLinkService} from "./DeepLinkService";
 import { MICROSOFT_AUTH_ERROR } from "../MsTeamsAPILight";
 import {MicrosoftGraphService} from "@root/lib/microsoft/service/MicrosoftGraphService";

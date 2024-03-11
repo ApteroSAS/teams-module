@@ -2,7 +2,7 @@ import {isMsTeams} from "@root/lib/microsoft/MsTeamsChecker";
 import {CHANGE_SETTINGS_URL, PROCESS_DEEPLINK} from "../microsoft/Events";
 import {app} from "@microsoft/teams-js";
 
-const EventEmitter = require("eventemitter3");
+import EventEmitter from "eventemitter3";
 
 let eventListener = new EventEmitter();
 

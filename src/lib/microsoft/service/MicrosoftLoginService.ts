@@ -1,4 +1,3 @@
-import {MicrosoftOauthLoginService} from "./MicrosoftOauthLoginService";
 import {TeamsLoginService} from "./TeamsLoginService";
 import {AuthInterface, NativeLoginBridge} from "@aptero/axolotis-module-basic";
 import {isMsTeams} from "@root/lib/microsoft/MsTeamsChecker";
@@ -21,7 +20,6 @@ export class MicrosoftLoginService implements AuthInterface {
 
     constructor(
         private nativeLoginBridge: NativeLoginBridge,
-        private microsoftOauthLoginService: MicrosoftOauthLoginService,
         private teamsLoginService: TeamsLoginService,
     ) {
         this.onReady().then(() => {
@@ -58,7 +56,7 @@ export class MicrosoftLoginService implements AuthInterface {
         if (isMsTeams()) {
             await this.teamsLoginService.updateProfile(profile);
         } else {
-            await this.microsoftOauthLoginService.updateProfile(profile);
+            throw new Error("Not implemented");
         }
     }
 
@@ -66,7 +64,7 @@ export class MicrosoftLoginService implements AuthInterface {
         if (isMsTeams()) {
             return await this.teamsLoginService.getGraph();
         } else {
-            return await this.microsoftOauthLoginService.getGraph();
+            throw new Error("Not implemented");
         }
     }
 
@@ -98,7 +96,7 @@ export class MicrosoftLoginService implements AuthInterface {
                 await this.teamsLoginService.passiveLogin();
                 this.authInProgress = false;
             } else {
-                await this.microsoftOauthLoginService.passiveLogin();
+                throw new Error("Not implemented");
                 this.authInProgress = false;
             }
             this.eventEmitter.emit(PASIVE_LOGIN_DONE);
@@ -116,7 +114,7 @@ export class MicrosoftLoginService implements AuthInterface {
                 await this.teamsLoginService.login();
                 this.authInProgress = false;
             } else {
-                await this.microsoftOauthLoginService.login();
+                throw new Error("Not implemented");
                 this.authInProgress = false;
             }
         }
@@ -158,7 +156,7 @@ export class MicrosoftLoginService implements AuthInterface {
                 await this.teamsLoginService.logout();
                 this.authInProgress = false;
             } else {
-                await this.microsoftOauthLoginService.logout();
+                throw new Error("Not implemented");
                 this.authInProgress = false;
             }
         }
