@@ -24,12 +24,12 @@
   },
   "scripts": {
     "clean": "rimraf dist",
-    "build": "yarn clean && rollup -c",
+    "build": "npm run clean && rollup -c",
     "ci:test": "cross-env NODE_ENV=development npx playwright test",
     "ci:test:debug": "cross-env NODE_ENV=development npx playwright test --headed",
     "ci:coverage:serve": "cross-env NODE_ENV=development USE_BABEL_PLUGIN_ISTANBUL=1 webpack --stats-error-details --config webpack.config.demo.js && npx http-server dist -p 9080",
-    "ci:coverage:build": "cross-env NODE_ENV=development USE_BABEL_PLUGIN_ISTANBUL=1 yarn run build",
-    "ci:coverage": "cross-env NODE_ENV=development npx playwright test && nyc --no-clean yarn --version",
+    "ci:coverage:build": "cross-env NODE_ENV=development USE_BABEL_PLUGIN_ISTANBUL=1 npm run build",
+    "ci:coverage": "cross-env NODE_ENV=development npx playwright test && nyc --no-clean",
     "ci": "cross-env CI=true start-server-and-test ci:coverage:serve http://localhost:9080 ci:coverage"
   },
   "author": "Aptero <admin@aptero.co>",
@@ -41,7 +41,6 @@
     "es6"
   ],
   "devDependencies": {
-    "@aptero/axolotis-player": "github:ApteroSAS/axolotis-player.git#semver:^2.1.6",
     "@istanbuljs/nyc-config-typescript": "^1.0.2",
     "@playwright/test": "^1.41.2",
     "@rollup/plugin-commonjs": "^25.0.7",
