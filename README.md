@@ -1,3 +1,6 @@
+FOR LOCAL developement copy the content of auth-start-tenant.html and auth-end-tenant.html in auth-start.html and auth-end.html
+
+
 This is the axolotis-teams-modules that allows the application
 to use the teams and microsoft service directly.
 

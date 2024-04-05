@@ -1,24 +1,24 @@
 import {
-    AuthenticationConfiguration,
-    createMicrosoftGraphClient, createMicrosoftGraphClientWithCredential,
-    IdentityType,
-    LogLevel,
-    setLogFunction,
-    setLogLevel,
-    TeamsFx, TeamsUserCredential, UserInfo
+    TeamsUserCredential, TeamsUserCredentialAuthConfig, UserInfo
 } from "@microsoft/teamsfx";
 import {getScopes, getScopesLight} from "../../aptTeamsApp/scope";
 import {app} from "@microsoft/teams-js";
 import {CookieStore, NativeLoginBridge, Properties} from "@aptero/axolotis-module-basic";
 import {PropertiesFormat, PROPERTY_KEY} from "../PropertiesFormat";
 import {isMsTeams} from "@root/lib/microsoft/MsTeamsChecker";
-import {Client, GraphError} from "@microsoft/microsoft-graph-client";
+import {Client} from "@microsoft/microsoft-graph-client";
 import {EventEmitter} from "eventemitter3";
+import {
+    TokenCredentialAuthenticationProvider
+} from "@microsoft/microsoft-graph-client/authProviders/azureTokenCredentials";
 
 declare const window;
 //To test and revoke application auth
 // https://myapplications.microsoft.com/
 // https://portal.office.com/account/?ref=MeControl#apps
+
+//Code exmaple:
+//https://github.com/OfficeDev/Microsoft-Teams-Samples
 
 const FORCE_STAY_LOGOUT = "ms_force_stay_logout";
 export const LOGGED_BASIC_INFO = "ms-auth-basic-info";
@@ -27,7 +27,6 @@ export const LOGOUT = "ms-auth-service-logout";
 
 export class TeamsLoginService {
     private ppt: PropertiesFormat;
-    private teamsFx: TeamsFx = null;
     private teamsUserCredential: TeamsUserCredential = null;
     private eventEmitter = new EventEmitter();
     private graph: Client;
@@ -46,69 +45,14 @@ export class TeamsLoginService {
     }
 
     //////////////
-    /////TeamsFx
-    ////////////
-    private getTeamsFx(): TeamsFx {
-        if (!this.teamsFx) {
-            if (process.env.NODE_ENV === "development") {
-                setLogLevel(LogLevel.Warn);
-                setLogFunction((leve, message) => {
-                    console.warn(message);
-                });
-            }
-            //https://docs.microsoft.com/en-us/microsoftteams/platform/toolkit/teamsfx-sdk
-            this.teamsFx = new TeamsFx(IdentityType.User, {
-                authorityHost:this.ppt.MICROSOFT_APP_AUTHORITY,
-                initiateLoginEndpoint: this.getAuthLoginPageUrl(),
-                //simpleAuthEndpoint: teamsfxEndpoint,//https://github.com/OfficeDev/TeamsFx/wiki/How-Authentication-Works-in-TeamsFx-Tab-Template
-                clientId: this.ppt.MICROSOFT_APP_ID, //process.env.REACT_APP_CLIENT_ID;
-            });
-        }
-        return this.teamsFx;
-    }
-
-    private async triggerScopeAuthPopUpTeamsFx(scopes:string[]): Promise<TeamsFx> {
-        const teamsFx = this.getTeamsFx();
-        console.log("login TeamsFx :" , scopes);
-        await teamsFx.login(scopes); //Trigger authorization popup
-        let credential = teamsFx.getCredential();//checks credential
-        console.log(await credential.getToken(scopes));//checks credential
-        return teamsFx;
-    }
-
-    private async initGraphTeamsFx(scope: string[], silent: boolean = true): Promise<{ graph: Client, scope: string[] }> {
-        const teamsFx = this.getTeamsFx();
-        try {
-            this.graph = createMicrosoftGraphClient(teamsFx, scope);
-            console.log(await this.graph.api("/me").get());//try to get basic scope
-            return {graph:this.graph, scope};
-        } catch (err) {
-            if (err.toString().indexOf("please login first") !== -1) {
-                console.info("app not authorized - no graph support - re-login");
-                console.info("app id : " + this.ppt.MICROSOFT_APP_ID + " / " + this.ppt.MICROSOFT_APP_AUTHORITY);
-                console.info("auth page : " + this.getAuthLoginPageUrl());
-                if (!silent) {
-                    await this.triggerScopeAuthPopUpTeamsFx(scope);//trigger login popup
-                    this.graph = createMicrosoftGraphClient(teamsFx, scope);
-                    console.log(await this.graph.api("/me").get());//try to get basic scope
-                    return {graph:this.graph, scope};
-                }else {
-                    throw err;
-                }
-            } else {
-                throw err;
-            }
-        }
-    }
-    //////////////
     /////TeamsUserCredential
     ////////////
     private getTeamsUserCredential(): TeamsUserCredential {
         if (!this.teamsUserCredential) {
-            const authConfig: AuthenticationConfiguration = {
+            const authConfig: TeamsUserCredentialAuthConfig = {
                 clientId: this.ppt.MICROSOFT_APP_ID,
                 initiateLoginEndpoint: this.getAuthLoginPageUrl(),
-                authorityHost:this.ppt.MICROSOFT_APP_AUTHORITY,
+                //authorityHost:this.ppt.MICROSOFT_APP_AUTHORITY,
             };
             this.teamsUserCredential = new TeamsUserCredential(authConfig);
         }
@@ -117,27 +61,33 @@ export class TeamsLoginService {
 
     private async triggerScopeAuthPopUpTeamsUserCredential(scopes:string[]): Promise<TeamsUserCredential> {
         const teamsUserCredential = this.getTeamsUserCredential();
-        console.log("login teamsUserCredential :" , scopes);
+        console.log("[TeamsUserCredential/popup] login:" , scopes);
         await teamsUserCredential.login(scopes); //Trigger authorization popup
-        console.log(await teamsUserCredential.getToken(scopes));//checks credential
+        console.log("[TeamsUserCredential/popup] login passed");
         return teamsUserCredential;
     }
     async initGraphTeamsUserCredential<T>(scope: string[], silent: boolean = true): Promise<{ graph: Client, scope: string[] }> {
         let credential: TeamsUserCredential = this.getTeamsUserCredential();
         try {
-            this.graph = createMicrosoftGraphClientWithCredential(credential, scope);
-            console.log(await this.graph.api("/me").get());//try to get basic scope
+            const authProvider = new TokenCredentialAuthenticationProvider(credential, { scopes: scope });
+            this.graph = Client.initWithMiddleware({
+                authProvider: authProvider,
+            });
+            console.log("[graph/me]", await this.graph.api("/me").get());//try to get basic scope
             return {graph:this.graph, scope};
         } catch (err: unknown) {
-            console.info("app not authorized - no graph support - re-login");
-            console.info("scopes : " + scope);
-            console.info("app id : " + this.ppt.MICROSOFT_APP_ID + " / " + this.ppt.MICROSOFT_APP_AUTHORITY);
-            console.info("auth page : " + this.getAuthLoginPageUrl());//you need to change the Appid if you are using localhost
+            console.info("[graph6] app not authorized - no graph support - re-login");
+            console.info("[graph] scopes : " + scope);
+            console.info("[graph] app id : " + this.ppt.MICROSOFT_APP_ID + " / " + this.ppt.MICROSOFT_APP_AUTHORITY);
+            console.info("[graph] auth page : " + this.getAuthLoginPageUrl());//you need to change the Appid if you are using localhost
             if (!silent) {
                 // Silently fail for user didn't consent error
                 await this.triggerScopeAuthPopUpTeamsUserCredential(scope);
-                this.graph = createMicrosoftGraphClientWithCredential(credential, scope);
-                console.log(await this.graph.api("/me").get());//try to get basic scope
+                const authProvider = new TokenCredentialAuthenticationProvider(credential, { scopes: scope });
+                this.graph = Client.initWithMiddleware({
+                    authProvider: authProvider,
+                });
+                console.log("[graph/me]", await this.graph.api("/me").get());//try to get basic scope
                 return {graph:this.graph, scope};
             } else {
                 throw err;
@@ -165,9 +115,9 @@ export class TeamsLoginService {
      */
     private async nativeLogin(scope: string[], silent = true) {
         //basic login
-        let teamsFx = this.getTeamsFx();
+        let teamsFx = this.getTeamsUserCredential();
         const basicUserInfo: UserInfo = await teamsFx.getUserInfo();//confirmed by stephano no user popup
-        console.log("basic login:", basicUserInfo);
+        console.log("[native login] basic login:", basicUserInfo);
         this.eventEmitter.emit(LOGGED_BASIC_INFO);
 
         ///////////////
@@ -177,7 +127,7 @@ export class TeamsLoginService {
             this.getTeamsUserCredential();
             await this.initGraphTeamsUserCredential(scope, silent);
         }catch (e){
-            console.error(e);
+            console.error("[native login] login failed",e);
         }
 
         ///////////////
@@ -201,7 +151,7 @@ export class TeamsLoginService {
         companyName?: string,
         picture?: string,
     } = {}){
-        let teamsFx = this.getTeamsFx();
+        let teamsFx = this.getTeamsUserCredential();
         const basicUserInfo: UserInfo = await teamsFx.getUserInfo();//confirmed by stephano no user popup
         const user: any = {};
         user.email = basicUserInfo.preferredUserName;
@@ -230,7 +180,7 @@ export class TeamsLoginService {
             this.cookieStore.remove(FORCE_STAY_LOGOUT); //Only in case of user requested login do we remove this flag
             await this.nativeLogin(getScopesLight(), false);
             await this.msToNativeLoginBridge.setProfile({
-                displayName: (await this.getTeamsFx().getUserInfo()).displayName,
+                displayName: (await this.getTeamsUserCredential().getUserInfo()).displayName,
             }); //HACK reset the display name since another process in the code seems to set Guest name
             this.eventEmitter.emit(LOGOUT);
             return true;
@@ -240,7 +190,7 @@ export class TeamsLoginService {
     public async upgrade() {
         console.log("upgrade");
         let scope = getScopes();
-        const teamsFx = this.getTeamsFx();
+        const teamsFx = this.getTeamsUserCredential();
         await teamsFx.login(scope); //Trigger authorization popup
         await this.nativeLogin(getScopes(), false);//update graph instance
         return true;
@@ -308,7 +258,7 @@ export class TeamsLoginService {
     }
 
     public async getUserInfo(): Promise<UserInfo> {
-        let teamsFx = this.getTeamsFx();
+        let teamsFx = this.getTeamsUserCredential();
         return teamsFx.getUserInfo();
     }
 

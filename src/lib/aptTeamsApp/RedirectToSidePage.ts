@@ -3,7 +3,8 @@ import {MSTEAMS_QUERY_PARAM} from "../microsoft/MsTeamsAPILight";
 import {isMsTeams} from "@root/lib/microsoft/MsTeamsChecker";
 
 export async function redirectToTeamsSidePanel() {
-  if (isMsTeams()) {
+  //TEMPORARY DISABLED
+  /*if (isMsTeams()) {
     let url = new URL(window.location.href);
     if (url.searchParams.get("msForceHub")) {
       return; //do not redirect in this case
@@ -14,5 +15,5 @@ export async function redirectToTeamsSidePanel() {
       }
       //else continue
     });
-  }
+  }*/
 }
