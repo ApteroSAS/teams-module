@@ -4,7 +4,7 @@ import {isMsTeams} from "@root/lib/microsoft/MsTeamsChecker";
 
 export async function redirectToTeamsSidePanel() {
   //TEMPORARY DISABLED
-  /*if (isMsTeams()) {
+  if (isMsTeams()) {
     let url = new URL(window.location.href);
     if (url.searchParams.get("msForceHub")) {
       return; //do not redirect in this case
@@ -15,5 +15,5 @@ export async function redirectToTeamsSidePanel() {
       }
       //else continue
     });
-  }*/
+  }
 }
