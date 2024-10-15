@@ -13,7 +13,7 @@ import {
   Properties, NATIVE_LOGIN_BRIDGE_SERVICE, NativeLoginBridge, PROPERTIES_SERVICE
 } from "@aptero/axolotis-module-basic";
 import {
-  MICROSOFT_DEEP_LINK_SERVICE,
+  MICROSOFT_DEEP_LINK_SERVICE, MICROSOFT_ENTRAID_LOGIN_SERVICE,
   MICROSOFT_GRAPH_SERVICE, MICROSOFT_LOGIN_SERVICE, MICROSOFT_OAUTH_LOGIN_SERVICE,
   MICROSOFT_SERVICE,
   MICROSOFT_STATIC_SERVICE,
@@ -24,6 +24,7 @@ import {MicrosoftGraphService} from "@root/lib/microsoft/service/MicrosoftGraphS
 import {MicrosoftLoginService} from "@root/lib/microsoft/service/MicrosoftLoginService";
 import {MicrosoftUrlService} from "@root/lib/microsoft/service/MicrosoftUrlService";
 import {DeepLinkService} from "@root/lib/microsoft/service/DeepLinkService";
+import {EntraIDLoginService} from "@root/lib/microsoft/service/EntraIDLoginService";
 
 export * from "./BasicExport";
 
@@ -58,6 +59,7 @@ export const TeamsModule = () => {
       return new MicrosoftLoginService(
             context.container.get<NativeLoginBridge>(NATIVE_LOGIN_BRIDGE_SERVICE),
             context.container.get<TeamsLoginService>(MICROSOFT_TEAMS_LOGIN_SERVICE),
+            context.container.get<EntraIDLoginService>(MICROSOFT_ENTRAID_LOGIN_SERVICE),
       );
     }).inSingletonScope();
 
@@ -71,6 +73,14 @@ export const TeamsModule = () => {
 
     bind(MICROSOFT_TEAMS_LOGIN_SERVICE).toDynamicValue((context) => {
       return new TeamsLoginService(
+            context.container.get<NativeLoginBridge>(NATIVE_LOGIN_BRIDGE_SERVICE),
+            context.container.get<Properties>(PROPERTIES_SERVICE),
+            context.container.get<CookieStore>(COOKIE_STORE_SERVICE)
+      );
+    }).inSingletonScope();
+
+    bind(MICROSOFT_ENTRAID_LOGIN_SERVICE).toDynamicValue((context) => {
+      return new EntraIDLoginService(
             context.container.get<NativeLoginBridge>(NATIVE_LOGIN_BRIDGE_SERVICE),
             context.container.get<Properties>(PROPERTIES_SERVICE),
             context.container.get<CookieStore>(COOKIE_STORE_SERVICE)

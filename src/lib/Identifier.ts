@@ -8,3 +8,4 @@ export const MICROSOFT_LOGIN_SERVICE = Symbol.for("@aptero/axolotis-module-teams
 export const MICROSOFT_OAUTH_LOGIN_SERVICE = Symbol.for("@aptero/axolotis-module-teams/MicrosoftOauthLoginService");
 export const MICROSOFT_URL_SERVICE = Symbol.for("@aptero/axolotis-module-teams/MicrosoftUrlService");
 export const MICROSOFT_TEAMS_LOGIN_SERVICE = Symbol.for("@aptero/axolotis-module-teams/MicrosoftTeamsLoginService");
+export const MICROSOFT_ENTRAID_LOGIN_SERVICE = Symbol.for("@aptero/axolotis-module-teams/MicrosoftEntraIDLoginService");

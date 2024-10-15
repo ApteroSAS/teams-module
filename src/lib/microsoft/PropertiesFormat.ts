@@ -5,4 +5,5 @@ export interface PropertiesFormat {
   TEAMS_APP_ID: string;
   APP_SOURCE_LINK: string;
   APP_SOURCE_TEAMS_APP_LINK: string;
+  SIGNIN_REDIRECT_URI: string;
 }

@@ -25,6 +25,7 @@
   "scripts": {
     "clean": "rimraf dist",
     "build": "npm run clean && rollup -c",
+    "start": "chokidar 'src/**/*' -c 'npm run build'",
     "ci:test": "cross-env NODE_ENV=development npx playwright test",
     "ci:test:debug": "cross-env NODE_ENV=development npx playwright test --headed",
     "ci:coverage:serve": "cross-env NODE_ENV=development USE_BABEL_PLUGIN_ISTANBUL=1 webpack --stats-error-details --config webpack.config.demo.js && npx http-server dist -p 9080",
@@ -51,6 +52,7 @@
     "@typescript-eslint/eslint-plugin": "^7.3.1",
     "@typescript-eslint/parser": "^7.3.1",
     "buffer": "^6.0.3",
+    "chokidar-cli": "^3.0.0",
     "cross-env": "^7.0.3",
     "crypto-browserify": "^3.12.0",
     "eslint": "^8.57.0",
@@ -71,6 +73,7 @@
   },
   "dependencies": {
     "@aptero/axolotis-module-basic": "1.0.0",
+    "@azure/msal-browser": "^3.26.1",
     "@microsoft/microsoft-graph-client": "^3.0.7",
     "@microsoft/teams-js": "^2.21.0",
     "@microsoft/teamsfx": "^2.3.1",
